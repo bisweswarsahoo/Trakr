@@ -25,16 +25,12 @@ const App = () => {
 
 	return (
 		<Router>
-			{user && <Navbar onLogout={handleLogout} />}{" "}
-			{/* show navbar only if logged in */}
+			{user && <Navbar onLogout={handleLogout} />}
 			<Routes>
-				{/* Public Route */}
 				<Route
 					path="/login"
 					element={user ? <Navigate to="/" /> : <Login onLogin={handleLogin} />}
 				/>
-
-				{/* Protected Routes */}
 				<Route
 					path="/"
 					element={user ? <Home /> : <Navigate to="/login" />}
@@ -43,8 +39,6 @@ const App = () => {
 					path="/dashboard"
 					element={user ? <Dashboard /> : <Navigate to="/login" />}
 				/>
-
-				{/* Catch-all */}
 				<Route
 					path="*"
 					element={<Navigate to={user ? "/" : "/login"} />}
