@@ -47,130 +47,123 @@ const Navbar = ({ onLogout }) => {
 	];
 
 	return (
-		<>
-			<AppBar
-				position="static"
-				sx={{
-					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-					boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-					borderRadius: 0,
-					width: "100vw",
-				}}
-			>
-				<Toolbar sx={{ minHeight: 64 }}>
-					{/* Logo Section */}
-					<Box
+		<AppBar
+			sx={{ background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)" }}
+		>
+			<Toolbar sx={{ minHeight: 64 }}>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						cursor: "pointer",
+						flexGrow: isMobile ? 0 : 1,
+					}}
+					onClick={() => navigate("/")}
+				>
+					<TrackChangesIcon sx={{ mr: 1, fontSize: 28 }} />
+					<Typography
+						variant="h6"
+						component="div"
 						sx={{
-							display: "flex",
-							alignItems: "center",
-							cursor: "pointer",
-							flexGrow: isMobile ? 0 : 1,
+							fontWeight: "bold",
+							fontSize: isMobile ? "1.1rem" : "1.25rem",
 						}}
-						onClick={() => navigate("/")}
 					>
-						<TrackChangesIcon sx={{ mr: 1, fontSize: 28 }} />
-						<Typography
-							variant="h6"
-							component="div"
-							sx={{
-								fontWeight: "bold",
-								fontSize: isMobile ? "1.1rem" : "1.25rem",
-							}}
-						>
-							Trakr - Expense Tracker
-						</Typography>
-					</Box>
+						Trakr - Expense Tracker
+					</Typography>
+				</Box>
 
-					{/* Desktop Navigation */}
-					{!isMobile && (
-						<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-							<Button
-								color="inherit"
-								component={Link}
-								to="/"
-								sx={{
-									"&:hover": {
-										backgroundColor: "rgba(255, 255, 255, 0.1)",
-										transform: "translateY(-1px)",
-									},
-									transition: "all 0.2s ease-in-out",
-									borderRadius: 2,
-									px: 2,
-								}}
-								startIcon={<ReceiptIcon />}
-							>
-								Expenses
-							</Button>
-							<Button
-								color="inherit"
-								component={Link}
-								to="/dashboard"
-								sx={{
-									"&:hover": {
-										backgroundColor: "rgba(255, 255, 255, 0.1)",
-										transform: "translateY(-1px)",
-									},
-									transition: "all 0.2s ease-in-out",
-									borderRadius: 2,
-									px: 2,
-								}}
-								startIcon={<DashboardIcon />}
-							>
-								Dashboard
-							</Button>
-							<Button
-								color="inherit"
-								onClick={handleLogoutClick}
-								sx={{
-									"&:hover": {
-										backgroundColor: "rgba(255, 255, 255, 0.1)",
-										transform: "translateY(-1px)",
-									},
-									transition: "all 0.2s ease-in-out",
-									borderRadius: 2,
-									px: 2,
-									ml: 2,
-								}}
-								startIcon={<LogoutIcon />}
-							>
-								Logout
-							</Button>
-						</Box>
-					)}
-
-					{/* Mobile Menu Button */}
-					{isMobile && (
-						<IconButton
+				{!isMobile && (
+					<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+						<Button
 							color="inherit"
-							edge="end"
-							onClick={handleMobileMenuToggle}
-							sx={{ ml: "auto" }}
+							component={Link}
+							to="/"
+							sx={{
+								"&:hover": {
+									backgroundColor: "rgba(255, 255, 255, 0.1)",
+									transform: "translateY(-1px)",
+								},
+								transition: "all 0.2s ease-in-out",
+								borderRadius: 2,
+								px: 2,
+							}}
+							startIcon={<ReceiptIcon />}
 						>
-							<MenuIcon />
-						</IconButton>
-					)}
-				</Toolbar>
-			</AppBar>
+							Expenses
+						</Button>
+						<Button
+							color="inherit"
+							component={Link}
+							to="/dashboard"
+							sx={{
+								"&:hover": {
+									backgroundColor: "rgba(255, 255, 255, 0.1)",
+									transform: "translateY(-1px)",
+								},
+								transition: "all 0.2s ease-in-out",
+								borderRadius: 2,
+								px: 2,
+							}}
+							startIcon={<DashboardIcon />}
+						>
+							Dashboard
+						</Button>
+						<Button
+							color="inherit"
+							onClick={handleLogoutClick}
+							sx={{
+								"&:hover": {
+									backgroundColor: "rgba(255, 255, 255, 0.1)",
+									transform: "translateY(-1px)",
+								},
+								transition: "all 0.2s ease-in-out",
+								borderRadius: 2,
+								px: 2,
+								ml: 2,
+							}}
+							startIcon={<LogoutIcon />}
+						>
+							Logout
+						</Button>
+					</Box>
+				)}
 
-			{/* Mobile Drawer */}
+				{isMobile && (
+					<IconButton
+						color="inherit"
+						edge="end"
+						onClick={handleMobileMenuToggle}
+						sx={{ ml: "auto" }}
+					>
+						<MenuIcon />
+					</IconButton>
+				)}
+			</Toolbar>
+
 			<Drawer
 				anchor="right"
 				open={mobileMenuOpen}
 				onClose={handleMobileMenuClose}
 				sx={{
 					"& .MuiDrawer-paper": {
-						width: 280,
+						width: isMobile ? 250 : 280,
 						background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
 						color: "white",
 					},
 				}}
 			>
-				<Box sx={{ p: 2 }}>
-					<Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-						<TrackChangesIcon sx={{ mr: 1, fontSize: 24 }} />
+				<Box sx={{ p: isMobile ? 1.5 : 2 }}>
+					<Box
+						sx={{ display: "flex", alignItems: "center", mb: isMobile ? 2 : 3 }}
+					>
+						<TrackChangesIcon sx={{ mr: 1, fontSize: isMobile ? 20 : 24 }} />
 						<Typography
 							variant="h6"
-							sx={{ fontWeight: "bold" }}
+							sx={{
+								fontWeight: "bold",
+								fontSize: isMobile ? "1rem" : "1.25rem",
+							}}
 						>
 							Trakr Menu
 						</Typography>
@@ -187,18 +180,34 @@ const Navbar = ({ onLogout }) => {
 								sx={{
 									borderRadius: 2,
 									mb: 1,
+									py: isMobile ? 1 : 1.5,
 									"&:hover": {
 										backgroundColor: "rgba(255, 255, 255, 0.1)",
 									},
 								}}
 							>
-								<ListItemIcon sx={{ color: "white" }}>{item.icon}</ListItemIcon>
-								<ListItemText primary={item.text} />
+								<ListItemIcon
+									sx={{ color: "white", minWidth: isMobile ? 40 : 56 }}
+								>
+									{item.icon}
+								</ListItemIcon>
+								<ListItemText
+									primary={item.text}
+									slotProps={{
+										primary: {
+											fontSize: isMobile ? "0.9rem" : "1rem",
+										},
+									}}
+									sx={{ color: "white" }}
+								/>
 							</ListItem>
 						))}
 
 						<Divider
-							sx={{ my: 2, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+							sx={{
+								my: isMobile ? 1.5 : 2,
+								backgroundColor: "rgba(255, 255, 255, 0.2)",
+							}}
 						/>
 
 						<ListItem
@@ -209,20 +218,31 @@ const Navbar = ({ onLogout }) => {
 							}}
 							sx={{
 								borderRadius: 2,
+								py: isMobile ? 1 : 1.5,
 								"&:hover": {
 									backgroundColor: "rgba(255, 255, 255, 0.1)",
 								},
 							}}
 						>
-							<ListItemIcon sx={{ color: "white" }}>
+							<ListItemIcon
+								sx={{ color: "white", minWidth: isMobile ? 40 : 56 }}
+							>
 								<LogoutIcon />
 							</ListItemIcon>
-							<ListItemText primary="Logout" />
+							<ListItemText
+								primary="Logout"
+								slotProps={{
+									primary: {
+										fontSize: isMobile ? "0.9rem" : "1rem",
+									},
+								}}
+								sx={{ color: "white" }}
+							/>
 						</ListItem>
 					</List>
 				</Box>
 			</Drawer>
-		</>
+		</AppBar>
 	);
 };
 

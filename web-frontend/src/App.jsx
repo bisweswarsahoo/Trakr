@@ -12,7 +12,7 @@ import Navbar from "./components/Navbar";
 import Register from "./pages/Register";
 
 const App = () => {
-	const [user, setUser] = useState(localStorage.getItem("token")); // check login
+	const [user, setUser] = useState(localStorage.getItem("token"));
 
 	const handleLogin = (userData) => {
 		setUser(userData);
