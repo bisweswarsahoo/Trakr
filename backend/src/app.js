@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 
 import expenseRoutes from "./routes/expenseRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(morgan("dev"));
 
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Test route
 app.get("/", (req, res) => {
