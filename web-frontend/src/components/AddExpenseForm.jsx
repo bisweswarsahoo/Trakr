@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { TextField, Button, Box, Typography, Paper } from "@mui/material";
+import {
+	TextField,
+	Button,
+	Box,
+	Typography,
+	Paper,
+	useTheme,
+	useMediaQuery,
+} from "@mui/material";
 import TitleIcon from "@mui/icons-material/Title";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CategoryIcon from "@mui/icons-material/Category";
@@ -7,6 +15,10 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const AddExpenseForm = ({ onAddExpense }) => {
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+
 	const [formData, setFormData] = useState({
 		title: "",
 		amount: "",
@@ -20,7 +32,7 @@ const AddExpenseForm = ({ onAddExpense }) => {
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
-		setErrors((prev) => ({ ...prev, [name]: "" })); // clear error on change
+		setErrors((prev) => ({ ...prev, [name]: "" }));
 	};
 
 	const validate = () => {
@@ -48,22 +60,18 @@ const AddExpenseForm = ({ onAddExpense }) => {
 	};
 
 	return (
-		<Box
-			sx={{
-				display: "flex",
-				justifyContent: "center",
-				alignItems: "center",
-				height: "100vh",
-				width: "100vw",
-				background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-			}}
-		>
+		<>
 			<Paper
 				elevation={6}
 				sx={{
-					padding: 3,
-					width: { xs: "90%", sm: 500 },
-					margin: "20px auto",
+					padding: isMobile ? 2 : 3,
+					width: {
+						xs: "90%",
+						sm: "85%",
+						lg: 500,
+					},
+					maxWidth: 500,
+					margin: isMobile ? "10px auto" : "20px auto",
 					borderRadius: 3,
 					backgroundColor: "rgba(255, 255, 255, 0.95)",
 				}}
@@ -73,13 +81,22 @@ const AddExpenseForm = ({ onAddExpense }) => {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						mb: 2,
+						mb: isMobile ? 1.5 : 2,
 					}}
 				>
-					<AddCircleIcon sx={{ fontSize: 30, color: "primary.main", mr: 1 }} />
+					<AddCircleIcon
+						sx={{
+							fontSize: isMobile ? 25 : 30,
+							color: "primary.main",
+							mr: 1,
+						}}
+					/>
 					<Typography
-						variant="h5"
-						gutterBottom
+						variant={isMobile ? "h5" : "h5"}
+						sx={{
+							fontSize: isMobile ? "1.3rem" : "1.5rem",
+							fontWeight: "bold",
+						}}
 					>
 						Add New Expense
 					</Typography>
@@ -87,7 +104,11 @@ const AddExpenseForm = ({ onAddExpense }) => {
 				<Box
 					component="form"
 					onSubmit={handleSubmit}
-					sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						gap: isMobile ? 1.5 : 2,
+					}}
 				>
 					<TextField
 						label="Expense Title"
@@ -97,8 +118,17 @@ const AddExpenseForm = ({ onAddExpense }) => {
 						error={!!errors.title}
 						helperText={errors.title}
 						fullWidth
-						InputProps={{
-							startAdornment: <TitleIcon />,
+						size={isMobile ? "small" : "medium"}
+						slotProps={{
+							input: {
+								startAdornment: (
+									<TitleIcon sx={{ color: "action.active", mr: 1 }} />
+								),
+								style: { fontSize: isMobile ? "0.9rem" : "1rem" },
+							},
+							inputLabel: {
+								style: { fontSize: isMobile ? "0.9rem" : "1rem" },
+							},
 						}}
 					/>
 					<TextField
@@ -110,8 +140,17 @@ const AddExpenseForm = ({ onAddExpense }) => {
 						error={!!errors.amount}
 						helperText={errors.amount}
 						fullWidth
-						InputProps={{
-							startAdornment: <AttachMoneyIcon />,
+						size={isMobile ? "small" : "medium"}
+						slotProps={{
+							input: {
+								startAdornment: (
+									<AttachMoneyIcon sx={{ color: "action.active", mr: 1 }} />
+								),
+								style: { fontSize: isMobile ? "0.9rem" : "1rem" },
+							},
+							inputLabel: {
+								style: { fontSize: isMobile ? "0.9rem" : "1rem" },
+							},
 						}}
 					/>
 					<TextField
@@ -122,8 +161,17 @@ const AddExpenseForm = ({ onAddExpense }) => {
 						error={!!errors.category}
 						helperText={errors.category}
 						fullWidth
-						InputProps={{
-							startAdornment: <CategoryIcon />,
+						size={isMobile ? "small" : "medium"}
+						slotProps={{
+							input: {
+								startAdornment: (
+									<CategoryIcon sx={{ color: "action.active", mr: 1 }} />
+								),
+								style: { fontSize: isMobile ? "0.9rem" : "1rem" },
+							},
+							inputLabel: {
+								style: { fontSize: isMobile ? "0.9rem" : "1rem" },
+							},
 						}}
 					/>
 					<TextField
@@ -132,12 +180,21 @@ const AddExpenseForm = ({ onAddExpense }) => {
 						name="date"
 						value={formData.date}
 						onChange={handleChange}
-						InputLabelProps={{ shrink: true }}
 						error={!!errors.date}
 						helperText={errors.date}
 						fullWidth
-						InputProps={{
-							startAdornment: <DateRangeIcon />,
+						size={isMobile ? "small" : "medium"}
+						slotProps={{
+							input: {
+								startAdornment: (
+									<DateRangeIcon sx={{ color: "action.active", mr: 1 }} />
+								),
+								style: { fontSize: isMobile ? "0.9rem" : "1rem" },
+							},
+							inputLabel: {
+								shrink: true,
+								style: { fontSize: isMobile ? "0.9rem" : "1rem" },
+							},
 						}}
 					/>
 					<Button
@@ -145,12 +202,18 @@ const AddExpenseForm = ({ onAddExpense }) => {
 						variant="contained"
 						color="primary"
 						disabled={loading}
+						sx={{
+							mt: 1,
+							py: isMobile ? 1 : 1.5,
+							fontSize: isMobile ? "0.9rem" : "1rem",
+							fontWeight: "bold",
+						}}
 					>
 						{loading ? "Adding..." : "Add Expense"}
 					</Button>
 				</Box>
 			</Paper>
-		</Box>
+		</>
 	);
 };
 
