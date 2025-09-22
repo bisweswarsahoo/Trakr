@@ -5,6 +5,7 @@ import {
 	Route,
 	Navigate,
 } from "react-router-dom";
+import { Box } from "@mui/material";
 import Login from "./pages/LoginPage";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
@@ -26,28 +27,32 @@ const App = () => {
 	return (
 		<Router>
 			{user && <Navbar onLogout={handleLogout} />}
-			<Routes>
-				<Route
-					path="/login"
-					element={user ? <Navigate to="/" /> : <Login onLogin={handleLogin} />}
-				/>
-				<Route
-					path="/"
-					element={user ? <Home /> : <Navigate to="/login" />}
-				/>
-				<Route
-					path="/dashboard"
-					element={user ? <Dashboard /> : <Navigate to="/login" />}
-				/>
-				<Route
-					path="*"
-					element={<Navigate to={user ? "/" : "/login"} />}
-				/>
-				<Route
-					path="/register"
-					element={user ? <Navigate to="/" /> : <Register />}
-				/>
-			</Routes>
+			<Box sx={{ pt: user ? 8 : 0 }}>
+				<Routes>
+					<Route
+						path="/login"
+						element={
+							user ? <Navigate to="/" /> : <Login onLogin={handleLogin} />
+						}
+					/>
+					<Route
+						path="/"
+						element={user ? <Home /> : <Navigate to="/login" />}
+					/>
+					<Route
+						path="/dashboard"
+						element={user ? <Dashboard /> : <Navigate to="/login" />}
+					/>
+					<Route
+						path="*"
+						element={<Navigate to={user ? "/" : "/login"} />}
+					/>
+					<Route
+						path="/register"
+						element={user ? <Navigate to="/" /> : <Register />}
+					/>
+				</Routes>
+			</Box>
 		</Router>
 	);
 };

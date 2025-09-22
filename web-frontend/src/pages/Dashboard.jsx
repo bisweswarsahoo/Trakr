@@ -1,5 +1,15 @@
-import React from "react";
-import { Box, Grid, Paper, Typography, Container } from "@mui/material";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+	Box,
+	Grid,
+	Paper,
+	Typography,
+	Container,
+	CircularProgress,
+	Alert,
+	useTheme,
+	useMediaQuery,
+} from "@mui/material";
 import {
 	PieChart,
 	Pie,
@@ -11,378 +21,385 @@ import {
 	XAxis,
 	YAxis,
 	Legend,
+	LineChart,
+	Line,
 } from "recharts";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import CategoryIcon from "@mui/icons-material/Category";
+import API from "../api";
 
-const Dashboard = ({ expenses }) => {
-	// Group expenses by category
-	const categoryData = (expenses || []).reduce((acc, exp) => {
-		acc[exp.category] = (acc[exp.category] || 0) + parseFloat(exp.amount);
-		return acc;
-	}, {});
-
-	const pieData = Object.keys(categoryData).map((key) => ({
-		name: key,
-		value: categoryData[key],
-	}));
-
-	const barData = (expenses || []).map((exp) => ({
-		name: exp.title,
-		amount: parseFloat(exp.amount),
-	}));
-
-	const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
+// Reusable component for the summary cards
+const SummaryCard = ({ icon: Icon, title, value, color }) => {
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 	return (
-		<Box
+		<Paper
 			sx={{
-				minHeight: "100vh",
-				background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-				padding: 2,
+				padding: isMobile ? 2 : 3,
+				textAlign: "center",
+				borderRadius: 3,
+				backgroundColor: "rgba(255, 255, 255, 0.95)",
+				boxShadow: 3,
+				transition: "transform 0.2s, box-shadow 0.2s",
+				"&:hover": {
+					transform: "translateY(-4px)",
+					boxShadow: 6,
+				},
 			}}
 		>
-			<Container maxWidth="xl">
+			<Icon
+				sx={{
+					fontSize: isMobile ? 35 : 40,
+					color: `${color}.main`,
+					mb: 1,
+				}}
+			/>
+			<Typography
+				variant="h6"
+				color={`${color}.main`}
+				sx={{ fontSize: isMobile ? "1rem" : "1.25rem" }}
+			>
+				{title}
+			</Typography>
+			<Typography
+				variant="h4"
+				color={`${color}.main`}
+				sx={{
+					fontWeight: "bold",
+					fontSize: isMobile ? "1.5rem" : "2.125rem",
+				}}
+			>
+				{value}
+			</Typography>
+		</Paper>
+	);
+};
+
+// Reusable component for the charts with a "no data" state
+const ChartContainer = ({
+	title,
+	children,
+	data,
+	emptyIcon: EmptyIcon,
+	emptyText,
+	emptySubtext,
+}) => {
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const hasData = data && data.length > 0;
+
+	return (
+		<Paper
+			sx={{
+				padding: isMobile ? 2 : 3,
+				height: isMobile ? 350 : 400,
+				borderRadius: 3,
+				backgroundColor: "rgba(255, 255, 255, 0.95)",
+				boxShadow: 3,
+				display: "flex",
+				flexDirection: "column",
+			}}
+		>
+			<Typography
+				variant="h6"
+				sx={{
+					mb: 2,
+					fontWeight: "bold",
+					color: "primary.main",
+					textAlign: "center",
+					fontSize: isMobile ? "1.1rem" : "1.25rem",
+				}}
+			>
+				{title}
+			</Typography>
+			{hasData ? (
+				<ResponsiveContainer
+					width="100%"
+					height="100%"
+				>
+					{children}
+				</ResponsiveContainer>
+			) : (
 				<Box
 					sx={{
 						display: "flex",
+						flexDirection: "column",
 						alignItems: "center",
 						justifyContent: "center",
-						mb: 4,
+						height: "100%",
+						flexGrow: 1,
+						paddingBottom: 4,
 					}}
 				>
-					<TrackChangesIcon sx={{ fontSize: 40, color: "white", mr: 2 }} />
+					<EmptyIcon
+						sx={{
+							fontSize: isMobile ? 50 : 60,
+							color: "grey.400",
+							mb: 2,
+						}}
+					/>
 					<Typography
-						variant="h3"
+						variant="h6"
+						color="text.secondary"
 						align="center"
-						gutterBottom
-						sx={{ color: "white", fontWeight: "bold" }}
 					>
-						Dashboard
+						{emptyText}
+					</Typography>
+					<Typography
+						variant="body2"
+						color="text.secondary"
+						align="center"
+					>
+						{emptySubtext}
 					</Typography>
 				</Box>
-				<Grid
-					container
-					spacing={3}
-				>
-					{/* Summary Cards */}
-					<Grid
-						item
-						xs={12}
-						sm={6}
-						md={3}
-					>
-						<Paper
-							sx={{
-								padding: 3,
-								textAlign: "center",
-								borderRadius: 3,
-								backgroundColor: "rgba(255, 255, 255, 0.95)",
-								boxShadow: 3,
-							}}
-						>
-							<ReceiptIcon
-								sx={{ fontSize: 40, color: "primary.main", mb: 1 }}
-							/>
-							<Typography
-								variant="h6"
-								color="primary"
-							>
-								Total Expenses
-							</Typography>
-							<Typography
-								variant="h4"
-								color="primary.main"
-								sx={{ fontWeight: "bold" }}
-							>
-								₹
-								{(expenses || [])
-									.reduce((sum, exp) => sum + parseFloat(exp.amount), 0)
-									.toFixed(2)}
-							</Typography>
-						</Paper>
-					</Grid>
+			)}
+		</Paper>
+	);
+};
 
-					<Grid
-						item
-						xs={12}
-						sm={6}
-						md={3}
-					>
-						<Paper
-							sx={{
-								padding: 3,
-								textAlign: "center",
-								borderRadius: 3,
-								backgroundColor: "rgba(255, 255, 255, 0.95)",
-								boxShadow: 3,
-							}}
-						>
-							<TrendingUpIcon
-								sx={{ fontSize: 40, color: "success.main", mb: 1 }}
-							/>
-							<Typography
-								variant="h6"
-								color="success.main"
-							>
-								Number of Expenses
-							</Typography>
-							<Typography
-								variant="h4"
-								color="success.main"
-								sx={{ fontWeight: "bold" }}
-							>
-								{(expenses || []).length}
-							</Typography>
-						</Paper>
-					</Grid>
+const Dashboard = () => {
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-					<Grid
-						item
-						xs={12}
-						sm={6}
-						md={3}
-					>
-						<Paper
-							sx={{
-								padding: 3,
-								textAlign: "center",
-								borderRadius: 3,
-								backgroundColor: "rgba(255, 255, 255, 0.95)",
-								boxShadow: 3,
-							}}
-						>
-							<CategoryIcon
-								sx={{ fontSize: 40, color: "warning.main", mb: 1 }}
-							/>
-							<Typography
-								variant="h6"
-								color="warning.main"
-							>
-								Categories
-							</Typography>
-							<Typography
-								variant="h4"
-								color="warning.main"
-								sx={{ fontWeight: "bold" }}
-							>
-								{Object.keys(categoryData).length}
-							</Typography>
-						</Paper>
-					</Grid>
+	const [dashboardData, setDashboardData] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 
-					<Grid
-						item
-						xs={12}
-						sm={6}
-						md={3}
-					>
-						<Paper
-							sx={{
-								padding: 3,
-								textAlign: "center",
-								borderRadius: 3,
-								backgroundColor: "rgba(255, 255, 255, 0.95)",
-								boxShadow: 3,
-							}}
-						>
-							<TrackChangesIcon
-								sx={{ fontSize: 40, color: "info.main", mb: 1 }}
-							/>
-							<Typography
-								variant="h6"
-								color="info.main"
-							>
-								Average Expense
-							</Typography>
-							<Typography
-								variant="h4"
-								color="info.main"
-								sx={{ fontWeight: "bold" }}
-							>
-								₹
-								{expenses && expenses.length > 0
-									? (
-											expenses.reduce(
-												(sum, exp) => sum + parseFloat(exp.amount),
-												0
-											) / expenses.length
-									  ).toFixed(2)
-									: "0.00"}
-							</Typography>
-						</Paper>
-					</Grid>
+	const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
-					{/* Pie Chart */}
-					<Grid
-						item
-						xs={12}
-						md={6}
-					>
-						<Paper
-							sx={{
-								padding: 3,
-								height: 400,
-								borderRadius: 3,
-								backgroundColor: "rgba(255, 255, 255, 0.95)",
-								boxShadow: 3,
-							}}
-						>
-							<Typography
-								variant="h6"
-								sx={{
-									mb: 2,
-									fontWeight: "bold",
-									color: "primary.main",
-									textAlign: "center",
-								}}
-							>
-								Spending by Category
-							</Typography>
-							{expenses && expenses.length > 0 ? (
-								<ResponsiveContainer
-									width="100%"
-									height="85%"
-								>
-									<PieChart>
-										<Pie
-											data={pieData}
-											dataKey="value"
-											nameKey="name"
-											outerRadius={100}
-											fill="#8884d8"
-											label={({ name, percent }) =>
-												`${name} ${(percent * 100).toFixed(0)}%`
-											}
-											labelLine={false}
-										>
-											{pieData.map((_, index) => (
-												<Cell
-													key={index}
-													fill={COLORS[index % COLORS.length]}
-												/>
-											))}
-										</Pie>
-										<Tooltip
-											formatter={(value) => [`₹${value.toFixed(2)}`, "Amount"]}
-										/>
-									</PieChart>
-								</ResponsiveContainer>
-							) : (
-								<Box
-									sx={{
-										display: "flex",
-										flexDirection: "column",
-										alignItems: "center",
-										justifyContent: "center",
-										height: "85%",
-									}}
-								>
-									<CategoryIcon
-										sx={{ fontSize: 60, color: "grey.400", mb: 2 }}
-									/>
-									<Typography
-										variant="h6"
-										color="text.secondary"
-									>
-										No expenses to display
-									</Typography>
-									<Typography
-										variant="body2"
-										color="text.secondary"
-									>
-										Add some expenses to see your spending breakdown
-									</Typography>
-								</Box>
-							)}
-						</Paper>
-					</Grid>
+	const fetchDashboardData = useCallback(async () => {
+		try {
+			setLoading(true);
+			const response = await API.get("/dashboard");
+			setDashboardData(response.data);
+			setError(null);
+		} catch (err) {
+			console.error("Error fetching dashboard data:", err);
+			setError("Failed to load dashboard data. Please try again.");
+		} finally {
+			setLoading(false);
+		}
+	}, []);
 
-					{/* Bar Chart */}
-					<Grid
-						item
-						xs={12}
-						md={6}
+	useEffect(() => {
+		fetchDashboardData();
+	}, [fetchDashboardData]);
+
+	if (loading) {
+		return (
+			<Box
+				sx={{
+					minHeight: "100vh",
+					background: "transparent",
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+					padding: isMobile ? 2 : 4,
+				}}
+			>
+				<CircularProgress
+					size={isMobile ? 50 : 60}
+					sx={{ color: "white" }}
+				/>
+			</Box>
+		);
+	}
+
+	if (error) {
+		return (
+			<Box
+				sx={{
+					minHeight: "100vh",
+					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+					padding: isMobile ? 2 : 4,
+				}}
+			>
+				<Container maxWidth="xl">
+					<Alert
+						severity="error"
+						sx={{ mt: 4 }}
 					>
-						<Paper
-							sx={{
-								padding: 3,
-								height: 400,
-								borderRadius: 3,
-								backgroundColor: "rgba(255, 255, 255, 0.95)",
-								boxShadow: 3,
-							}}
-						>
-							<Typography
-								variant="h6"
-								sx={{
-									mb: 2,
-									fontWeight: "bold",
-									color: "primary.main",
-									textAlign: "center",
-								}}
-							>
-								Expenses Breakdown
-							</Typography>
-							{expenses && expenses.length > 0 ? (
-								<ResponsiveContainer
-									width="100%"
-									height="85%"
-								>
-									<BarChart data={barData}>
-										<XAxis
-											dataKey="name"
-											tick={{ fontSize: 12 }}
-											angle={-45}
-											textAnchor="end"
-											height={80}
-										/>
-										<YAxis tick={{ fontSize: 12 }} />
-										<Tooltip
-											formatter={(value) => [`₹${value.toFixed(2)}`, "Amount"]}
-										/>
-										<Legend />
-										<Bar
-											dataKey="amount"
-											fill="#82ca9d"
-											radius={[4, 4, 0, 0]}
-										/>
-									</BarChart>
-								</ResponsiveContainer>
-							) : (
-								<Box
-									sx={{
-										display: "flex",
-										flexDirection: "column",
-										alignItems: "center",
-										justifyContent: "center",
-										height: "85%",
-									}}
-								>
-									<TrendingUpIcon
-										sx={{ fontSize: 60, color: "grey.400", mb: 2 }}
-									/>
-									<Typography
-										variant="h6"
-										color="text.secondary"
-									>
-										No expenses to display
-									</Typography>
-									<Typography
-										variant="body2"
-										color="text.secondary"
-									>
-										Add some expenses to see your spending trends
-									</Typography>
-								</Box>
-							)}
-						</Paper>
-					</Grid>
+						{error}
+					</Alert>
+				</Container>
+			</Box>
+		);
+	}
+
+	const { summary, charts } = dashboardData || {};
+
+	return (
+		<Container
+			maxWidth="xl"
+			sx={{ p: isMobile ? 2 : 4 }}
+		>
+			<Typography
+				variant={isMobile ? "h4" : "h3"}
+				align="center"
+				sx={{
+					color: "white",
+					fontWeight: "bold",
+					marginBottom: isMobile ? 3 : 4,
+					textShadow: "2px 2px 4px rgba(0,0,0,0.2)",
+				}}
+			>
+				Expense Dashboard
+			</Typography>
+
+			{/* Summary Cards Grid */}
+			<Grid
+				container
+				spacing={isMobile ? 2 : 3}
+				sx={{ mb: 4 }}
+			>
+				<Grid size={{ xs: 12, sm: 6, md: 3 }}>
+					<SummaryCard
+						icon={ReceiptIcon}
+						title="Total Expenses"
+						value={`₹${summary?.totalAmount || "0.00"}`}
+						color="primary"
+					/>
 				</Grid>
-			</Container>
-		</Box>
+				<Grid size={{ xs: 12, sm: 6, md: 3 }}>
+					<SummaryCard
+						icon={TrendingUpIcon}
+						title="Number of Expenses"
+						value={summary?.totalExpenses || 0}
+						color="success"
+					/>
+				</Grid>
+				<Grid size={{ xs: 12, sm: 6, md: 3 }}>
+					<SummaryCard
+						icon={CategoryIcon}
+						title="Categories"
+						value={summary?.categoryCount || 0}
+						color="warning"
+					/>
+				</Grid>
+				<Grid size={{ xs: 12, sm: 6, md: 3 }}>
+					<SummaryCard
+						icon={TrackChangesIcon}
+						title="Average Expense"
+						value={`₹${summary?.averageExpense || "0.00"}`}
+						color="info"
+					/>
+				</Grid>
+			</Grid>
+
+			{/* Charts Grid */}
+			<Grid
+				container
+				spacing={isMobile ? 2 : 3}
+			>
+				<Grid size={{ xs: 12, md: 6 }}>
+					<ChartContainer
+						title="Spending by Category"
+						data={charts?.pieData}
+						emptyIcon={CategoryIcon}
+						emptyText="No expenses to display"
+						emptySubtext="Add some expenses to see your spending breakdown"
+					>
+						<PieChart>
+							<Pie
+								data={charts?.pieData}
+								dataKey="value"
+								nameKey="name"
+								outerRadius={isMobile ? 80 : 100}
+								fill="#8884d8"
+								label={
+									isMobile
+										? false
+										: ({ name, percent }) =>
+												`${name} ${(percent * 100).toFixed(0)}%`
+								}
+								labelLine={false}
+							>
+								{charts?.pieData?.map((_, index) => (
+									<Cell
+										key={`cell-${index}`}
+										fill={COLORS[index % COLORS.length]}
+									/>
+								))}
+							</Pie>
+							<Tooltip
+								formatter={(value) => [`₹${value.toFixed(2)}`, "Amount"]}
+							/>
+						</PieChart>
+					</ChartContainer>
+				</Grid>
+
+				<Grid size={{ xs: 12, md: 6 }}>
+					<ChartContainer
+						title="Recent Expenses"
+						data={charts?.barData}
+						emptyIcon={TrendingUpIcon}
+						emptyText="No expenses to display"
+						emptySubtext="Add some expenses to see your spending trends"
+					>
+						<BarChart data={charts?.barData}>
+							<XAxis
+								dataKey="name"
+								tick={{ fontSize: isMobile ? 10 : 12 }}
+								angle={isMobile ? -30 : -45}
+								textAnchor="end"
+								height={isMobile ? 60 : 80}
+								interval={0}
+							/>
+							<YAxis tick={{ fontSize: isMobile ? 10 : 12 }} />
+							<Tooltip
+								formatter={(value) => [`₹${value.toFixed(2)}`, "Amount"]}
+							/>
+							<Legend />
+							<Bar
+								dataKey="amount"
+								fill="#82ca9d"
+								radius={[4, 4, 0, 0]}
+							/>
+						</BarChart>
+					</ChartContainer>
+				</Grid>
+
+				<Grid size={{ xs: 12 }}>
+					<ChartContainer
+						title="Monthly Spending Trends"
+						data={charts?.monthlyData}
+						emptyIcon={TrendingUpIcon}
+						emptyText="No trend data available"
+						emptySubtext="Start adding expenses to see your spending patterns over time"
+					>
+						<LineChart data={charts?.monthlyData}>
+							<XAxis
+								dataKey="month"
+								tick={{ fontSize: isMobile ? 10 : 12 }}
+								angle={isMobile ? -30 : 0}
+								textAnchor={isMobile ? "end" : "middle"}
+								height={isMobile ? 60 : 40}
+								interval={0}
+							/>
+							<YAxis tick={{ fontSize: isMobile ? 10 : 12 }} />
+							<Tooltip formatter={(value) => [`₹${value}`, "Amount"]} />
+							<Legend />
+							<Line
+								type="monotone"
+								dataKey="amount"
+								stroke="#8884d8"
+								strokeWidth={isMobile ? 2 : 3}
+								dot={{
+									fill: "#8884d8",
+									strokeWidth: 2,
+									r: isMobile ? 4 : 6,
+								}}
+								activeDot={{ r: isMobile ? 6 : 8 }}
+							/>
+						</LineChart>
+					</ChartContainer>
+				</Grid>
+			</Grid>
+		</Container>
 	);
 };
 

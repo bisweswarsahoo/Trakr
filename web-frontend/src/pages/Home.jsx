@@ -82,7 +82,7 @@ const Home = () => {
 			<Paper
 				elevation={6}
 				sx={{
-					marginTop: isMobile ? 2 : 4,
+					marginY: isMobile ? 2 : 4,
 					padding: isMobile ? 2 : 3,
 					borderRadius: 3,
 					backgroundColor: "rgba(255, 255, 255, 0.95)",

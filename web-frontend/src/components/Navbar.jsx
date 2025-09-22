@@ -11,6 +11,7 @@ import {
 	Drawer,
 	List,
 	ListItem,
+	ListItemButton,
 	ListItemIcon,
 	ListItemText,
 	Divider,
@@ -48,7 +49,12 @@ const Navbar = ({ onLogout }) => {
 
 	return (
 		<AppBar
-			sx={{ background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)" }}
+			position="fixed"
+			sx={{
+				background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+				boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+				zIndex: 1100,
+			}}
 		>
 			<Toolbar sx={{ minHeight: 64 }}>
 				<Box
@@ -146,6 +152,7 @@ const Navbar = ({ onLogout }) => {
 				open={mobileMenuOpen}
 				onClose={handleMobileMenuClose}
 				sx={{
+					zIndex: 1200,
 					"& .MuiDrawer-paper": {
 						width: isMobile ? 250 : 280,
 						background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -172,34 +179,37 @@ const Navbar = ({ onLogout }) => {
 					<List>
 						{navigationItems.map((item) => (
 							<ListItem
-								button
 								key={item.text}
-								component={Link}
-								to={item.path}
-								onClick={handleMobileMenuClose}
-								sx={{
-									borderRadius: 2,
-									mb: 1,
-									py: isMobile ? 1 : 1.5,
-									"&:hover": {
-										backgroundColor: "rgba(255, 255, 255, 0.1)",
-									},
-								}}
+								disablePadding
 							>
-								<ListItemIcon
-									sx={{ color: "white", minWidth: isMobile ? 40 : 56 }}
-								>
-									{item.icon}
-								</ListItemIcon>
-								<ListItemText
-									primary={item.text}
-									slotProps={{
-										primary: {
-											fontSize: isMobile ? "0.9rem" : "1rem",
+								<ListItemButton
+									component={Link}
+									to={item.path}
+									onClick={handleMobileMenuClose}
+									sx={{
+										borderRadius: 2,
+										mb: 1,
+										py: isMobile ? 1 : 1.5,
+										"&:hover": {
+											backgroundColor: "rgba(255, 255, 255, 0.1)",
 										},
 									}}
-									sx={{ color: "white" }}
-								/>
+								>
+									<ListItemIcon
+										sx={{ color: "white", minWidth: isMobile ? 40 : 56 }}
+									>
+										{item.icon}
+									</ListItemIcon>
+									<ListItemText
+										primary={item.text}
+										slotProps={{
+											primary: {
+												fontSize: isMobile ? "0.9rem" : "1rem",
+											},
+										}}
+										sx={{ color: "white" }}
+									/>
+								</ListItemButton>
 							</ListItem>
 						))}
 
@@ -210,34 +220,35 @@ const Navbar = ({ onLogout }) => {
 							}}
 						/>
 
-						<ListItem
-							button
-							onClick={() => {
-								handleMobileMenuClose();
-								handleLogoutClick();
-							}}
-							sx={{
-								borderRadius: 2,
-								py: isMobile ? 1 : 1.5,
-								"&:hover": {
-									backgroundColor: "rgba(255, 255, 255, 0.1)",
-								},
-							}}
-						>
-							<ListItemIcon
-								sx={{ color: "white", minWidth: isMobile ? 40 : 56 }}
-							>
-								<LogoutIcon />
-							</ListItemIcon>
-							<ListItemText
-								primary="Logout"
-								slotProps={{
-									primary: {
-										fontSize: isMobile ? "0.9rem" : "1rem",
+						<ListItem disablePadding>
+							<ListItemButton
+								onClick={() => {
+									handleMobileMenuClose();
+									handleLogoutClick();
+								}}
+								sx={{
+									borderRadius: 2,
+									py: isMobile ? 1 : 1.5,
+									"&:hover": {
+										backgroundColor: "rgba(255, 255, 255, 0.1)",
 									},
 								}}
-								sx={{ color: "white" }}
-							/>
+							>
+								<ListItemIcon
+									sx={{ color: "white", minWidth: isMobile ? 40 : 56 }}
+								>
+									<LogoutIcon />
+								</ListItemIcon>
+								<ListItemText
+									primary="Logout"
+									slotProps={{
+										primary: {
+											fontSize: isMobile ? "0.9rem" : "1rem",
+										},
+									}}
+									sx={{ color: "white" }}
+								/>
+							</ListItemButton>
 						</ListItem>
 					</List>
 				</Box>
