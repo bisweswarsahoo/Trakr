@@ -2,7 +2,9 @@ import Expense from "../models/expenseModel.js";
 
 export const getDashboardData = async (req, res) => {
 	try {
-		const expenses = await Expense.find().sort({ date: -1 });
+		const expenses = await Expense.find({ user: req.user._id }).sort({
+			date: -1,
+		});
 
 		const totalExpenses = expenses.length;
 		const totalAmount = expenses.reduce(
