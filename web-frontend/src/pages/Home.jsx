@@ -1,20 +1,9 @@
 import React, { useState, useEffect } from "react";
 import AddExpenseForm from "../components/AddExpenseForm";
+import ExpenseList from "../components/ExpenseList";
 import API from "../api";
-import {
-	List,
-	ListItem,
-	ListItemText,
-	Typography,
-	Paper,
-	IconButton,
-	Box,
-	CircularProgress,
-	useTheme,
-	useMediaQuery,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ReceiptIcon from "@mui/icons-material/Receipt";
+import { useTheme, useMediaQuery, Fab } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 const Home = () => {
 	const theme = useTheme();
@@ -25,6 +14,7 @@ const Home = () => {
 	const [summary, setSummary] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [summaryLoading, setSummaryLoading] = useState(true);
+	const [modalOpen, setModalOpen] = useState(false);
 
 	useEffect(() => {
 		const fetchExpenses = async () => {
@@ -78,136 +68,31 @@ const Home = () => {
 
 	return (
 		<>
-			<AddExpenseForm onAddExpense={handleAddExpense} />
-			<Paper
-				elevation={6}
+			<AddExpenseForm
+				open={modalOpen}
+				onClose={() => setModalOpen(false)}
+				onAddExpense={handleAddExpense}
+			/>
+			<ExpenseList
+				expenses={expenses}
+				summary={summary}
+				loading={loading}
+				summaryLoading={summaryLoading}
+				onDeleteExpense={handleDeleteExpense}
+			/>
+			<Fab
+				color="primary"
+				aria-label="add expense"
+				onClick={() => setModalOpen(true)}
 				sx={{
-					marginY: isMobile ? 2 : 4,
-					padding: isMobile ? 2 : 3,
-					borderRadius: 3,
-					backgroundColor: "rgba(255, 255, 255, 0.95)",
-					marginX: isMobile ? 1 : "auto",
-					maxWidth: isMobile ? "none" : "800px",
+					position: "fixed",
+					bottom: isMobile ? 16 : 24,
+					right: isMobile ? 16 : 24,
+					zIndex: 1000,
 				}}
 			>
-				<Typography
-					variant={isMobile ? "h6" : "h6"}
-					sx={{
-						mb: 2,
-						fontWeight: "bold",
-						color: "primary.main",
-						fontSize: isMobile ? "1.1rem" : "1.25rem",
-					}}
-				>
-					Your Expenses
-				</Typography>
-				{!summaryLoading && summary && (
-					<Box
-						sx={{
-							display: "flex",
-							flexDirection: isMobile ? "column" : "row",
-							justifyContent: isMobile ? "center" : "space-between",
-							alignItems: "center",
-							mb: 2,
-							p: isMobile ? 1.5 : 2,
-							backgroundColor: "primary.light",
-							borderRadius: 2,
-							color: "white",
-							gap: isMobile ? 0 : 1,
-						}}
-					>
-						<Typography
-							variant="body1"
-							sx={{
-								fontSize: isMobile ? "0.9rem" : "1rem",
-								textAlign: isMobile ? "center" : "left",
-							}}
-						>
-							Total Expenses: {summary.totalExpenses || 0}
-						</Typography>
-						<Typography
-							variant="body1"
-							sx={{
-								fontSize: isMobile ? "0.9rem" : "1rem",
-								textAlign: isMobile ? "center" : "right",
-							}}
-						>
-							Total Amount: ₹{summary.totalAmount || "0.00"}
-						</Typography>
-					</Box>
-				)}
-				{loading ? (
-					<Box
-						sx={{
-							display: "flex",
-							justifyContent: "center",
-							py: isMobile ? 3 : 4,
-						}}
-					>
-						<CircularProgress size={isMobile ? 40 : 48} />
-					</Box>
-				) : (
-					<List>
-						{expenses.length === 0 ? (
-							<Box sx={{ textAlign: "center", py: isMobile ? 3 : 4 }}>
-								<Typography
-									variant="body1"
-									color="text.secondary"
-									sx={{ fontSize: isMobile ? "0.9rem" : "1rem" }}
-								>
-									No expenses yet. Add your first expense above!
-								</Typography>
-							</Box>
-						) : (
-							expenses.map((exp) => (
-								<ListItem
-									key={exp._id}
-									divider
-									sx={{
-										px: isMobile ? 1 : 2,
-										py: isMobile ? 1.5 : 2,
-									}}
-									secondaryAction={
-										<IconButton
-											edge="end"
-											onClick={() => handleDeleteExpense(exp._id)}
-											sx={{
-												color: "error.main",
-												size: isMobile ? "small" : "medium",
-											}}
-										>
-											<DeleteIcon fontSize={isMobile ? "small" : "medium"} />
-										</IconButton>
-									}
-								>
-									<ReceiptIcon
-										sx={{
-											mr: isMobile ? 1.5 : 2,
-											color: "primary.main",
-											fontSize: isMobile ? "1.2rem" : "1.5rem",
-										}}
-									/>
-									<ListItemText
-										primary={`${exp.title} - ₹${exp.amount}`}
-										secondary={`${exp.category} | ${new Date(
-											exp.date
-										).toLocaleDateString()}`}
-										slotProps={{
-											primary: {
-												fontSize: isMobile ? "0.95rem" : "1rem",
-												fontWeight: 500,
-											},
-											secondary: {
-												fontSize: isMobile ? "0.8rem" : "0.875rem",
-											},
-										}}
-									/>
-								</ListItem>
-							))
-						)}
-					</List>
-				)}
-			</Paper>
+				<AddIcon />
+			</Fab>
 		</>
 	);
 };

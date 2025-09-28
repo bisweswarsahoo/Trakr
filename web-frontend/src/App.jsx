@@ -15,8 +15,9 @@ import Register from "./pages/Register";
 const App = () => {
 	const [user, setUser] = useState(localStorage.getItem("token"));
 
-	const handleLogin = (userData) => {
-		setUser(userData);
+	const handleLogin = (token) => {
+		localStorage.setItem("token", token);
+		setUser(token);
 	};
 
 	const handleLogout = () => {
