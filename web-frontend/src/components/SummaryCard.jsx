@@ -16,11 +16,14 @@ const SummaryCard = ({ icon: Icon, title, value, color, subtitle }) => {
 			elevation={8}
 			sx={{
 				position: "relative",
-				borderRadius: 4,
+				borderRadius: 2,
 				overflow: "hidden",
 				background: `linear-gradient(135deg, ${theme.palette[color].light}15 0%, ${theme.palette[color].main}25 100%)`,
 				border: `1px solid ${theme.palette[color].main}20`,
 				transition: "all 0.3s ease",
+				height: "100%",
+				display: "flex",
+				flexDirection: "column",
 				"&:hover": {
 					transform: "translateY(-8px)",
 					boxShadow: `0 12px 35px ${theme.palette[color].main}25`,
@@ -40,9 +43,13 @@ const SummaryCard = ({ icon: Icon, title, value, color, subtitle }) => {
 		>
 			<Box
 				sx={{
-					p: isMobile ? 2.5 : 3,
+					p: isMobile ? 1.5 : 2,
 					position: "relative",
 					zIndex: 1,
+					flex: 1,
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "space-between",
 				}}
 			>
 				<Box
@@ -50,27 +57,28 @@ const SummaryCard = ({ icon: Icon, title, value, color, subtitle }) => {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "space-between",
-						mb: 2,
+						mb: 1,
 					}}
 				>
 					<Avatar
 						sx={{
-							width: isMobile ? 50 : 60,
-							height: isMobile ? 50 : 60,
+							width: isMobile ? 40 : 48,
+							height: isMobile ? 40 : 48,
 							backgroundColor: `${theme.palette[color].main}`,
 							boxShadow: `0 8px 20px ${theme.palette[color].main}30`,
 						}}
 					>
-						<Icon fontSize="large" />
+						<Icon fontSize={isMobile ? "medium" : "large"} />
 					</Avatar>
-					<Box sx={{ textAlign: "right" }}>
+					<Box sx={{ textAlign: "right", minWidth: 0 }}>
 						<Typography
 							variant="h3"
 							sx={{
 								fontWeight: "bold",
-								fontSize: isMobile ? "1.8rem" : "2.2rem",
+								fontSize: isMobile ? "1.4rem" : "1.8rem",
 								color: theme.palette[color].main,
 								lineHeight: 1,
+								wordBreak: "break-all",
 							}}
 						>
 							{value}
@@ -81,6 +89,7 @@ const SummaryCard = ({ icon: Icon, title, value, color, subtitle }) => {
 								sx={{
 									color: theme.palette[color].dark,
 									fontWeight: 500,
+									fontSize: isMobile ? "0.7rem" : "0.75rem",
 								}}
 							>
 								{subtitle}
@@ -93,7 +102,11 @@ const SummaryCard = ({ icon: Icon, title, value, color, subtitle }) => {
 					sx={{
 						fontWeight: 600,
 						color: theme.palette[color].dark,
-						fontSize: isMobile ? "1rem" : "1.1rem",
+						fontSize: isMobile ? "0.85rem" : "0.95rem",
+						lineHeight: 1.2,
+						overflow: "hidden",
+						textOverflow: "ellipsis",
+						whiteSpace: "nowrap",
 					}}
 				>
 					{title}

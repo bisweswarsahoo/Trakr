@@ -1,4 +1,5 @@
-import { Button } from "@mui/material";
+import { Button, useTheme } from "@mui/material";
+import { getGradientByName } from "../../theme/utils";
 
 const AuthButton = ({
 	children,
@@ -6,18 +7,20 @@ const AuthButton = ({
 	variant = "login",
 	...props
 }) => {
+	const theme = useTheme();
+
 	const config = {
 		login: {
-			gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-			hoverGradient: "linear-gradient(135deg, #5a67d8 0%, #6b5b95 100%)",
-			shadowColor: "rgba(102, 126, 234, 0.4)",
-			hoverShadowColor: "rgba(102, 126, 234, 0.5)",
+			gradient: getGradientByName("primary", theme),
+			hoverGradient: getGradientByName("primary", theme),
+			shadowColor: `rgba(102, 126, 234, 0.4)`,
+			hoverShadowColor: `rgba(102, 126, 234, 0.5)`,
 		},
 		register: {
-			gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-			hoverGradient: "linear-gradient(135deg, #e91e63 0%, #e53e3e 100%)",
-			shadowColor: "rgba(240, 147, 251, 0.4)",
-			hoverShadowColor: "rgba(240, 147, 251, 0.5)",
+			gradient: getGradientByName("secondary", theme),
+			hoverGradient: getGradientByName("secondary", theme),
+			shadowColor: `rgba(240, 147, 251, 0.4)`,
+			hoverShadowColor: `rgba(240, 147, 251, 0.5)`,
 		},
 	};
 

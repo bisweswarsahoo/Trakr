@@ -1,36 +1,37 @@
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
+import { createAlphaColor } from "../../theme/utils";
 
 const FloatingElements = ({ variant = "login" }) => {
+	const theme = useTheme();
+
+	const createFloatingElement = (position, size, opacity) => ({
+		position: "absolute",
+		...position,
+		width: size,
+		height: size,
+		background: createAlphaColor(theme.palette.common.white, opacity),
+		borderRadius: "50%",
+		pointerEvents: "none",
+	});
+
 	const elements = {
 		login: [
 			{
-				top: "10%",
-				left: "10%",
-				width: 100,
-				height: 100,
+				...createFloatingElement({ top: "10%", left: "10%" }, 100, 0.1),
 				animation: "float 6s ease-in-out infinite",
 			},
 			{
-				top: "70%",
-				right: "15%",
-				width: 80,
-				height: 80,
+				...createFloatingElement({ top: "70%", right: "15%" }, 80, 0.05),
 				animation: "float 4s ease-in-out infinite reverse",
 			},
 		],
 		register: [
 			{
-				top: "15%",
-				right: "10%",
-				width: 120,
-				height: 120,
+				...createFloatingElement({ top: "15%", right: "10%" }, 120, 0.1),
 				animation: "float 5s ease-in-out infinite",
 			},
 			{
-				top: "60%",
-				left: "8%",
-				width: 90,
-				height: 90,
+				...createFloatingElement({ top: "60%", left: "8%" }, 90, 0.05),
 				animation: "float 7s ease-in-out infinite reverse",
 			},
 		],

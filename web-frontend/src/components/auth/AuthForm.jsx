@@ -20,6 +20,7 @@ import AuthHeader from "./AuthHeader";
 import AuthTextField from "./AuthTextField";
 import AuthButton from "./AuthButton";
 import FloatingElements from "./FloatingElements";
+import { getGradientByName, createAlphaColor } from "../../theme/utils";
 
 const AuthForm = ({ mode = "login", onLogin }) => {
 	const navigate = useNavigate();
@@ -27,7 +28,6 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 	const isRegister = mode === "register";
 
-	// Form state
 	const [form, setForm] = useState({
 		name: "",
 		email: "",
@@ -40,7 +40,6 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-	// Form configuration based on mode
 	const config = {
 		login: {
 			title: "Welcome Back",
@@ -51,7 +50,7 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 			footerText: "Don't have an account?",
 			footerLinkText: "Create one here",
 			footerAction: () => navigate("/register"),
-			borderGradient: "linear-gradient(90deg, #667eea, #764ba2, #f093fb)",
+			borderGradient: getGradientByName("primary", theme),
 		},
 		register: {
 			title: "Join Trakr",
@@ -62,8 +61,7 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 			footerText: "Already have an account?",
 			footerLinkText: "Sign in here",
 			footerAction: () => navigate("/login"),
-			borderGradient:
-				"linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c)",
+			borderGradient: getGradientByName("secondary", theme),
 		},
 	};
 
@@ -77,7 +75,6 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
-		// Register-specific validation
 		if (isRegister) {
 			if (form.password !== form.confirmPassword) {
 				setError("Passwords do not match");
@@ -145,11 +142,19 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 						},
 						maxWidth: isRegister ? "580px" : "520px",
 						borderRadius: 4,
-						background: "rgba(255, 255, 255, 0.95)",
+						background: createAlphaColor(theme.palette.background.paper, 0.95),
 						backdropFilter: "blur(20px)",
-						boxShadow:
-							"0 32px 64px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.6)",
-						border: "1px solid rgba(255,255,255,0.2)",
+						boxShadow: `0 32px 64px ${createAlphaColor(
+							theme.palette.common.black,
+							0.15
+						)}, inset 0 1px 0 ${createAlphaColor(
+							theme.palette.common.white,
+							0.6
+						)}`,
+						border: `1px solid ${createAlphaColor(
+							theme.palette.common.white,
+							0.2
+						)}`,
 						position: "relative",
 						overflow: "hidden",
 						"&::before": {
@@ -292,7 +297,7 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 								<Typography
 									variant="body2"
 									sx={{
-										color: "#667eea",
+										color: theme.palette.primary.main,
 										cursor: "pointer",
 										fontSize: {
 											xs: "0.95rem",
@@ -302,7 +307,7 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 										transition: "all 0.3s ease",
 										"&:hover": {
 											textDecoration: "underline",
-											color: "#5a67d8",
+											color: theme.palette.primary.dark,
 											transform: "translateY(-1px)",
 										},
 									}}
@@ -326,7 +331,9 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 								<Typography
 									component="span"
 									sx={{
-										color: isRegister ? "#f093fb" : "#667eea",
+										color: isRegister
+											? theme.palette.secondary.main
+											: theme.palette.primary.main,
 										cursor: "pointer",
 										fontWeight: "bold",
 										fontSize: {
@@ -336,7 +343,9 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 										transition: "all 0.3s ease",
 										"&:hover": {
 											textDecoration: "underline",
-											color: isRegister ? "#e91e63" : "#5a67d8",
+											color: isRegister
+												? theme.palette.secondary.dark
+												: theme.palette.primary.dark,
 										},
 									}}
 									onClick={currentConfig.footerAction}

@@ -21,12 +21,12 @@ const ChartsSection = ({ charts }) => {
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 	const COLORS = [
-		"#667eea",
-		"#764ba2",
-		"#f093fb",
-		"#f5576c",
-		"#4facfe",
-		"#00f2fe",
+		theme.palette.primary.main,
+		theme.palette.primary.dark,
+		theme.palette.secondary.main,
+		theme.palette.secondary.dark,
+		theme.palette.success.main,
+		theme.palette.success.dark,
 	];
 
 	return (

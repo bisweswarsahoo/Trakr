@@ -25,6 +25,8 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import { getGradientByName, createAlphaColor } from "../theme/utils";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = ({ onLogout }) => {
 	const navigate = useNavigate();
@@ -55,12 +57,17 @@ const Navbar = ({ onLogout }) => {
 	const handleLogout = handleLogoutClick;
 
 	const navigationItems = [
-		{ text: "Expenses", icon: <ReceiptIcon />, path: "/", color: "#4CAF50" },
+		{
+			text: "Expenses",
+			icon: <ReceiptIcon />,
+			path: "/",
+			color: theme.palette.success.main,
+		},
 		{
 			text: "Dashboard",
 			icon: <DashboardIcon />,
 			path: "/dashboard",
-			color: "#2196F3",
+			color: theme.palette.primary.main,
 		},
 	];
 
@@ -68,11 +75,17 @@ const Navbar = ({ onLogout }) => {
 		<AppBar
 			position="fixed"
 			sx={{
-				background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-				boxShadow: "0 8px 32px rgba(102, 126, 234, 0.3)",
+				background: getGradientByName("primary", theme),
+				boxShadow: `0 8px 32px ${createAlphaColor(
+					theme.palette.primary.main,
+					0.3
+				)}`,
 				backdropFilter: "blur(10px)",
-				zIndex: 1100,
-				borderBottom: "1px solid rgba(255,255,255,0.1)",
+				zIndex: theme.zIndex.appBar,
+				borderBottom: `1px solid ${createAlphaColor(
+					theme.palette.common.white,
+					0.1
+				)}`,
 			}}
 		>
 			<Toolbar
@@ -139,7 +152,7 @@ const Navbar = ({ onLogout }) => {
 						</Typography>
 					</Box>
 				</Box>
-
+				<ThemeToggle sx={{ ml: 1 }} />
 				{!isMobile && (
 					<Box
 						sx={{
@@ -250,11 +263,11 @@ const Navbar = ({ onLogout }) => {
 				open={mobileMenuOpen}
 				onClose={handleMobileMenuClose}
 				sx={{
-					zIndex: 1200,
+					zIndex: theme.zIndex.drawer,
 					"& .MuiDrawer-paper": {
 						width: isMobile ? 280 : 320,
-						background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-						color: "white",
+						background: getGradientByName("primary", theme),
+						color: theme.palette.primary.contrastText,
 						position: "relative",
 						overflow: "hidden",
 						"&::before": {
@@ -264,7 +277,7 @@ const Navbar = ({ onLogout }) => {
 							right: -50,
 							width: 150,
 							height: 150,
-							background: "rgba(255,255,255,0.08)",
+							background: createAlphaColor(theme.palette.common.white, 0.08),
 							borderRadius: "50%",
 						},
 						"&::after": {
@@ -274,7 +287,7 @@ const Navbar = ({ onLogout }) => {
 							left: -30,
 							width: 100,
 							height: 100,
-							background: "rgba(255,255,255,0.05)",
+							background: createAlphaColor(theme.palette.common.white, 0.05),
 							borderRadius: "50%",
 						},
 					},
@@ -287,7 +300,10 @@ const Navbar = ({ onLogout }) => {
 							alignItems: "center",
 							mb: 3,
 							pb: 2,
-							borderBottom: "1px solid rgba(255,255,255,0.2)",
+							borderBottom: `1px solid ${createAlphaColor(
+								theme.palette.common.white,
+								0.2
+							)}`,
 						}}
 					>
 						<Avatar

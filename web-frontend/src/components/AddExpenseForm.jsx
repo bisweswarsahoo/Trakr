@@ -23,6 +23,11 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
+import {
+	getCategoryColor,
+	getGradientByName,
+	createAlphaColor,
+} from "../theme/utils";
 
 const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 	const theme = useTheme();
@@ -39,14 +44,14 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 	const [errors, setErrors] = useState({});
 
 	const categories = [
-		{ name: "Food", icon: "🍽️", color: "#FF6B6B" },
-		{ name: "Transport", icon: "🚗", color: "#4ECDC4" },
-		{ name: "Entertainment", icon: "🎬", color: "#45B7D1" },
-		{ name: "Shopping", icon: "🛍️", color: "#96CEB4" },
-		{ name: "Health", icon: "🏥", color: "#FFEAA7" },
-		{ name: "Utilities", icon: "💡", color: "#DDA0DD" },
-		{ name: "Education", icon: "📚", color: "#98D8C8" },
-		{ name: "Other", icon: "💰", color: "#95A5A6" },
+		{ name: "Food", icon: "🍽️", key: "food" },
+		{ name: "Transport", icon: "🚗", key: "transport" },
+		{ name: "Entertainment", icon: "🎬", key: "entertainment" },
+		{ name: "Shopping", icon: "🛍️", key: "shopping" },
+		{ name: "Health", icon: "🏥", key: "healthcare" },
+		{ name: "Utilities", icon: "💡", key: "utilities" },
+		{ name: "Education", icon: "📚", key: "education" },
+		{ name: "Other", icon: "💰", key: "other" },
 	];
 
 	const [loading, setLoading] = useState(false);
@@ -94,7 +99,10 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 				backdrop: {
 					timeout: 500,
 					sx: {
-						backgroundColor: "rgba(0, 0, 0, 0.7)",
+						backgroundColor: createAlphaColor(
+							theme.palette.background.default,
+							0.7
+						),
 						backdropFilter: "blur(8px)",
 					},
 				},
@@ -123,23 +131,22 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 						maxHeight: "95vh",
 						overflow: "auto",
 						outline: "none",
+						borderRadius: 3,
 					}}
 				>
 					<Paper
 						elevation={24}
 						sx={{
-							borderRadius: 4,
-							background: "linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)",
+							background: theme.palette.background.paper,
 							position: "relative",
 							overflow: "hidden",
-							border: "1px solid rgba(0,0,0,0.05)",
+							border: `1px solid ${theme.palette.divider}`,
 						}}
 					>
-						{/* Enhanced Header Section */}
 						<Box
 							sx={{
-								background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-								color: "white",
+								background: getGradientByName("primary", theme),
+								color: theme.palette.primary.contrastText,
 								p: isMobile ? 2.5 : 3,
 								position: "relative",
 								overflow: "hidden",
@@ -150,7 +157,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									right: -20,
 									width: 100,
 									height: 100,
-									background: "rgba(255,255,255,0.1)",
+									background: createAlphaColor(theme.palette.common.white, 0.1),
 									borderRadius: "50%",
 								},
 								"&::after": {
@@ -160,7 +167,10 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									left: -30,
 									width: 80,
 									height: 80,
-									background: "rgba(255,255,255,0.05)",
+									background: createAlphaColor(
+										theme.palette.common.white,
+										0.05
+									),
 									borderRadius: "50%",
 								},
 							}}
@@ -171,11 +181,17 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									position: "absolute",
 									right: 12,
 									top: 12,
-									color: "white",
-									backgroundColor: "rgba(255,255,255,0.15)",
+									color: theme.palette.primary.contrastText,
+									backgroundColor: createAlphaColor(
+										theme.palette.common.white,
+										0.15
+									),
 									zIndex: 2,
 									"&:hover": {
-										backgroundColor: "rgba(255,255,255,0.25)",
+										backgroundColor: createAlphaColor(
+											theme.palette.common.white,
+											0.25
+										),
 									},
 								}}
 							>
@@ -192,8 +208,8 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 							>
 								<Avatar
 									sx={{
-										bgcolor: "rgba(255,255,255,0.2)",
-										color: "white",
+										bgcolor: createAlphaColor(theme.palette.common.white, 0.2),
+										color: theme.palette.primary.contrastText,
 										width: isMobile ? 50 : 60,
 										height: isMobile ? 50 : 60,
 										mr: 2,
@@ -248,13 +264,19 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									variant="outlined"
 									sx={{
 										"& .MuiOutlinedInput-root": {
-											borderRadius: 3,
-											backgroundColor: "#fafafa",
+											borderRadius: theme.shape.borderRadius,
+											backgroundColor:
+												theme.palette.mode === "light"
+													? theme.palette.grey[50]
+													: theme.palette.grey[900],
 											"&:hover": {
-												backgroundColor: "#f5f5f5",
+												backgroundColor:
+													theme.palette.mode === "light"
+														? theme.palette.grey[100]
+														: theme.palette.grey[800],
 											},
 											"&.Mui-focused": {
-												backgroundColor: "white",
+												backgroundColor: theme.palette.background.paper,
 											},
 										},
 									}}
@@ -278,13 +300,19 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									variant="outlined"
 									sx={{
 										"& .MuiOutlinedInput-root": {
-											borderRadius: 3,
-											backgroundColor: "#fafafa",
+											borderRadius: theme.shape.borderRadius,
+											backgroundColor:
+												theme.palette.mode === "light"
+													? theme.palette.grey[50]
+													: theme.palette.grey[900],
 											"&:hover": {
-												backgroundColor: "#f5f5f5",
+												backgroundColor:
+													theme.palette.mode === "light"
+														? theme.palette.grey[100]
+														: theme.palette.grey[800],
 											},
 											"&.Mui-focused": {
-												backgroundColor: "white",
+												backgroundColor: theme.palette.background.paper,
 											},
 										},
 									}}
@@ -310,13 +338,19 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									variant="outlined"
 									sx={{
 										"& .MuiOutlinedInput-root": {
-											borderRadius: 3,
-											backgroundColor: "#fafafa",
+											borderRadius: theme.shape.borderRadius,
+											backgroundColor:
+												theme.palette.mode === "light"
+													? theme.palette.grey[50]
+													: theme.palette.grey[900],
 											"&:hover": {
-												backgroundColor: "#f5f5f5",
+												backgroundColor:
+													theme.palette.mode === "light"
+														? theme.palette.grey[100]
+														: theme.palette.grey[800],
 											},
 											"&.Mui-focused": {
-												backgroundColor: "white",
+												backgroundColor: theme.palette.background.paper,
 											},
 										},
 									}}
@@ -354,13 +388,19 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									variant="outlined"
 									sx={{
 										"& .MuiOutlinedInput-root": {
-											borderRadius: 3,
-											backgroundColor: "#fafafa",
+											borderRadius: theme.shape.borderRadius,
+											backgroundColor:
+												theme.palette.mode === "light"
+													? theme.palette.grey[50]
+													: theme.palette.grey[900],
 											"&:hover": {
-												backgroundColor: "#f5f5f5",
+												backgroundColor:
+													theme.palette.mode === "light"
+														? theme.palette.grey[100]
+														: theme.palette.grey[800],
 											},
 											"&.Mui-focused": {
-												backgroundColor: "white",
+												backgroundColor: theme.palette.background.paper,
 											},
 										},
 									}}
@@ -388,23 +428,24 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 										py: isMobile ? 1.5 : 2,
 										fontSize: isMobile ? "1rem" : "1.1rem",
 										fontWeight: "bold",
-										borderRadius: 3,
+										borderRadius: theme.shape.borderRadius,
 										background: loading
-											? "linear-gradient(45deg, #ccc 30%, #999 90%)"
-											: "linear-gradient(45deg, #667eea 30%, #764ba2 90%)",
-										boxShadow: loading
-											? "none"
-											: "0 4px 15px rgba(102, 126, 234, 0.4)",
+											? theme.palette.action.disabledBackground
+											: getGradientByName("primary", theme),
+										boxShadow: loading ? "none" : theme.shadows[2],
 										textTransform: "none",
-										transition: "all 0.3s ease",
+										transition: theme.transitions.create([
+											"transform",
+											"box-shadow",
+										]),
 										"&:hover": loading
 											? {}
 											: {
 													transform: "translateY(-2px)",
-													boxShadow: "0 6px 20px rgba(102, 126, 234, 0.5)",
+													boxShadow: theme.shadows[4],
 											  },
 										"&:disabled": {
-											color: "white",
+											color: theme.palette.primary.contrastText,
 										},
 									}}
 								>
@@ -412,7 +453,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 										<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 											<CircularProgress
 												size={20}
-												sx={{ color: "white" }}
+												sx={{ color: theme.palette.primary.contrastText }}
 											/>
 											Adding Expense...
 										</Box>

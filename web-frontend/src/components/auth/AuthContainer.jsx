@@ -1,12 +1,13 @@
 import { Container, useTheme, useMediaQuery } from "@mui/material";
+import { getGradientByName } from "../../theme/utils";
 
 const AuthContainer = ({ children, variant = "login" }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 	const gradients = {
-		login: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-		register: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+		login: getGradientByName("primary", theme),
+		register: getGradientByName("secondary", theme),
 	};
 
 	return (

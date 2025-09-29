@@ -7,10 +7,10 @@ import {
 	useTheme,
 	useMediaQuery,
 } from "@mui/material";
-import DashboardHeader from "../components/DashboardHeader";
 import SummarySection from "../components/SummarySection";
 import ChartsSection from "../components/ChartsSection";
 import API from "../api";
+import { getGradientByName, createAlphaColor } from "../theme/utils";
 
 const Dashboard = () => {
 	const theme = useTheme();
@@ -20,7 +20,13 @@ const Dashboard = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
+	const COLORS = [
+		theme.palette.primary.main,
+		theme.palette.success.main,
+		theme.palette.warning.main,
+		theme.palette.error.main,
+		theme.palette.secondary.main,
+	];
 
 	const fetchDashboardData = useCallback(async () => {
 		try {
@@ -45,7 +51,6 @@ const Dashboard = () => {
 			<Box
 				sx={{
 					minHeight: "100vh",
-					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
 					display: "flex",
 					justifyContent: "center",
 					alignItems: "center",
@@ -105,7 +110,7 @@ const Dashboard = () => {
 			<Box
 				sx={{
 					minHeight: "100vh",
-					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+					background: getGradientByName("primary", theme),
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
@@ -117,7 +122,7 @@ const Dashboard = () => {
 						severity="error"
 						sx={{
 							borderRadius: 3,
-							boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
+							boxShadow: theme.shadows[4],
 							fontSize: isMobile ? "0.9rem" : "1rem",
 						}}
 					>
@@ -132,7 +137,6 @@ const Dashboard = () => {
 
 	return (
 		<Box>
-			<DashboardHeader />
 			<Container
 				maxWidth="xl"
 				sx={{

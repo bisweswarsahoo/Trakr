@@ -1,6 +1,7 @@
-import { TextField, IconButton } from "@mui/material";
+import { TextField, IconButton, useTheme } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { createAlphaColor } from "../../theme/utils";
 
 const AuthTextField = ({
 	label,
@@ -17,16 +18,17 @@ const AuthTextField = ({
 	onTogglePassword,
 	...props
 }) => {
+	const theme = useTheme();
 	const config = {
 		login: {
-			iconColor: "#667eea",
-			shadowColor: "rgba(102, 126, 234, 0.15)",
-			focusShadowColor: "rgba(102, 126, 234, 0.25)",
+			iconColor: theme.palette.primary.main,
+			shadowColor: createAlphaColor(theme.palette.primary.main, 0.15),
+			focusShadowColor: createAlphaColor(theme.palette.primary.main, 0.25),
 		},
 		register: {
-			iconColor: "#f093fb",
-			shadowColor: "rgba(240, 147, 251, 0.15)",
-			focusShadowColor: "rgba(240, 147, 251, 0.25)",
+			iconColor: theme.palette.secondary.main,
+			shadowColor: createAlphaColor(theme.palette.secondary.main, 0.15),
+			focusShadowColor: createAlphaColor(theme.palette.secondary.main, 0.25),
 		},
 	};
 
@@ -80,16 +82,22 @@ const AuthTextField = ({
 						xs: "1rem",
 						sm: "1.1rem",
 					},
-					background: "rgba(255,255,255,0.8)",
+					background:
+						theme.palette.mode === "light"
+							? createAlphaColor(theme.palette.background.paper, 0.8)
+							: createAlphaColor(theme.palette.background.paper, 0.9),
 					backdropFilter: "blur(10px)",
 					transition: "all 0.3s ease",
 					"&:hover": {
-						background: "rgba(255,255,255,0.9)",
+						background:
+							theme.palette.mode === "light"
+								? createAlphaColor(theme.palette.background.paper, 0.9)
+								: theme.palette.background.paper,
 						transform: "translateY(-2px)",
 						boxShadow: `0 8px 25px ${currentConfig.shadowColor}`,
 					},
 					"&.Mui-focused": {
-						background: "rgba(255,255,255,1)",
+						background: theme.palette.background.paper,
 						transform: "translateY(-2px)",
 						boxShadow: `0 8px 25px ${currentConfig.focusShadowColor}`,
 					},

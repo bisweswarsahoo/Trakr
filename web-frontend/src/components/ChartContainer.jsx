@@ -15,7 +15,7 @@ const ChartContainer = ({
 	emptyIcon: EmptyIcon,
 	emptyText,
 	emptySubtext,
-	gradient = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+	gradient,
 }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -25,22 +25,21 @@ const ChartContainer = ({
 		<Paper
 			elevation={8}
 			sx={{
-				borderRadius: 4,
+				borderRadius: 3,
 				overflow: "hidden",
-				background: "linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)",
-				border: "1px solid rgba(0,0,0,0.05)",
-				transition: "all 0.3s ease",
+				background: theme.palette.background.paper,
+				border: `1px solid ${theme.palette.divider}`,
+				transition: theme.transitions.create(["transform", "box-shadow"]),
 				"&:hover": {
 					transform: "translateY(-4px)",
-					boxShadow: "0 12px 35px rgba(0,0,0,0.15)",
+					boxShadow: theme.shadows[8],
 				},
 			}}
 		>
-			{/* Enhanced Header */}
 			<Box
 				sx={{
 					background: gradient,
-					color: "white",
+					color: theme.palette.common.white,
 					p: isMobile ? 2 : 2.5,
 					position: "relative",
 					overflow: "hidden",
@@ -69,7 +68,6 @@ const ChartContainer = ({
 				</Typography>
 			</Box>
 
-			{/* Chart Content */}
 			<Box
 				sx={{
 					height: isMobile ? 320 : 380,

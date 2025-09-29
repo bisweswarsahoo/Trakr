@@ -17,6 +17,11 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import CategoryIcon from "@mui/icons-material/Category";
+import {
+	getCategoryColor,
+	createAlphaColor,
+	getGradientByName,
+} from "../theme/utils";
 
 const ExpenseList = ({
 	expenses,
@@ -28,20 +33,6 @@ const ExpenseList = ({
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 	const isTablet = useMediaQuery(theme.breakpoints.down("md"));
-
-	const getCategoryColor = (category) => {
-		const colors = {
-			food: "#FF6B6B",
-			transport: "#4ECDC4",
-			entertainment: "#45B7D1",
-			shopping: "#96CEB4",
-			health: "#FFEAA7",
-			utilities: "#DDA0DD",
-			education: "#98D8C8",
-			default: "#95A5A6",
-		};
-		return colors[category.toLowerCase()] || colors.default;
-	};
 
 	const getCategoryIcon = (category) => {
 		const icons = {
@@ -63,18 +54,17 @@ const ExpenseList = ({
 			sx={{
 				marginY: isMobile ? 2 : 4,
 				padding: 0,
-				borderRadius: 4,
-				background: "linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%)",
+				borderRadius: 3,
 				marginX: isMobile ? 1 : "auto",
 				maxWidth: isMobile ? "none" : "900px",
 				overflow: "hidden",
-				border: "1px solid rgba(0,0,0,0.05)",
+				border: `1px solid ${theme.palette.divider}`,
 			}}
 		>
 			<Box
 				sx={{
-					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-					color: "white",
+					background: getGradientByName("primary", theme),
+					color: theme.palette.primary.contrastText,
 					p: isMobile ? 2 : 3,
 					position: "relative",
 					overflow: "hidden",
@@ -111,8 +101,8 @@ const ExpenseList = ({
 				<Box
 					sx={{
 						p: isMobile ? 2 : 3,
-						background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-						color: "white",
+						background: getGradientByName("secondary", theme),
+						color: theme.palette.secondary.contrastText,
 						position: "relative",
 						"&::before": {
 							content: '""',
@@ -292,8 +282,7 @@ const ExpenseList = ({
 									elevation={2}
 									sx={{
 										borderRadius: 3,
-										background:
-											"linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%)",
+										background: theme.palette.background.paper,
 										border: "1px solid rgba(0,0,0,0.08)",
 										transition: "all 0.3s ease",
 										"&:hover": {
@@ -327,7 +316,7 @@ const ExpenseList = ({
 													sx={{
 														width: isMobile ? 45 : 55,
 														height: isMobile ? 45 : 55,
-														bgcolor: getCategoryColor(exp.category),
+														bgcolor: getCategoryColor(exp.category, theme),
 														color: "white",
 														fontSize: isMobile ? "1.2rem" : "1.5rem",
 													}}
@@ -363,8 +352,11 @@ const ExpenseList = ({
 															}
 															label={exp.category}
 															sx={{
-																bgcolor: `${getCategoryColor(exp.category)}20`,
-																color: getCategoryColor(exp.category),
+																bgcolor: createAlphaColor(
+																	getCategoryColor(exp.category, theme),
+																	0.2
+																),
+																color: getCategoryColor(exp.category, theme),
 																fontWeight: 500,
 																fontSize: "0.75rem",
 															}}

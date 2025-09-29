@@ -7,6 +7,7 @@ import {
 	useTheme,
 } from "@mui/material";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
+import { getGradientByName, createAlphaColor } from "../../theme/utils";
 
 const AuthHeader = ({ variant = "login", title, subtitle, description }) => {
 	const theme = useTheme();
@@ -14,9 +15,9 @@ const AuthHeader = ({ variant = "login", title, subtitle, description }) => {
 
 	const config = {
 		login: {
-			avatarGradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-			textGradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-			shadowColor: "rgba(102, 126, 234, 0.3)",
+			avatarGradient: getGradientByName("primary", theme),
+			textGradient: getGradientByName("primary", theme),
+			shadowColor: createAlphaColor(theme.palette.primary.main, 0.3),
 			animation: "pulse 2s ease-in-out infinite alternate",
 			animationKeyframes: {
 				"@keyframes pulse": {
@@ -26,9 +27,9 @@ const AuthHeader = ({ variant = "login", title, subtitle, description }) => {
 			},
 		},
 		register: {
-			avatarGradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-			textGradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-			shadowColor: "rgba(240, 147, 251, 0.4)",
+			avatarGradient: getGradientByName("secondary", theme),
+			textGradient: getGradientByName("secondary", theme),
+			shadowColor: createAlphaColor(theme.palette.secondary.main, 0.4),
 			animation: "bounce 2s ease-in-out infinite alternate",
 			animationKeyframes: {
 				"@keyframes bounce": {
@@ -71,7 +72,7 @@ const AuthHeader = ({ variant = "login", title, subtitle, description }) => {
 					<TrackChangesIcon
 						sx={{
 							fontSize: variant === "register" ? 42 : 40,
-							color: "white",
+							color: theme.palette.common.white,
 						}}
 					/>
 				</Avatar>
@@ -98,7 +99,7 @@ const AuthHeader = ({ variant = "login", title, subtitle, description }) => {
 					variant="h6"
 					align="center"
 					sx={{
-						color: "text.secondary",
+						color: theme.palette.text.secondary,
 						fontSize: {
 							xs: "1rem",
 							sm: "1.1rem",
@@ -114,7 +115,7 @@ const AuthHeader = ({ variant = "login", title, subtitle, description }) => {
 						align="center"
 						sx={{
 							mt: 2,
-							color: "text.secondary",
+							color: theme.palette.text.secondary,
 							fontSize: {
 								xs: "1rem",
 								sm: "1.1rem",
