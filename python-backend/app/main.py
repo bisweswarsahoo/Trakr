@@ -6,8 +6,12 @@ from app.database import engine, Base, get_db
 from app.core.config import settings
 from app.api.endpoints import auth, categories, expenses, income, reports
 
-# Create DB Tables
-Base.metadata.create_all(bind=engine)
+# Create DB Tables on startup (graceful failure)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    import logging
+    logging.warning(f"Could not create database tables on startup: {e}")
 
 app = FastAPI(title=settings.PROJECT_NAME)
 

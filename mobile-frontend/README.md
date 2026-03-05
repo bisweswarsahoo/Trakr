@@ -1,70 +1,143 @@
-# Trakr Mobile Frontend
+# Trakr — Mobile Frontend (React Native / Expo)
 
-This is the mobile frontend for **Trakr**, a comprehensive, production-ready full-stack application for small shop owners to track income, manage expenses, and generate real-time financial reports.
+Cross-platform mobile app for Trakr. Built with React Native, Expo, and Zustand.
 
-## Tech Stack 🚀
+## Tech Stack
 
-This application is built with modern mobile development technologies:
+- **React Native** — Cross-platform mobile framework
+- **Expo SDK ~54** — Toolchain and native module bridge
+- **Zustand** — Lightweight global state management
+- **React Hook Form** — Form handling and validation
+- **Axios** — HTTP client for API calls
+- **React Navigation** — Screen navigation
+- **AsyncStorage** — Persistent local token storage
 
-- **Framework**: [React Native](https://reactnative.dev/) powered by [Expo](https://expo.dev/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Navigation**: [React Navigation](https://reactnavigation.org/) (Bottom Tabs & Native Stack)
-- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
-- **Data Fetching & API**: [Axios](https://axios-http.com/)
-- **Forms & Validation**: [React Hook Form](https://react-hook-form.com/)
-- **Data Visualization**: [react-native-chart-kit](https://github.com/indiespirit/react-native-chart-kit)
-- **Icons**: [Lucide React Native](https://lucide.dev/)
+## Features
 
-## Features ✨
+- 🔐 **Authentication** — Register and login with JWT-based session management
+- 📊 **Dashboard** — At-a-glance view of total income, expenses, and net profit with a pie chart breakdown by category
+- 💸 **Expense Tracking** — View and manage your expense records with pull-to-refresh
+- 💰 **Income Tracking** — Record and browse income entries
+- 📈 **Reports** — Visual financial reports with charts
+- ⚙️ **Settings** — Manage account preferences and sign out
+- 🔄 **Auto-reload** — Screens refresh data every time they gain focus
 
-- **Authentication**: Secure login, registration, and persistent sessions using JWT.
-- **Financial Dashboard**: Real-time overview of net profit, total income, total expenses, and a pie chart visualizing expenses by category.
-- **Expense & Income Tracking**: Manage daily transactions with full CRUD capabilities.
-- **Receipt Management**: Attach and store receipt images for expenses using `expo-image-picker`.
-- **Custom Categories**: Organize your spending into various categories.
+## Project Structure
 
-## Getting Started 🛠️
+```
+mobile-frontend/
+├── src/
+│   ├── components/              # Reusable UI components (Button, Card, Input)
+│   ├── navigation/              # React Navigation stack setup
+│   ├── screens/
+│   │   ├── LoginScreen.tsx      # Login form
+│   │   ├── RegisterScreen.tsx   # Registration form
+│   │   ├── DashboardScreen.tsx  # Summary + charts
+│   │   ├── ExpensesScreen.tsx   # Expense list
+│   │   ├── IncomeScreen.tsx     # Income list
+│   │   ├── ReportsScreen.tsx    # Extended reports
+│   │   └── SettingsScreen.tsx   # App settings / logout
+│   ├── services/
+│   │   └── api.ts               # Axios instance with auth interceptor
+│   ├── store/
+│   │   └── index.ts             # Zustand auth store
+│   ├── theme/                   # Colors, spacing, typography
+│   └── types/                   # TypeScript interfaces
+├── app.json                     # Expo configuration
+├── package.json
+├── .env                         # Local config (git-ignored)
+└── .env.example                 # Template for environment variables
+```
+
+## Development Setup
 
 ### Prerequisites
 
-- Node.js (v18+)
-- npm or yarn
-- Expo Go app on your physical device, or an iOS Simulator / Android Emulator.
+- Node.js 18+
+- Expo CLI: `npm install -g expo-cli`
+- Expo Go app on your phone ([Android](https://play.google.com/store/apps/details?id=host.exp.exponent) / [iOS](https://apps.apple.com/app/expo-go/id982107779))
 
-### Installation & Running
+### 1. Install dependencies
 
-1. Install the dependencies:
-
-   ```bash
-   npm install
-   ```
-
-2. Start the Expo development server:
-
-   ```bash
-   npm start
-   # or
-   npx expo start
-   ```
-
-3. **Running the App**:
-   - Press `i` to open in an iOS Simulator.
-   - Press `a` to open in an Android Emulator.
-   - Scan the QR code shown in the terminal with the Expo Go app on your physical Android or iOS device.
-
-## Application Structure 📂
-
-```
-src/
-├── components/       # Reusable UI components (Cards, Buttons, Inputs, etc.)
-├── navigation/       # React Navigation setup (Stacks and Tabs)
-├── screens/          # Main application screens (Home, Login, Settings, etc.)
-├── services/         # API integration and Axios interceptors
-├── store/            # Zustand global state management
-├── theme/            # Theme configuration, typography, and standard colors
-└── types/            # Global TypeScript interfaces and types
+```bash
+cd mobile-frontend
+npm install
 ```
 
-## Backend API
+### 2. Configure environment
 
-This front-end application relies on the Trakr Backend API (FastAPI) to function. Ensure that the backend server is running and accessible. Update your API base URL in the `services/` layer or via environment variables if necessary.
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with the correct API URL:
+
+| Scenario                    | `EXPO_PUBLIC_API_URL` value            |
+| --------------------------- | -------------------------------------- |
+| Android Emulator            | `http://10.0.2.2:8000/api/v1`          |
+| iOS Simulator               | `http://localhost:8000/api/v1`         |
+| Physical Device (same WiFi) | `http://<your-machine-ip>:8000/api/v1` |
+
+Find your machine's local IP:
+
+```bash
+ip route get 1.1.1.1 | grep -oP 'src \K[^ ]+'   # Linux
+ipconfig getifaddr en0                             # macOS
+```
+
+### 3. Start the backend
+
+Make sure the Python backend is running with `--host 0.0.0.0`:
+
+```bash
+cd ../python-backend
+uvicorn app.main:app --reload --host 0.0.0.0
+```
+
+### 4. Start the Expo dev server
+
+```bash
+npm start
+```
+
+Scan the QR code with:
+
+- **Android**: Expo Go app
+- **iOS**: Camera app
+
+> ⚠️ Your phone and computer must be on the **same WiFi network**.
+
+---
+
+## Environment Variables
+
+| Variable              | Required | Description                                           |
+| --------------------- | -------- | ----------------------------------------------------- |
+| `EXPO_PUBLIC_API_URL` | ✅ Yes   | Base URL for the backend API (must include `/api/v1`) |
+
+All `EXPO_PUBLIC_*` variables are bundled into the app at build time and are visible to users — do not put secrets here.
+
+---
+
+## Production Build
+
+Update `EXPO_PUBLIC_API_URL` in `.env` to your deployed backend URL, then:
+
+```bash
+# Android APK / AAB
+npx expo build:android
+
+# iOS IPA
+npx expo build:ios
+
+# Or with EAS Build (recommended for new projects)
+npm install -g eas-cli
+eas build --platform android
+eas build --platform ios
+```
+
+**Production checklist:**
+
+- [ ] Set `EXPO_PUBLIC_API_URL` to your production backend URL (HTTPS)
+- [ ] Ensure the backend has CORS configured for your app
+- [ ] Use EAS Build for proper app store submissions

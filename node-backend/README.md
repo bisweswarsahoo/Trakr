@@ -1,79 +1,131 @@
-# Trakr Node.js Backend
+# Trakr — Node.js Backend (Express)
 
-This is the Node.js (Express) backend alternative for the **Trakr** application. It provides the same RESTful API endpoints for the front-end clients, implemented using modern JavaScript and MongoDB.
+Supplementary REST API for Trakr. Built with Express.js and MongoDB.
 
-## Features ✨
+## Tech Stack
 
-- **User Authentication**: Secure JWT-based registration and login (using `bcryptjs` and `jsonwebtoken`).
-- **REST API**: Built with Express.js for handling transactions, categories, and user data.
-- **Database**: MongoDB integration via Mongoose ODM.
-- **Security & Logging**: CORS enabled and request logging via Morgan.
+- **Express.js** — Web framework
+- **MongoDB + Mongoose** — NoSQL database and ODM
+- **JSON Web Tokens (JWT)** — Authentication
+- **bcryptjs** — Password hashing
+- **dotenv** — Environment variable management
+- **morgan** — HTTP request logging
 
-## Tech Stack 🛠️
+## Features
 
-- **Framework**: Express.js
-- **Database**: MongoDB (Mongoose)
-- **Environment**: Node.js
-- **Utilities**: dotenv, bcryptjs, jsonwebtoken, cors, morgan
+- 🔐 **User Authentication** — Register and login with hashed passwords and JWT tokens
+- 💸 **Expense Tracking** — Create, read, and delete expense records
+- 📊 **Dashboard Summary** — Aggregated financial summary per user
+- 🛡️ **Protected Routes** — All data endpoints require a valid JWT token
 
-## Getting Started 🚀
+## Project Structure
+
+```
+node-backend/
+├── src/
+│   ├── routes/
+│   │   ├── userRoutes.js        # Auth routes
+│   │   ├── expenseRoutes.js     # Expense CRUD
+│   │   └── dashboardRoutes.js   # Dashboard data
+│   ├── controllers/             # Route handler logic
+│   ├── models/                  # Mongoose schemas
+│   ├── middleware/              # Auth middleware
+│   ├── utils/
+│   │   └── generateToken.js     # JWT helper
+│   ├── app.js                   # Express app setup
+│   └── server.js                # Entry point + DB connection
+├── package.json
+├── .env                         # Local secrets (git-ignored)
+└── .env.example                 # Template for environment variables
+```
+
+## Development Setup
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v16+)
-- [MongoDB](https://www.mongodb.com/) running locally or via MongoDB Atlas
+- Node.js 18+
+- MongoDB (local) or MongoDB Atlas (cloud)
 
-### Installation
+### 1. Install dependencies
 
-1. Clone the repository and navigate to the `node-backend` directory:
+```bash
+cd node-backend
+npm install
+```
 
-   ```bash
-   cd node-backend
-   ```
+### 2. Configure environment
 
-2. Install dependencies:
+```bash
+cp .env.example .env
+```
 
-   ```bash
-   npm install
-   ```
+Edit `.env`:
 
-3. Setup environment variables:
-   Copy the provided `.env.example` to `.env` and adjust the values if necessary.
+```env
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/trakr
+JWT_SECRET=your_jwt_secret_here
+```
 
-   ```bash
-   cp .env.example .env
-   ```
+Generate a secure `JWT_SECRET`:
 
-   **Required Variables:**
-   - `PORT`: Server port (default: 5000)
-   - `MONGO_URI`: MongoDB connection string
-   - `JWT_SECRET`: Secret key for signing JWT tokens
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
 
-### Running the Server
-
-**Development Mode** (with Nodemon for auto-reloading):
+### 3. Start the development server
 
 ```bash
 npm run dev
 ```
 
-**Production Mode**:
+API available at: `http://localhost:5000`
+
+---
+
+## Environment Variables
+
+| Variable     | Required | Default | Description                   |
+| ------------ | -------- | ------- | ----------------------------- |
+| `PORT`       | No       | `5000`  | Server port                   |
+| `MONGO_URI`  | ✅ Yes   | —       | MongoDB connection string     |
+| `JWT_SECRET` | ✅ Yes   | —       | Secret for signing JWT tokens |
+
+---
+
+## API Endpoints
+
+| Method | Path                  | Auth | Description         |
+| ------ | --------------------- | ---- | ------------------- |
+| POST   | `/api/users/register` | No   | Register new user   |
+| POST   | `/api/users/login`    | No   | Login (returns JWT) |
+| GET    | `/api/expenses`       | Yes  | List expenses       |
+| POST   | `/api/expenses`       | Yes  | Create expense      |
+| DELETE | `/api/expenses/:id`   | Yes  | Delete expense      |
+| GET    | `/api/dashboard`      | Yes  | Dashboard summary   |
+
+---
+
+## Production Deployment
 
 ```bash
-npm start
+npm install --production
+NODE_ENV=production npm start
 ```
 
-The server will start on `http://localhost:5000` (or your configured `PORT`).
+**Using PM2 (recommended):**
 
-## Project Structure 📂
+```bash
+npm install -g pm2
+pm2 start src/server.js --name trakr-node-api
+pm2 save
+pm2 startup
+```
 
-```
-src/
-├── controllers/    # Route handlers bridging requests to business logic
-├── middlewares/    # Custom middlewares (e.g., auth verification, error handling)
-├── models/         # Mongoose schema definitions
-├── routes/         # Express router configurations
-├── utils/          # Helper functions (e.g., token generation)
-├── app.js          # Express app setup and middleware configuration
-└── server.js       # Entry point and database connection
-```
+**Production checklist:**
+
+- [ ] Use MongoDB Atlas for a managed cloud database
+- [ ] Use a strong, randomly generated `JWT_SECRET`
+- [ ] Set `NODE_ENV=production`
+- [ ] Put behind Nginx as a reverse proxy
+- [ ] Enable HTTPS

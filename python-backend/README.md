@@ -1,99 +1,171 @@
-# Trakr Python Backend
+# Trakr — Python Backend (FastAPI)
 
-This is the primary Python (FastAPI) backend for the **Trakr** application. It provides a robust, production-ready RESTful API for handling user authentication, financial transactions, categories, and report generation.
+REST API for the Trakr expense manager. Built with FastAPI, SQLAlchemy, and PostgreSQL (Supabase).
 
-## Features ✨
+## Tech Stack
 
-- **Authentication System**: Secure JWT-based login and registration (using `passlib` and `python-jose`).
-- **RESTful API**: Fast and fully documented endpoints built with FastAPI.
-- **Database**: PostgreSQL integration using SQLAlchemy ORM.
-- **Data Validation**: strict request/response validation and serialization with Pydantic.
-- **Database Migrations**: Managed via Alembic (if schema changes are required later).
-- **Interactive Documentation**: Auto-generated Swagger UI and ReDoc for easy API testing and exploration.
+- **FastAPI** — High-performance Python web framework
+- **SQLAlchemy** — ORM for database access
+- **alembic** — Database migrations
 
-## Tech Stack 🛠️
+## Features
 
-- **Framework**: [FastAPI](https://fastapi.tiangolo.com/)
-- **Language**: Python 3.10+
-- **Database**: PostgreSQL
-- **ORM**: SQLAlchemy
-- **Data Validation**: Pydantic
-- **Authentication**: JWT & Bcrypt
-- **Migrations**: Alembic
+- 🔐 **JWT Authentication** — Secure register/login with Bearer token flow
+- 👤 **Multi-user support** — Each user sees only their own data
+- 💸 **Expense Management** — Full CRUD with categories, vendor, payment method, notes, and receipt URL
+- 💰 **Income Management** — Track income entries with title, amount, date, and payment method
+- 📂 **Category Management** — Organize expenses with custom or default categories
+- 📊 **Reports API** — Summary (total income, expense, net profit) and per-category expense breakdown with optional date range filtering
+- 🏥 **Health Check** — `/health/db` endpoint to verify database connectivity
+- 📄 **Auto-generated Docs** — Interactive Swagger UI at `/docs` and ReDoc at `/redoc`
+- **PostgreSQL** — Database (hosted on Supabase)
+- **Passlib + bcrypt** — Password hashing
+- **python-jose** — JWT authentication
 
-## Getting Started 🚀
+## Project Structure
+
+```
+python-backend/
+├── app/
+│   ├── api/
+│   │   ├── deps.py              # Auth dependencies
+│   │   └── endpoints/
+│   │       ├── auth.py          # Register / Login / Me
+│   │       ├── expenses.py      # Expense CRUD
+│   │       ├── income.py        # Income CRUD
+│   │       ├── categories.py    # Category CRUD
+│   │       └── reports.py       # Summary & chart data
+│   ├── core/
+│   │   ├── config.py            # Pydantic settings (reads from .env)
+│   │   └── security.py          # JWT & bcrypt helpers
+│   ├── models/                  # SQLAlchemy ORM models
+│   ├── schemas/                 # Pydantic request/response schemas
+│   ├── database.py              # Engine + session setup
+│   └── main.py                  # FastAPI app entry point
+├── alembic/                     # Database migration scripts
+├── requirements.txt
+├── .env                         # Local secrets (git-ignored)
+└── .env.example                 # Template for environment variables
+```
+
+## Development Setup
 
 ### Prerequisites
 
-- [Python](https://www.python.org/) (v3.10+)
-- [PostgreSQL](https://www.postgresql.org/) server running locally or remotely
+- Python 3.11+
+- PostgreSQL database (local or Supabase)
+- `libpq-devel` (Fedora) or `libpq-dev` (Ubuntu/Debian) system package
 
-### 1. Database Setup
-
-Ensure PostgreSQL is running and create the necessary database. For example:
-
-```bash
-createdb expense_tracker
-```
-
-### 2. Installation
-
-Navigate to the `python-backend` directory:
+### 1. Clone and set up virtual environment
 
 ```bash
 cd python-backend
-```
-
-Create and activate a Python virtual environment:
-
-```bash
 python3 -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
+source venv/bin/activate        # Windows: venv\Scripts\activate
 ```
 
-Install the required dependencies:
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Environment Variables
-
-Create a `.env` file in the root of the `python-backend` directory by copying the example file:
+### 3. Configure environment
 
 ```bash
 cp .env.example .env
 ```
 
-Make sure to update the `.env` file with your specific PostgreSQL connection string (e.g., `DATABASE_URL=postgresql://user:password@localhost/expense_tracker`) and a secure `SECRET_KEY`.
+Edit `.env`:
 
-### 4. Running the Server
+```env
+DATABASE_URL=postgresql://postgres.xxx:password@aws-x.pooler.supabase.com:6543/postgres
+SECRET_KEY=your_secret_key_here
+```
 
-Start the FastAPI development server using Uvicorn:
+Generate a secure `SECRET_KEY`:
 
 ```bash
+python3 -c "import secrets; print(secrets.token_hex(32))"
+```
+
+### 4. Run database migrations
+
+```bash
+alembic upgrade head
+```
+
+### 5. Start the development server
+
+```bash
+# Localhost only (for browser testing):
 uvicorn app.main:app --reload
+
+# All network interfaces (required for physical device testing):
+uvicorn app.main:app --reload --host 0.0.0.0
 ```
 
-The server will be available at `http://127.0.0.1:8000`.
+API available at: `http://localhost:8000`  
+Interactive docs (Swagger): `http://localhost:8000/docs`  
+Alternative docs (ReDoc): `http://localhost:8000/redoc`
 
-### 5. API Documentation
+---
 
-Once the server is running, you can explore and test the API endpoints interactively:
+## Environment Variables
 
-- **Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- **ReDoc**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+| Variable       | Required | Description                                                          |
+| -------------- | -------- | -------------------------------------------------------------------- |
+| `DATABASE_URL` | ✅ Yes   | PostgreSQL connection URI (use the Supabase pooler URL on port 6543) |
+| `SECRET_KEY`   | ✅ Yes   | Random hex string used to sign JWTs                                  |
 
-## Project Structure 📂
+### Supabase Connection String
+
+Use the **Connection Pooler** URL (not the direct connection), found at:  
+**Supabase Dashboard → Settings → Database → Connection pooling → URI**
+
+It looks like:
 
 ```
-app/
-├── api/              # API router endpoints (auth, categories, expenses, etc.)
-├── core/             # Configuration settings and security (JWT, hashing)
-├── models/           # SQLAlchemy database models
-├── schemas/          # Pydantic schemas for data validation
-├── database.py       # Database connection setup
-└── main.py           # FastAPI application entry point
-alembic/              # Database migration configurations
-requirements.txt      # Python dependencies
+postgresql://postgres.project_ref:password@aws-0-region.pooler.supabase.com:6543/postgres
 ```
+
+---
+
+## API Endpoints
+
+| Method | Path                                | Auth | Description                  |
+| ------ | ----------------------------------- | ---- | ---------------------------- |
+| POST   | `/api/v1/auth/register`             | No   | Register a new user          |
+| POST   | `/api/v1/auth/login`                | No   | Login (returns JWT)          |
+| GET    | `/api/v1/auth/me`                   | Yes  | Get current user             |
+| GET    | `/api/v1/expenses/`                 | Yes  | List expenses                |
+| POST   | `/api/v1/expenses/`                 | Yes  | Create expense               |
+| GET    | `/api/v1/income/`                   | Yes  | List income records          |
+| POST   | `/api/v1/income/`                   | Yes  | Create income record         |
+| GET    | `/api/v1/categories/`               | Yes  | List categories              |
+| GET    | `/api/v1/reports/summary`           | Yes  | Income/expense summary       |
+| GET    | `/api/v1/reports/category-expenses` | Yes  | Expenses grouped by category |
+| GET    | `/health/db`                        | No   | Database health check        |
+
+---
+
+## Production Deployment
+
+```bash
+# Install production dependencies
+pip install -r requirements.txt
+
+# Run migrations
+alembic upgrade head
+
+# Start with multiple workers
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+```
+
+**Production checklist:**
+
+- [ ] Use a strong, randomly generated `SECRET_KEY`
+- [ ] Use Supabase pooler URL for `DATABASE_URL`
+- [ ] Put behind Nginx or Caddy as a reverse proxy
+- [ ] Enable HTTPS (SSL/TLS)
+- [ ] Set `allow_origins` in CORS to your actual frontend domain (not `["*"]`)

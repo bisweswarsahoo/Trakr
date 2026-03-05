@@ -1,69 +1,140 @@
-# Trakr Web Frontend
+# Trakr — Web Frontend (React + Vite)
 
-This is the web-based frontend client for the **Trakr** application. It provides small shop owners with a clean, responsive desktop/web interface to track income, manage expenses, and generate real-time financial reports.
+Web dashboard for the Trakr expense manager. Built with React, Vite, and Material UI.
 
-## Features ✨
+## Tech Stack
 
-- **Authentication**: JWT-based login, registration, and persistent sessions.
-- **Financial Dashboard**: Real-time overview of net profit, total income, and total expenses.
-- **Data Visualization**: Dynamic charts using Recharts and Chart.js for visualizing financial metrics.
-- **Expense & Income Tracking**: Manage daily transactions with full CRUD capabilities.
-- **Responsive UI**: Built with Material UI (MUI) for a clean, accessible, and responsive user experience.
+- **React 19** — UI framework
+- **Vite** — Build tool and dev server
+- **Material UI (MUI)** — Component library
+- **Recharts / Chart.js** — Data visualizations
+- **Axios** — HTTP client for API calls
+- **React Router** — Client-side navigation
 
-## Tech Stack 🚀
+## Features
 
-This application is built with a modern React stack:
+- 🔐 **Authentication** — Login and register with JWT token persistence via localStorage
+- 📊 **Dashboard** — Visual overview of income, expenses, and net profit with charts
+- 💸 **Expense Management** — View, add, and manage expense records
+- 💰 **Income Management** — Track and browse income entries
+- 📈 **Reports & Charts** — Data visualizations with Recharts and Chart.js
+- 📱 **Responsive Design** — Works on desktop and mobile browsers
 
-- **Framework**: [React 19](https://react.dev/)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **Routing**: [React Router](https://reactrouter.com/)
-- **UI Library**: [Material UI (MUI)](https://mui.com/material-ui/)
-- **Data Visualization**: [Recharts](https://recharts.org/) & [Chart.js](https://www.chartjs.org/)
-- **HTTP Client**: [Axios](https://axios-http.com/)
+## Project Structure
 
-## Getting Started 🛠️
+```
+web-frontend/
+├── src/
+│   ├── api.js                   # Axios instance with auth interceptor
+│   ├── components/              # Reusable UI components
+│   ├── pages/                   # Page-level components
+│   ├── store/ or context/       # Global state management
+│   └── main.jsx                 # App entry point
+├── index.html
+├── vite.config.js
+├── package.json
+├── .env                         # Local config (git-ignored)
+└── .env.example                 # Template for environment variables
+```
+
+## Development Setup
 
 ### Prerequisites
 
-- Node.js (v18+)
-- npm or yarn
+- Node.js 18+
 
-### Installation & Running
+### 1. Install dependencies
 
-1. Clone the repository and navigate to the `web-frontend` directory:
+```bash
+cd web-frontend
+npm install
+```
 
-   ```bash
-   cd web-frontend
-   ```
+### 2. Configure environment
 
-2. Install the dependencies:
+```bash
+cp .env.example .env
+```
 
-   ```bash
-   npm install
-   ```
+Edit `.env`:
 
-3. Start the Vite development server:
+```env
+# Python backend (FastAPI):
+VITE_API_URL=http://localhost:8000/api/v1
 
-   ```bash
-   npm run dev
-   ```
+# Node backend (Express):
+# VITE_API_URL=http://localhost:5000/api
+```
 
-4. Open your browser and navigate to the local URL provided by Vite (usually `http://localhost:5173/`).
+### 3. Start the dev server
 
-## Building for Production 📦
+```bash
+npm run dev
+```
 
-To create a production-ready build of the application:
+Web app available at: `http://localhost:5173`
+
+---
+
+## Environment Variables
+
+| Variable       | Required | Description                  |
+| -------------- | -------- | ---------------------------- |
+| `VITE_API_URL` | ✅ Yes   | Base URL for the backend API |
+
+> ℹ️ All Vite env variables must be prefixed with `VITE_` to be accessible in code as `import.meta.env.VITE_API_URL`.
+
+---
+
+## Production Build
+
+Update `VITE_API_URL` in `.env` to your deployed backend URL, then:
 
 ```bash
 npm run build
 ```
 
-This will generate a `dist/` directory containing the optimized static assets. You can preview the production build locally using:
+This outputs a static `dist/` folder ready to deploy.
+
+### Deploy to Vercel (recommended)
 
 ```bash
-npm run preview
+npm install -g vercel
+vercel --prod
 ```
 
-## Backend Connection
+### Deploy to Netlify
 
-This frontend application relies on the Trakr Backend API (either the Python or Node.js version) to function. Ensure that the backend server is running and accessible. Update your API base URL configuration if necessary to point to the correct backend port (e.g., `8000` for FastAPI or `5000` for Express).
+```bash
+npm install -g netlify-cli
+netlify deploy --prod --dir dist
+```
+
+### Deploy to a VPS with Nginx
+
+```bash
+npm run build
+# Copy dist/ to your server:
+scp -r dist/ user@your-server:/var/www/trakr/
+```
+
+Nginx config:
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    root /var/www/trakr;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+**Production checklist:**
+
+- [ ] Set `VITE_API_URL` to your production HTTPS backend URL
+- [ ] Ensure CSP headers allow connections to your backend domain
+- [ ] Enable gzip compression in your web server
