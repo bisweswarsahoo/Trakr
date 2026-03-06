@@ -27,18 +27,25 @@ export const DashboardScreen = () => {
 
 	const fetchDashboardData = async () => {
 		try {
-			const summaryRes = await api.get("/reports/summary");
-			setSummary(summaryRes.data);
+			const res = await api.get("/dashboard");
+			const data = res.data;
 
-			const categoryRes = await api.get("/reports/category-expenses");
-			// For now we map IDs; in reality we'd join with category names or fetch categories store.
-			const mappedCategories = categoryRes.data.map((c: any) => ({
-				name: `Cat ${c.category_id || "Other"}`,
-				population: c.total,
-				color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-				legendFontColor: colors.textSecondary,
-				legendFontSize: 12,
-			}));
+			setSummary({
+				total_income: data.monthly.income,
+				total_expense: data.monthly.expense,
+				net_profit: data.monthly.net,
+			});
+
+			const mappedCategories = (data.charts?.category_breakdown || []).map(
+				(c: any) => ({
+					name: c.name || "Other",
+					population: c.value,
+					color:
+						c.color || `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+					legendFontColor: colors.textSecondary,
+					legendFontSize: 12,
+				}),
+			);
 			setCategoryExpenses(mappedCategories);
 		} catch (e) {
 			console.error(e);

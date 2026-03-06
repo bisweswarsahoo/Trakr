@@ -31,24 +31,21 @@ export const LoginScreen = () => {
 	const onSubmit = async (data: any) => {
 		try {
 			setLoading(true);
-			const formData = new URLSearchParams();
-			formData.append("username", data.email);
-			formData.append("password", data.password);
-
-			const res = await api.post("/auth/login", formData, {
-				headers: { "Content-Type": "application/x-www-form-urlencoded" },
+			const res = await api.post("/auth/login", {
+				email: data.email,
+				password: data.password,
 			});
-			const token = res.data.access_token;
+
+			const { token, ...userData } = res.data;
 
 			await AsyncStorage.setItem("userToken", token);
 			api.defaults.headers.Authorization = `Bearer ${token}`;
 
-			const userRes = await api.get("/auth/me");
-			signIn(userRes.data, token);
+			signIn(userData, token);
 		} catch (error: any) {
 			Alert.alert(
 				"Login Failed",
-				error.response?.data?.detail || "An error occurred",
+				error.response?.data?.error || "An error occurred",
 			);
 		} finally {
 			setLoading(false);
@@ -63,7 +60,7 @@ export const LoginScreen = () => {
 			<ScrollView contentContainerStyle={styles.scroll}>
 				<View style={styles.header}>
 					<Text style={styles.title}>Welcome Back</Text>
-					<Text style={styles.subtitle}>Login to Shop Expense Manager</Text>
+					<Text style={styles.subtitle}>Login to Trakr</Text>
 				</View>
 
 				<Card>

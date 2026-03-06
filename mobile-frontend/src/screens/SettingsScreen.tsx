@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, ScrollView, Alert } from "react-native";
 import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { useAuthStore } from "../store";
+import { api } from "../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors, spacing } from "../theme";
 
@@ -16,6 +17,11 @@ export const SettingsScreen = () => {
 				text: "Logout",
 				style: "destructive",
 				onPress: async () => {
+					try {
+						await api.post("/auth/logout");
+					} catch (e) {
+						// Ignore logout API errors
+					}
 					await AsyncStorage.removeItem("userToken");
 					signOut();
 				},

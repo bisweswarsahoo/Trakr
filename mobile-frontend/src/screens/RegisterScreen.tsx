@@ -41,7 +41,7 @@ export const RegisterScreen = () => {
 		} catch (error: any) {
 			Alert.alert(
 				"Registration Failed",
-				error.response?.data?.detail || "An error occurred",
+				error.response?.data?.error || "An error occurred",
 			);
 		} finally {
 			setLoading(false);

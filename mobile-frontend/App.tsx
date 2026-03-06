@@ -14,9 +14,9 @@ export default function App() {
 			try {
 				const token = await AsyncStorage.getItem("userToken");
 				if (token) {
-					// Attempt to fetch 'me'
+					// Attempt to fetch user profile via Node.js gateway
 					api.defaults.headers.Authorization = `Bearer ${token}`;
-					const res = await api.get("/auth/me");
+					const res = await api.get("/users/me");
 					signIn(res.data, token);
 				}
 			} catch (e) {
