@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import AddExpenseForm from "../components/AddExpenseForm";
-import ExpenseList from "../components/ExpenseList";
-import API from "../api";
+import AddExpenseForm from "../components/forms/AddExpenseForm";
+import ExpenseList from "../components/lists/ExpenseList";
+import API from "../services/api";
 import { useTheme, useMediaQuery, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 

@@ -12,48 +12,30 @@ import {
 	Backdrop,
 	Avatar,
 	Divider,
-	MenuItem,
 	Slide,
 	CircularProgress,
 } from "@mui/material";
 import TitleIcon from "@mui/icons-material/Title";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import CategoryIcon from "@mui/icons-material/Category";
 import DateRangeIcon from "@mui/icons-material/DateRange";
+import PaymentIcon from "@mui/icons-material/Payment";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
-import {
-	getCategoryColor,
-	getGradientByName,
-	createAlphaColor,
-} from "../theme/utils";
+import { getGradientByName, createAlphaColor } from "../../theme/utils";
 
-const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
+const AddIncomeForm = ({ open, onClose, onAddIncome }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-	const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
 	const [formData, setFormData] = useState({
 		title: "",
 		amount: "",
-		category: "",
 		date: "",
+		payment_method: "cash",
 	});
 
 	const [errors, setErrors] = useState({});
-
-	const categories = [
-		{ name: "Food", icon: "🍽️", key: "food" },
-		{ name: "Transport", icon: "🚗", key: "transport" },
-		{ name: "Entertainment", icon: "🎬", key: "entertainment" },
-		{ name: "Shopping", icon: "🛍️", key: "shopping" },
-		{ name: "Health", icon: "🏥", key: "healthcare" },
-		{ name: "Utilities", icon: "💡", key: "utilities" },
-		{ name: "Education", icon: "📚", key: "education" },
-		{ name: "Other", icon: "💰", key: "other" },
-	];
-
 	const [loading, setLoading] = useState(false);
 
 	const handleChange = (e) => {
@@ -67,7 +49,6 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 		if (!formData.title) newErrors.title = "Title is required";
 		if (!formData.amount || formData.amount <= 0)
 			newErrors.amount = "Enter a valid amount";
-		if (!formData.category) newErrors.category = "Category is required";
 		if (!formData.date) newErrors.date = "Select a date";
 		return newErrors;
 	};
@@ -79,12 +60,30 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 			setErrors(validationErrors);
 			return;
 		}
-
 		setLoading(true);
-		onAddExpense(formData);
-		setFormData({ title: "", amount: "", category: "", date: "" });
+		onAddIncome(formData);
+		setFormData({ title: "", amount: "", date: "", payment_method: "cash" });
 		setLoading(false);
-		onClose(); // Close modal after successful submission
+		onClose();
+	};
+
+	const inputSx = {
+		"& .MuiOutlinedInput-root": {
+			borderRadius: theme.shape.borderRadius,
+			backgroundColor:
+				theme.palette.mode === "light"
+					? theme.palette.grey[50]
+					: theme.palette.grey[900],
+			"&:hover": {
+				backgroundColor:
+					theme.palette.mode === "light"
+						? theme.palette.grey[100]
+						: theme.palette.grey[800],
+			},
+			"&.Mui-focused": {
+				backgroundColor: theme.palette.background.paper,
+			},
+		},
 	};
 
 	return (
@@ -92,26 +91,20 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 			open={open}
 			onClose={onClose}
 			closeAfterTransition
-			slots={{
-				backdrop: Backdrop,
-			}}
+			slots={{ backdrop: Backdrop }}
 			slotProps={{
 				backdrop: {
 					timeout: 500,
 					sx: {
 						backgroundColor: createAlphaColor(
 							theme.palette.background.default,
-							0.7
+							0.7,
 						),
 						backdropFilter: "blur(8px)",
 					},
 				},
 			}}
-			sx={{
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "center",
-			}}
+			sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
 		>
 			<Slide
 				direction="up"
@@ -122,11 +115,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 				<Box
 					sx={{
 						position: "relative",
-						width: {
-							xs: "95%",
-							sm: "90%",
-							md: 550,
-						},
+						width: { xs: "95%", sm: "90%", md: 550 },
 						maxWidth: 550,
 						maxHeight: "95vh",
 						overflow: "auto",
@@ -145,8 +134,8 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 					>
 						<Box
 							sx={{
-								background: getGradientByName("primary", theme),
-								color: theme.palette.primary.contrastText,
+								background: getGradientByName("secondary", theme),
+								color: theme.palette.secondary.contrastText,
 								p: isMobile ? 2.5 : 3,
 								position: "relative",
 								overflow: "hidden",
@@ -160,19 +149,6 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									background: createAlphaColor(theme.palette.common.white, 0.1),
 									borderRadius: "50%",
 								},
-								"&::after": {
-									content: '""',
-									position: "absolute",
-									bottom: -30,
-									left: -30,
-									width: 80,
-									height: 80,
-									background: createAlphaColor(
-										theme.palette.common.white,
-										0.05
-									),
-									borderRadius: "50%",
-								},
 							}}
 						>
 							<IconButton
@@ -181,16 +157,16 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									position: "absolute",
 									right: 12,
 									top: 12,
-									color: theme.palette.primary.contrastText,
+									color: theme.palette.secondary.contrastText,
 									backgroundColor: createAlphaColor(
 										theme.palette.common.white,
-										0.15
+										0.15,
 									),
 									zIndex: 2,
 									"&:hover": {
 										backgroundColor: createAlphaColor(
 											theme.palette.common.white,
-											0.25
+											0.25,
 										),
 									},
 								}}
@@ -209,7 +185,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 								<Avatar
 									sx={{
 										bgcolor: createAlphaColor(theme.palette.common.white, 0.2),
-										color: theme.palette.primary.contrastText,
+										color: theme.palette.secondary.contrastText,
 										width: isMobile ? 50 : 60,
 										height: isMobile ? 50 : 60,
 										mr: 2,
@@ -226,7 +202,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 											lineHeight: 1.2,
 										}}
 									>
-										Add New Expense
+										Add Income
 									</Typography>
 									<Typography
 										variant="body2"
@@ -236,13 +212,12 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 											mt: 0.5,
 										}}
 									>
-										Track your spending effortlessly
+										Record your earnings
 									</Typography>
 								</Box>
 							</Box>
 						</Box>
 
-						{/* Enhanced Content Section */}
 						<Box sx={{ p: isMobile ? 2.5 : 3.5 }}>
 							<Box
 								component="form"
@@ -254,7 +229,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 								}}
 							>
 								<TextField
-									label="Expense Title"
+									label="Income Title"
 									name="title"
 									value={formData.title}
 									onChange={handleChange}
@@ -262,24 +237,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									helperText={errors.title}
 									fullWidth
 									variant="outlined"
-									sx={{
-										"& .MuiOutlinedInput-root": {
-											borderRadius: theme.shape.borderRadius,
-											backgroundColor:
-												theme.palette.mode === "light"
-													? theme.palette.grey[50]
-													: theme.palette.grey[900],
-											"&:hover": {
-												backgroundColor:
-													theme.palette.mode === "light"
-														? theme.palette.grey[100]
-														: theme.palette.grey[800],
-											},
-											"&.Mui-focused": {
-												backgroundColor: theme.palette.background.paper,
-											},
-										},
-									}}
+									sx={inputSx}
 									slotProps={{
 										input: {
 											startAdornment: (
@@ -298,24 +256,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									helperText={errors.amount}
 									fullWidth
 									variant="outlined"
-									sx={{
-										"& .MuiOutlinedInput-root": {
-											borderRadius: theme.shape.borderRadius,
-											backgroundColor:
-												theme.palette.mode === "light"
-													? theme.palette.grey[50]
-													: theme.palette.grey[900],
-											"&:hover": {
-												backgroundColor:
-													theme.palette.mode === "light"
-														? theme.palette.grey[100]
-														: theme.palette.grey[800],
-											},
-											"&.Mui-focused": {
-												backgroundColor: theme.palette.background.paper,
-											},
-										},
-									}}
+									sx={inputSx}
 									slotProps={{
 										input: {
 											startAdornment: (
@@ -327,55 +268,21 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									}}
 								/>
 								<TextField
-									select
-									label="Category"
-									name="category"
-									value={formData.category}
+									label="Payment Method"
+									name="payment_method"
+									value={formData.payment_method}
 									onChange={handleChange}
-									error={!!errors.category}
-									helperText={errors.category}
 									fullWidth
 									variant="outlined"
-									sx={{
-										"& .MuiOutlinedInput-root": {
-											borderRadius: theme.shape.borderRadius,
-											backgroundColor:
-												theme.palette.mode === "light"
-													? theme.palette.grey[50]
-													: theme.palette.grey[900],
-											"&:hover": {
-												backgroundColor:
-													theme.palette.mode === "light"
-														? theme.palette.grey[100]
-														: theme.palette.grey[800],
-											},
-											"&.Mui-focused": {
-												backgroundColor: theme.palette.background.paper,
-											},
-										},
-									}}
+									sx={inputSx}
 									slotProps={{
 										input: {
 											startAdornment: (
-												<CategoryIcon sx={{ color: "warning.main", mr: 1 }} />
+												<PaymentIcon sx={{ color: "info.main", mr: 1 }} />
 											),
 										},
 									}}
-								>
-									{categories.map((cat) => (
-										<MenuItem
-											key={cat.name}
-											value={cat.name}
-										>
-											<Box
-												sx={{ display: "flex", alignItems: "center", gap: 1 }}
-											>
-												<span style={{ fontSize: "1.2rem" }}>{cat.icon}</span>
-												<Typography>{cat.name}</Typography>
-											</Box>
-										</MenuItem>
-									))}
-								</TextField>
+								/>
 								<TextField
 									label="Date"
 									type="date"
@@ -386,38 +293,17 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									helperText={errors.date}
 									fullWidth
 									variant="outlined"
-									sx={{
-										"& .MuiOutlinedInput-root": {
-											borderRadius: theme.shape.borderRadius,
-											backgroundColor:
-												theme.palette.mode === "light"
-													? theme.palette.grey[50]
-													: theme.palette.grey[900],
-											"&:hover": {
-												backgroundColor:
-													theme.palette.mode === "light"
-														? theme.palette.grey[100]
-														: theme.palette.grey[800],
-											},
-											"&.Mui-focused": {
-												backgroundColor: theme.palette.background.paper,
-											},
-										},
-									}}
+									sx={inputSx}
 									slotProps={{
 										input: {
 											startAdornment: (
 												<DateRangeIcon sx={{ color: "info.main", mr: 1 }} />
 											),
 										},
-										inputLabel: {
-											shrink: true,
-										},
+										inputLabel: { shrink: true },
 									}}
 								/>
-								{/* Enhanced Submit Section */}
 								<Divider sx={{ my: 2, borderStyle: "dashed" }} />
-
 								<Button
 									type="submit"
 									variant="contained"
@@ -431,7 +317,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 										borderRadius: theme.shape.borderRadius,
 										background: loading
 											? theme.palette.action.disabledBackground
-											: getGradientByName("primary", theme),
+											: getGradientByName("secondary", theme),
 										boxShadow: loading ? "none" : theme.shadows[2],
 										textTransform: "none",
 										transition: theme.transitions.create([
@@ -443,22 +329,21 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 											: {
 													transform: "translateY(-2px)",
 													boxShadow: theme.shadows[4],
-											  },
-										"&:disabled": {
-											color: theme.palette.primary.contrastText,
-										},
+												},
 									}}
 								>
 									{loading ? (
 										<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 											<CircularProgress
 												size={20}
-												sx={{ color: theme.palette.primary.contrastText }}
+												sx={{
+													color: theme.palette.secondary.contrastText,
+												}}
 											/>
-											Adding Expense...
+											Adding Income...
 										</Box>
 									) : (
-										"Add Expense"
+										"Add Income"
 									)}
 								</Button>
 							</Box>
@@ -470,4 +355,4 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 	);
 };
 
-export default AddExpenseForm;
+export default AddIncomeForm;

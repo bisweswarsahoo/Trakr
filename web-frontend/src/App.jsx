@@ -6,14 +6,14 @@ import {
 	Navigate,
 } from "react-router-dom";
 import { Box } from "@mui/material";
-import Login from "./pages/LoginPage";
-import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
-import IncomePage from "./pages/IncomePage";
-import ReportsPage from "./pages/ReportsPage";
-import SettingsPage from "./pages/SettingsPage";
-import Navbar from "./components/Navbar";
-import Register from "./pages/Register";
+import Login from "./screens/LoginScreen";
+import Home from "./screens/ExpensesScreen";
+import Dashboard from "./screens/DashboardScreen";
+import IncomePage from "./screens/IncomeScreen";
+import ReportsPage from "./screens/ReportsScreen";
+import SettingsPage from "./screens/SettingsScreen";
+import Navbar from "./components/layout/Navbar";
+import Register from "./screens/RegisterScreen";
 
 const App = () => {
 	const [user, setUser] = useState(localStorage.getItem("token"));

@@ -27,9 +27,9 @@ import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import { getGradientByName, createAlphaColor } from "../theme/utils";
-import ThemeToggle from "./ThemeToggle";
-import API from "../api";
+import { getGradientByName, createAlphaColor } from "../../theme/utils";
+import ThemeToggle from "../ui/ThemeToggle";
+import API from "../../services/api";
 
 const Navbar = ({ onLogout }) => {
 	const navigate = useNavigate();

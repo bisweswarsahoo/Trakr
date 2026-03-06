@@ -22,7 +22,7 @@ import BalanceIcon from "@mui/icons-material/Balance";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import CategoryIcon from "@mui/icons-material/Category";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import API from "../api";
+import API from "../services/api";
 import { getGradientByName, createAlphaColor } from "../theme/utils";
 
 const ReportsPage = () => {

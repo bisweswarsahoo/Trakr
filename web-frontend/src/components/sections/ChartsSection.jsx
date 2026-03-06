@@ -1,5 +1,5 @@
 import { Grid, useTheme, useMediaQuery } from "@mui/material";
-import ChartContainer from "./ChartContainer";
+import ChartContainer from "../ui/ChartContainer";
 import CategoryIcon from "@mui/icons-material/Category";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import {

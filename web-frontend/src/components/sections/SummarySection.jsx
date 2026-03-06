@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import SummaryCard from "./SummaryCard";
+import SummaryCard from "../ui/SummaryCard";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import CategoryIcon from "@mui/icons-material/Category";

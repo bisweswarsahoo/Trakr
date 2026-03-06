@@ -22,7 +22,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import API from "../api";
+import API from "../services/api";
 import { getGradientByName, createAlphaColor } from "../theme/utils";
 
 const SettingsPage = ({ onLogout }) => {

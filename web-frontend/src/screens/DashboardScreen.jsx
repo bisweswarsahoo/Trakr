@@ -7,9 +7,9 @@ import {
 	useTheme,
 	useMediaQuery,
 } from "@mui/material";
-import SummarySection from "../components/SummarySection";
-import ChartsSection from "../components/ChartsSection";
-import API from "../api";
+import SummarySection from "../components/sections/SummarySection";
+import ChartsSection from "../components/sections/ChartsSection";
+import API from "../services/api";
 import { getGradientByName, createAlphaColor } from "../theme/utils";
 
 const Dashboard = () => {
