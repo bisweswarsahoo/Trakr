@@ -12,41 +12,21 @@ import {
 	Chip,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ReceiptIcon from "@mui/icons-material/Receipt";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import CategoryIcon from "@mui/icons-material/Category";
-import {
-	getCategoryColor,
-	createAlphaColor,
-	getGradientByName,
-} from "../theme/utils";
+import PaymentIcon from "@mui/icons-material/Payment";
+import { createAlphaColor, getGradientByName } from "../theme/utils";
 
-const ExpenseList = ({
-	expenses,
+const IncomeList = ({
+	income,
 	summary,
 	loading,
 	summaryLoading,
-	onDeleteExpense,
+	onDeleteIncome,
 }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-	const isTablet = useMediaQuery(theme.breakpoints.down("md"));
-
-	const getCategoryIcon = (category) => {
-		const icons = {
-			food: "🍽️",
-			transport: "🚗",
-			entertainment: "🎬",
-			shopping: "🛍️",
-			health: "🏥",
-			utilities: "💡",
-			education: "📚",
-			default: "💰",
-		};
-		return icons[category.toLowerCase()] || icons.default;
-	};
 
 	return (
 		<Paper
@@ -63,8 +43,8 @@ const ExpenseList = ({
 		>
 			<Box
 				sx={{
-					background: getGradientByName("primary", theme),
-					color: theme.palette.primary.contrastText,
+					background: getGradientByName("secondary", theme),
+					color: theme.palette.secondary.contrastText,
 					p: isMobile ? 2 : 3,
 					position: "relative",
 					overflow: "hidden",
@@ -94,15 +74,16 @@ const ExpenseList = ({
 					}}
 				>
 					<TrendingUpIcon fontSize="large" />
-					Your Expenses
+					Your Income
 				</Typography>
 			</Box>
+
 			{!summaryLoading && summary && (
 				<Box
 					sx={{
 						p: isMobile ? 2 : 3,
-						background: getGradientByName("secondary", theme),
-						color: theme.palette.secondary.contrastText,
+						background: getGradientByName("primary", theme),
+						color: theme.palette.primary.contrastText,
 						position: "relative",
 						"&::before": {
 							content: '""',
@@ -145,20 +126,20 @@ const ExpenseList = ({
 									height: 50,
 								}}
 							>
-								<ReceiptIcon />
+								<TrendingUpIcon />
 							</Avatar>
 							<Box>
 								<Typography
 									variant="h4"
 									sx={{ fontWeight: "bold", lineHeight: 1 }}
 								>
-									{summary.totalExpenses || 0}
+									{summary.totalEntries || 0}
 								</Typography>
 								<Typography
 									variant="body2"
 									sx={{ opacity: 0.9 }}
 								>
-									Total Expenses
+									Total Entries
 								</Typography>
 							</Box>
 						</Box>
@@ -195,13 +176,14 @@ const ExpenseList = ({
 									variant="body2"
 									sx={{ opacity: 0.9 }}
 								>
-									Total Amount
+									Total Income
 								</Typography>
 							</Box>
 						</Box>
 					</Box>
 				</Box>
 			)}
+
 			{loading ? (
 				<Box
 					sx={{
@@ -216,10 +198,8 @@ const ExpenseList = ({
 					<CircularProgress
 						size={isMobile ? 50 : 60}
 						sx={{
-							color: "primary.main",
-							"& .MuiCircularProgress-circle": {
-								strokeLinecap: "round",
-							},
+							color: "secondary.main",
+							"& .MuiCircularProgress-circle": { strokeLinecap: "round" },
 						}}
 					/>
 					<Typography
@@ -227,12 +207,12 @@ const ExpenseList = ({
 						color="text.secondary"
 						sx={{ fontSize: "1.1rem" }}
 					>
-						Loading your expenses...
+						Loading your income...
 					</Typography>
 				</Box>
 			) : (
 				<Box sx={{ p: isMobile ? 1 : 2 }}>
-					{expenses.length === 0 ? (
+					{income.length === 0 ? (
 						<Box
 							sx={{
 								textAlign: "center",
@@ -252,7 +232,7 @@ const ExpenseList = ({
 									fontSize: "2.5rem",
 								}}
 							>
-								💰
+								💵
 							</Avatar>
 							<Box>
 								<Typography
@@ -263,22 +243,25 @@ const ExpenseList = ({
 										fontWeight: 500,
 									}}
 								>
-									No expenses yet!
+									No income yet!
 								</Typography>
 								<Typography
 									variant="body2"
 									color="text.secondary"
-									sx={{ fontSize: isMobile ? "0.9rem" : "1rem", mt: 1 }}
+									sx={{
+										fontSize: isMobile ? "0.9rem" : "1rem",
+										mt: 1,
+									}}
 								>
-									Start tracking by adding your first expense
+									Start recording by adding your first income entry
 								</Typography>
 							</Box>
 						</Box>
 					) : (
 						<Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-							{expenses.map((exp, index) => (
+							{income.map((entry) => (
 								<Card
-									key={exp.id}
+									key={entry.id}
 									elevation={2}
 									sx={{
 										borderRadius: 3,
@@ -316,12 +299,15 @@ const ExpenseList = ({
 													sx={{
 														width: isMobile ? 45 : 55,
 														height: isMobile ? 45 : 55,
-														bgcolor: getCategoryColor(exp.category, theme),
-														color: "white",
+														bgcolor: createAlphaColor(
+															theme.palette.success.main,
+															0.15,
+														),
+														color: theme.palette.success.main,
 														fontSize: isMobile ? "1.2rem" : "1.5rem",
 													}}
 												>
-													{getCategoryIcon(exp.category)}
+													💵
 												</Avatar>
 												<Box sx={{ flex: 1, minWidth: 0 }}>
 													<Typography
@@ -335,7 +321,7 @@ const ExpenseList = ({
 															textOverflow: "ellipsis",
 														}}
 													>
-														{exp.title}
+														{entry.title}
 													</Typography>
 													<Box
 														sx={{
@@ -345,22 +331,24 @@ const ExpenseList = ({
 															alignItems: "center",
 														}}
 													>
-														<Chip
-															size="small"
-															icon={
-																<CategoryIcon sx={{ fontSize: "0.9rem" }} />
-															}
-															label={exp.category}
-															sx={{
-																bgcolor: createAlphaColor(
-																	getCategoryColor(exp.category, theme),
-																	0.2,
-																),
-																color: getCategoryColor(exp.category, theme),
-																fontWeight: 500,
-																fontSize: "0.75rem",
-															}}
-														/>
+														{entry.payment_method && (
+															<Chip
+																size="small"
+																icon={
+																	<PaymentIcon sx={{ fontSize: "0.9rem" }} />
+																}
+																label={entry.payment_method}
+																sx={{
+																	bgcolor: createAlphaColor(
+																		theme.palette.info.main,
+																		0.1,
+																	),
+																	color: theme.palette.info.main,
+																	fontWeight: 500,
+																	fontSize: "0.75rem",
+																}}
+															/>
+														)}
 														<Chip
 															size="small"
 															icon={
@@ -368,7 +356,7 @@ const ExpenseList = ({
 																	sx={{ fontSize: "0.9rem" }}
 																/>
 															}
-															label={new Date(exp.date).toLocaleDateString()}
+															label={new Date(entry.date).toLocaleDateString()}
 															variant="outlined"
 															sx={{
 																fontSize: "0.75rem",
@@ -379,20 +367,24 @@ const ExpenseList = ({
 												</Box>
 											</Box>
 											<Box
-												sx={{ display: "flex", alignItems: "center", gap: 1 }}
+												sx={{
+													display: "flex",
+													alignItems: "center",
+													gap: 1,
+												}}
 											>
 												<Typography
 													variant="h5"
 													sx={{
 														fontWeight: "bold",
-														color: "primary.main",
+														color: "success.main",
 														fontSize: isMobile ? "1.1rem" : "1.3rem",
 													}}
 												>
-													₹{exp.amount}
+													+₹{entry.amount}
 												</Typography>
 												<IconButton
-													onClick={() => onDeleteExpense(exp.id)}
+													onClick={() => onDeleteIncome(entry.id)}
 													sx={{
 														color: "error.main",
 														"&:hover": {
@@ -420,4 +412,4 @@ const ExpenseList = ({
 	);
 };
 
-export default ExpenseList;
+export default IncomeList;

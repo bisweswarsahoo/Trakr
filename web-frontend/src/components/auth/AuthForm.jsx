@@ -89,22 +89,26 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 		setLoading(true);
 		try {
 			if (isRegister) {
-				await API.post("/users/register", {
+				await API.post("/auth/register", {
 					name: form.name,
 					email: form.email,
 					password: form.password,
+					shop_name: form.name + "'s Shop",
 				});
 				navigate("/login");
 			} else {
-				const { data } = await API.post("/users/login", form);
+				const { data } = await API.post("/auth/login", {
+					email: form.email,
+					password: form.password,
+				});
 				localStorage.setItem("token", data.token);
 				onLogin(data.token);
 				navigate("/");
 			}
 		} catch (err) {
 			setError(
-				err.response?.data?.message ||
-					`${isRegister ? "Registration" : "Login"} failed`
+				err.response?.data?.error ||
+					`${isRegister ? "Registration" : "Login"} failed`,
 			);
 		} finally {
 			setLoading(false);
@@ -146,14 +150,14 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 						backdropFilter: "blur(20px)",
 						boxShadow: `0 32px 64px ${createAlphaColor(
 							theme.palette.common.black,
-							0.15
+							0.15,
 						)}, inset 0 1px 0 ${createAlphaColor(
 							theme.palette.common.white,
-							0.6
+							0.6,
 						)}`,
 						border: `1px solid ${createAlphaColor(
 							theme.palette.common.white,
-							0.2
+							0.2,
 						)}`,
 						position: "relative",
 						overflow: "hidden",

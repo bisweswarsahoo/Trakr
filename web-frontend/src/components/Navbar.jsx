@@ -22,11 +22,14 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { getGradientByName, createAlphaColor } from "../theme/utils";
 import ThemeToggle from "./ThemeToggle";
+import API from "../api";
 
 const Navbar = ({ onLogout }) => {
 	const navigate = useNavigate();
@@ -35,7 +38,12 @@ const Navbar = ({ onLogout }) => {
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-	const handleLogoutClick = () => {
+	const handleLogoutClick = async () => {
+		try {
+			await API.post("/auth/logout");
+		} catch (e) {
+			// Ignore logout API errors
+		}
 		onLogout();
 		navigate("/login");
 	};
@@ -64,10 +72,28 @@ const Navbar = ({ onLogout }) => {
 			color: theme.palette.success.main,
 		},
 		{
+			text: "Income",
+			icon: <TrendingUpIcon />,
+			path: "/income",
+			color: theme.palette.info.main,
+		},
+		{
 			text: "Dashboard",
 			icon: <DashboardIcon />,
 			path: "/dashboard",
 			color: theme.palette.primary.main,
+		},
+		{
+			text: "Reports",
+			icon: <ReceiptIcon />,
+			path: "/reports",
+			color: theme.palette.warning.main,
+		},
+		{
+			text: "Settings",
+			icon: <PersonIcon />,
+			path: "/settings",
+			color: theme.palette.secondary.main,
 		},
 	];
 
@@ -78,13 +104,13 @@ const Navbar = ({ onLogout }) => {
 				background: getGradientByName("primary", theme),
 				boxShadow: `0 8px 32px ${createAlphaColor(
 					theme.palette.primary.main,
-					0.3
+					0.3,
 				)}`,
 				backdropFilter: "blur(10px)",
 				zIndex: theme.zIndex.appBar,
 				borderBottom: `1px solid ${createAlphaColor(
 					theme.palette.common.white,
-					0.1
+					0.1,
 				)}`,
 			}}
 		>
@@ -302,7 +328,7 @@ const Navbar = ({ onLogout }) => {
 							pb: 2,
 							borderBottom: `1px solid ${createAlphaColor(
 								theme.palette.common.white,
-								0.2
+								0.2,
 							)}`,
 						}}
 					>

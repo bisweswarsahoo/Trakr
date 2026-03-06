@@ -1,14 +1,25 @@
 import axios from "axios";
 
 const API = axios.create({
-	baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api", // backend URL
+	baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
-// Optional: add auth header if logged in
+// Attach auth header if logged in
 API.interceptors.request.use((req) => {
 	const token = localStorage.getItem("token");
 	if (token) req.headers.Authorization = `Bearer ${token}`;
 	return req;
 });
+
+// Handle 401 responses globally
+API.interceptors.response.use(
+	(response) => response,
+	(error) => {
+		if (error.response?.status === 401) {
+			localStorage.removeItem("token");
+		}
+		return Promise.reject(error);
+	},
+);
 
 export default API;

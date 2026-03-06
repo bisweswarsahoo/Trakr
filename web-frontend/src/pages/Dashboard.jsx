@@ -32,7 +32,48 @@ const Dashboard = () => {
 		try {
 			setLoading(true);
 			const response = await API.get("/dashboard");
-			setDashboardData(response.data);
+			const raw = response.data;
+
+			// Transform API response to match component expectations
+			const transformed = {
+				summary: {
+					totalAmount: raw.monthly?.expense?.toFixed(2) || "0.00",
+					totalExpenses:
+						raw.recent_transactions?.filter((t) => t.type === "expense")
+							.length || 0,
+					categoryCount: raw.charts?.category_breakdown?.length || 0,
+					averageExpense:
+						raw.monthly?.expense && raw.recent_transactions?.length
+							? (
+									raw.monthly.expense /
+									Math.max(
+										raw.recent_transactions.filter((t) => t.type === "expense")
+											.length,
+										1,
+									)
+								).toFixed(2)
+							: "0.00",
+				},
+				charts: {
+					pieData: (raw.charts?.category_breakdown || []).map((c) => ({
+						name: c.name || "Other",
+						value: c.value || 0,
+					})),
+					barData: (raw.recent_transactions || [])
+						.filter((t) => t.type === "expense")
+						.slice(0, 7)
+						.map((t) => ({
+							name: t.title?.substring(0, 12) || "Expense",
+							amount: t.amount || 0,
+						})),
+					monthlyData: (raw.charts?.monthly_trend || []).map((m) => ({
+						month: m.month || "",
+						amount: m.expense || 0,
+					})),
+				},
+			};
+
+			setDashboardData(transformed);
 			setError(null);
 		} catch (err) {
 			console.error("Error fetching dashboard data:", err);

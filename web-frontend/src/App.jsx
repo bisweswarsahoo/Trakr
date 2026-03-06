@@ -9,6 +9,9 @@ import { Box } from "@mui/material";
 import Login from "./pages/LoginPage";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
+import IncomePage from "./pages/IncomePage";
+import ReportsPage from "./pages/ReportsPage";
+import SettingsPage from "./pages/SettingsPage";
 import Navbar from "./components/Navbar";
 import Register from "./pages/Register";
 
@@ -37,6 +40,10 @@ const App = () => {
 						}
 					/>
 					<Route
+						path="/register"
+						element={user ? <Navigate to="/" /> : <Register />}
+					/>
+					<Route
 						path="/"
 						element={user ? <Home /> : <Navigate to="/login" />}
 					/>
@@ -45,12 +52,26 @@ const App = () => {
 						element={user ? <Dashboard /> : <Navigate to="/login" />}
 					/>
 					<Route
-						path="*"
-						element={<Navigate to={user ? "/" : "/login"} />}
+						path="/income"
+						element={user ? <IncomePage /> : <Navigate to="/login" />}
 					/>
 					<Route
-						path="/register"
-						element={user ? <Navigate to="/" /> : <Register />}
+						path="/reports"
+						element={user ? <ReportsPage /> : <Navigate to="/login" />}
+					/>
+					<Route
+						path="/settings"
+						element={
+							user ? (
+								<SettingsPage onLogout={handleLogout} />
+							) : (
+								<Navigate to="/login" />
+							)
+						}
+					/>
+					<Route
+						path="*"
+						element={<Navigate to={user ? "/" : "/login"} />}
 					/>
 				</Routes>
 			</Box>
