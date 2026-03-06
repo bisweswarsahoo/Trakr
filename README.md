@@ -8,9 +8,12 @@ A full-stack expense tracking application for small shop owners to manage income
 Trakr/
 ├── mobile-frontend/    # React Native (Expo) — iOS & Android app
 ├── web-frontend/       # React + Vite — Web dashboard
-├── python-backend/     # FastAPI + PostgreSQL — Main REST API
-└── node-backend/       # Express + MongoDB — Supplementary API
+├── python-backend/     # FastAPI + PostgreSQL — Financial Service
+└── node-backend/       # Express + PostgreSQL — API Gateway & Auth
 ```
+
+> Both frontends communicate **only** with the Node.js API Gateway (`:5000/api`).  
+> The gateway handles auth directly and proxies financial requests to FastAPI.
 
 ---
 
@@ -30,23 +33,23 @@ uvicorn app.main:app --reload --host 0.0.0.0
 API runs at: `http://localhost:8000`  
 Interactive docs: `http://localhost:8000/docs`
 
-### 2. Node Backend
+### 2. Node Backend (API Gateway)
 
 ```bash
 cd node-backend
 npm install
-cp .env.example .env        # Edit MONGO_URI and JWT_SECRET
-npm run dev
+cp .env.example .env        # Edit DATABASE_URL, JWT_SECRET, FASTAPI_SERVICE_URL
+npm start
 ```
 
-API runs at: `http://localhost:5000`
+Gateway runs at: `http://localhost:5000`
 
 ### 3. Mobile Frontend (Expo)
 
 ```bash
 cd mobile-frontend
 npm install
-cp .env.example .env        # Set EXPO_PUBLIC_API_URL
+cp .env.example .env        # Set EXPO_PUBLIC_API_URL to http://<your-ip>:5000/api
 npx expo start
 ```
 
@@ -57,7 +60,7 @@ Scan the QR code with Expo Go on your phone (ensure phone and PC are on the same
 ```bash
 cd web-frontend
 npm install
-cp .env.example .env        # Set VITE_API_URL
+cp .env.example .env        # VITE_API_URL=http://localhost:5000/api
 npm run dev
 ```
 
@@ -67,15 +70,17 @@ Web dashboard at: `http://localhost:5173`
 
 ## Environment Variables Summary
 
-| Sub-project       | Variable              | Description                                                                                    |
-| ----------------- | --------------------- | ---------------------------------------------------------------------------------------------- |
-| `python-backend`  | `DATABASE_URL`        | PostgreSQL connection string (Supabase pooler)                                                 |
-| `python-backend`  | `SECRET_KEY`          | JWT signing secret (generate with `python3 -c "import secrets; print(secrets.token_hex(32))"`) |
-| `node-backend`    | `MONGO_URI`           | MongoDB connection string                                                                      |
-| `node-backend`    | `JWT_SECRET`          | JWT signing secret                                                                             |
-| `node-backend`    | `PORT`                | Server port (default: 5000)                                                                    |
-| `mobile-frontend` | `EXPO_PUBLIC_API_URL` | Backend API base URL                                                                           |
-| `web-frontend`    | `VITE_API_URL`        | Backend API base URL                                                                           |
+| Sub-project       | Variable               | Description                                       |
+| ----------------- | ---------------------- | ------------------------------------------------- |
+| `python-backend`  | `DATABASE_URL`         | PostgreSQL connection string (Supabase)           |
+| `python-backend`  | `SECRET_KEY`           | Internal security key                             |
+| `python-backend`  | `INTERNAL_SERVICE_KEY` | Shared key for gateway auth                       |
+| `node-backend`    | `DATABASE_URL`         | PostgreSQL connection string (Supabase)           |
+| `node-backend`    | `JWT_SECRET`           | JWT signing secret                                |
+| `node-backend`    | `FASTAPI_SERVICE_URL`  | FastAPI URL (default: http://localhost:8000)      |
+| `node-backend`    | `INTERNAL_SERVICE_KEY` | Shared key for FastAPI auth                       |
+| `mobile-frontend` | `EXPO_PUBLIC_API_URL`  | Node.js gateway URL (e.g. http://\<ip\>:5000/api) |
+| `web-frontend`    | `VITE_API_URL`         | Node.js gateway URL (http://localhost:5000/api)   |
 
 ---
 
@@ -92,14 +97,15 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 - Use a managed Postgres instance (e.g., Supabase)
 - Put behind a reverse proxy (Nginx / Caddy)
 
-### Node Backend
+### Node Backend (API Gateway)
 
 ```bash
 npm install --production
 NODE_ENV=production npm start
 ```
 
-- Set `MONGO_URI` to your cloud MongoDB Atlas URI
+- Set `DATABASE_URL` to your Supabase PostgreSQL URI
+- Set `FASTAPI_SERVICE_URL` to your deployed FastAPI URL
 - Use PM2 for process management: `pm2 start src/server.js`
 
 ### Mobile Frontend
@@ -125,9 +131,10 @@ Host the `dist/` folder on Vercel, Netlify, or any static host.
 
 ## Tech Stack
 
-| Layer      | Technology                                          |
-| ---------- | --------------------------------------------------- |
-| Mobile App | React Native, Expo, Zustand, React Hook Form        |
-| Web App    | React 19, Vite, Material UI, Recharts               |
-| Python API | FastAPI, SQLAlchemy, Alembic, PostgreSQL (Supabase) |
-| Node API   | Express.js, MongoDB, Mongoose, JWT                  |
+| Layer       | Technology                                          |
+| ----------- | --------------------------------------------------- |
+| Mobile App  | React Native, Expo, Zustand, React Hook Form        |
+| Web App     | React 19, Vite, Material UI, Recharts               |
+| Finance API | FastAPI, SQLAlchemy, Alembic, PostgreSQL (Supabase) |
+| API Gateway | Express.js, PostgreSQL, JWT, Axios (proxy)          |
+| Database    | PostgreSQL (shared, hosted on Supabase)             |

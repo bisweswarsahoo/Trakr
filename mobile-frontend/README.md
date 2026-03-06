@@ -72,11 +72,13 @@ cp .env.example .env
 
 Edit `.env` with the correct API URL:
 
-| Scenario                    | `EXPO_PUBLIC_API_URL` value            |
-| --------------------------- | -------------------------------------- |
-| Android Emulator            | `http://10.0.2.2:8000/api/v1`          |
-| iOS Simulator               | `http://localhost:8000/api/v1`         |
-| Physical Device (same WiFi) | `http://<your-machine-ip>:8000/api/v1` |
+| Scenario                    | `EXPO_PUBLIC_API_URL` value         |
+| --------------------------- | ----------------------------------- |
+| Android Emulator            | `http://10.0.2.2:5000/api`          |
+| iOS Simulator               | `http://localhost:5000/api`         |
+| Physical Device (same WiFi) | `http://<your-machine-ip>:5000/api` |
+
+> All requests go through the Node.js API Gateway. Do **not** point directly to FastAPI.
 
 Find your machine's local IP:
 
@@ -87,9 +89,14 @@ ipconfig getifaddr en0                             # macOS
 
 ### 3. Start the backend
 
-Make sure the Python backend is running with `--host 0.0.0.0`:
+Make sure both the Node.js gateway and FastAPI backend are running:
 
 ```bash
+# Terminal 1: Node.js gateway
+cd ../node-backend
+npm start
+
+# Terminal 2: FastAPI service
 cd ../python-backend
 uvicorn app.main:app --reload --host 0.0.0.0
 ```
@@ -111,9 +118,9 @@ Scan the QR code with:
 
 ## Environment Variables
 
-| Variable              | Required | Description                                           |
-| --------------------- | -------- | ----------------------------------------------------- |
-| `EXPO_PUBLIC_API_URL` | ✅ Yes   | Base URL for the backend API (must include `/api/v1`) |
+| Variable              | Required | Description                               |
+| --------------------- | -------- | ----------------------------------------- |
+| `EXPO_PUBLIC_API_URL` | ✅ Yes   | Node.js gateway URL (must include `/api`) |
 
 All `EXPO_PUBLIC_*` variables are bundled into the app at build time and are visible to users — do not put secrets here.
 

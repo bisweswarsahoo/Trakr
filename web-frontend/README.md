@@ -15,9 +15,11 @@ Web dashboard for the Trakr expense manager. Built with React, Vite, and Materia
 
 - 🔐 **Authentication** — Login and register with JWT token persistence via localStorage
 - 📊 **Dashboard** — Visual overview of income, expenses, and net profit with charts
-- 💸 **Expense Management** — View, add, and manage expense records
-- 💰 **Income Management** — Track and browse income entries
-- 📈 **Reports & Charts** — Data visualizations with Recharts and Chart.js
+- 💸 **Expense Management** — View, add, and delete expense records with category mapping
+- 💰 **Income Management** — Track and manage income entries
+- 📈 **Reports** — Period selector (daily/weekly/monthly/yearly) with summary cards and category breakdown
+- ⚙️ **Settings** — View/edit user profile (name, shop) and logout
+- 🌙 **Theme Toggle** — Dark and light mode support
 - 📱 **Responsive Design** — Works on desktop and mobile browsers
 
 ## Project Structure
@@ -25,10 +27,26 @@ Web dashboard for the Trakr expense manager. Built with React, Vite, and Materia
 ```
 web-frontend/
 ├── src/
-│   ├── api.js                   # Axios instance with auth interceptor
-│   ├── components/              # Reusable UI components
-│   ├── pages/                   # Page-level components
-│   ├── store/ or context/       # Global state management
+│   ├── api.js                   # Axios instance → Node.js gateway (:5000/api)
+│   ├── components/
+│   │   ├── auth/                # AuthForm, AuthButton, AuthTextField, etc.
+│   │   ├── Navbar.jsx           # Navigation (Expenses, Income, Dashboard, Reports, Settings)
+│   │   ├── AddExpenseForm.jsx   # Expense creation modal
+│   │   ├── AddIncomeForm.jsx    # Income creation modal
+│   │   ├── ExpenseList.jsx      # Expense list with summary
+│   │   ├── IncomeList.jsx       # Income list with summary
+│   │   ├── SummarySection.jsx   # Dashboard summary cards
+│   │   ├── ChartsSection.jsx    # Dashboard charts
+│   │   └── ThemeToggle.jsx      # Dark/light mode switch
+│   ├── pages/
+│   │   ├── Home.jsx             # Expenses page
+│   │   ├── IncomePage.jsx       # Income page
+│   │   ├── Dashboard.jsx        # Dashboard with charts
+│   │   ├── ReportsPage.jsx      # Financial reports
+│   │   ├── SettingsPage.jsx     # User profile + logout
+│   │   ├── LoginPage.jsx        # Login
+│   │   └── Register.jsx         # Registration
+│   ├── theme/                   # MUI theme + utilities
 │   └── main.jsx                 # App entry point
 ├── index.html
 ├── vite.config.js
@@ -59,12 +77,10 @@ cp .env.example .env
 Edit `.env`:
 
 ```env
-# Python backend (FastAPI):
-VITE_API_URL=http://localhost:8000/api/v1
-
-# Node backend (Express):
-# VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:5000/api
 ```
+
+> All requests go through the Node.js API Gateway. Do **not** point directly to FastAPI.
 
 ### 3. Start the dev server
 

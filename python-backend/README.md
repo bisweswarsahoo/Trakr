@@ -1,6 +1,6 @@
-# Trakr — Python Backend (FastAPI)
+# Trakr — Python Backend (FastAPI Financial Service)
 
-REST API for the Trakr expense manager. Built with FastAPI, SQLAlchemy, and PostgreSQL (Supabase).
+Core financial service for Trakr. Built with FastAPI, SQLAlchemy, and PostgreSQL (Supabase). Not directly exposed to frontends — all requests come through the Node.js API Gateway.
 
 ## Tech Stack
 
@@ -10,12 +10,13 @@ REST API for the Trakr expense manager. Built with FastAPI, SQLAlchemy, and Post
 
 ## Features
 
-- 🔐 **JWT Authentication** — Secure register/login with Bearer token flow
+- 🔐 **JWT Authentication** — Internal service auth via `X-Service-Key` + `X-User-ID` headers from gateway
 - 👤 **Multi-user support** — Each user sees only their own data
 - 💸 **Expense Management** — Full CRUD with categories, vendor, payment method, notes, and receipt URL
 - 💰 **Income Management** — Track income entries with title, amount, date, and payment method
 - 📂 **Category Management** — Organize expenses with custom or default categories
-- 📊 **Reports API** — Summary (total income, expense, net profit) and per-category expense breakdown with optional date range filtering
+- 📊 **Reports API** — Summary + daily/weekly/monthly/yearly reports and per-category breakdown
+- 📊 **Dashboard API** — Today/monthly totals, category breakdown, monthly trend, recent transactions
 - 🏥 **Health Check** — `/health/db` endpoint to verify database connectivity
 - 📄 **Auto-generated Docs** — Interactive Swagger UI at `/docs` and ReDoc at `/redoc`
 - **PostgreSQL** — Database (hosted on Supabase)
@@ -30,11 +31,11 @@ python-backend/
 │   ├── api/
 │   │   ├── deps.py              # Auth dependencies
 │   │   └── endpoints/
-│   │       ├── auth.py          # Register / Login / Me
-│   │       ├── expenses.py      # Expense CRUD
+│   │       ├── expenses.py      # Expense CRUD + receipt upload
 │   │       ├── income.py        # Income CRUD
 │   │       ├── categories.py    # Category CRUD
-│   │       └── reports.py       # Summary & chart data
+│   │       ├── dashboard.py     # Dashboard aggregation
+│   │       └── reports.py       # Period reports + category report
 │   ├── core/
 │   │   ├── config.py            # Pydantic settings (reads from .env)
 │   │   └── security.py          # JWT & bcrypt helpers
@@ -133,19 +134,29 @@ postgresql://postgres.project_ref:password@aws-0-region.pooler.supabase.com:6543
 
 ## API Endpoints
 
-| Method | Path                                | Auth | Description                  |
-| ------ | ----------------------------------- | ---- | ---------------------------- |
-| POST   | `/api/v1/auth/register`             | No   | Register a new user          |
-| POST   | `/api/v1/auth/login`                | No   | Login (returns JWT)          |
-| GET    | `/api/v1/auth/me`                   | Yes  | Get current user             |
-| GET    | `/api/v1/expenses/`                 | Yes  | List expenses                |
-| POST   | `/api/v1/expenses/`                 | Yes  | Create expense               |
-| GET    | `/api/v1/income/`                   | Yes  | List income records          |
-| POST   | `/api/v1/income/`                   | Yes  | Create income record         |
-| GET    | `/api/v1/categories/`               | Yes  | List categories              |
-| GET    | `/api/v1/reports/summary`           | Yes  | Income/expense summary       |
-| GET    | `/api/v1/reports/category-expenses` | Yes  | Expenses grouped by category |
-| GET    | `/health/db`                        | No   | Database health check        |
+| Method | Path                            | Auth     | Description            |
+| ------ | ------------------------------- | -------- | ---------------------- |
+| GET    | `/api/v1/expenses/`             | Internal | List expenses          |
+| POST   | `/api/v1/expenses/`             | Internal | Create expense         |
+| PUT    | `/api/v1/expenses/{id}`         | Internal | Update expense         |
+| DELETE | `/api/v1/expenses/{id}`         | Internal | Delete expense         |
+| POST   | `/api/v1/expenses/{id}/receipt` | Internal | Upload receipt image   |
+| GET    | `/api/v1/income/`               | Internal | List income records    |
+| POST   | `/api/v1/income/`               | Internal | Create income record   |
+| PUT    | `/api/v1/income/{id}`           | Internal | Update income record   |
+| DELETE | `/api/v1/income/{id}`           | Internal | Delete income record   |
+| GET    | `/api/v1/categories/`           | Internal | List categories        |
+| POST   | `/api/v1/categories/`           | Internal | Create category        |
+| GET    | `/api/v1/dashboard/`            | Internal | Dashboard aggregation  |
+| GET    | `/api/v1/reports/summary`       | Internal | Income/expense summary |
+| GET    | `/api/v1/reports/daily`         | Internal | Daily report           |
+| GET    | `/api/v1/reports/weekly`        | Internal | Weekly report          |
+| GET    | `/api/v1/reports/monthly`       | Internal | Monthly report         |
+| GET    | `/api/v1/reports/yearly`        | Internal | Yearly report          |
+| GET    | `/api/v1/reports/category`      | Internal | Category breakdown     |
+| GET    | `/health/db`                    | No       | Database health check  |
+
+> **Internal** = Authenticated via `X-Service-Key` and `X-User-ID` headers from the Node.js gateway
 
 ---
 
