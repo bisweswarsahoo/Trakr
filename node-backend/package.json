@@ -1,24 +1,30 @@
 {
 	"name": "trakr-node-backend",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"version": "2.0.0",
+	"description": "Trakr API Gateway - Auth, Notifications, Real-time & FastAPI Proxy",
+	"type": "module",
+	"main": "src/server.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "node src/server.js",
 		"dev": "nodemon src/server.js"
 	},
-	"keywords": [],
+	"keywords": [
+		"trakr",
+		"api-gateway",
+		"microservice"
+	],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"axios": "^1.7.9",
 		"bcryptjs": "^3.0.2",
 		"cors": "^2.8.5",
 		"dotenv": "^17.2.2",
 		"express": "^5.1.0",
 		"jsonwebtoken": "^9.0.2",
-		"mongoose": "^8.18.1",
-		"morgan": "^1.10.1"
+		"morgan": "^1.10.1",
+		"pg": "^8.13.1",
+		"socket.io": "^4.8.1"
 	},
 	"devDependencies": {
 		"nodemon": "^3.1.10"

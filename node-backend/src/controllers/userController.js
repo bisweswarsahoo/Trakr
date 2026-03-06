@@ -1,57 +1,71 @@
-import User from "../models/userModel.js";
-import generateToken from "../utils/generateToken.js";
+import { query } from "../config/db.js";
 
-// Register user
-export const registerUser = async (req, res) => {
+/**
+ * GET /users/me
+ * Get current authenticated user's profile
+ */
+export const getMe = async (req, res) => {
 	try {
-		const { name, email, password } = req.body;
+		const result = await query(
+			"SELECT id, name, email, shop_name, created_at FROM users WHERE id = $1",
+			[req.user.id],
+		);
 
-		const userExists = await User.findOne({ email });
-		if (userExists) {
-			return res.status(400).json({ error: "User already exists" });
+		if (result.rows.length === 0) {
+			return res.status(404).json({ error: "User not found" });
 		}
 
-		const user = new User({ name, email, password });
-		await user.save();
-
-		res.status(201).json({
-			_id: user._id,
-			name: user.name,
-			email: user.email,
-			token: generateToken(user._id),
-		});
+		res.json(result.rows[0]);
 	} catch (err) {
-		res.status(400).json({ error: err.message });
-	}
-};
-
-// Login user
-export const loginUser = async (req, res) => {
-	try {
-		const { email, password } = req.body;
-
-		const user = await User.findOne({ email });
-		if (user && (await user.matchPassword(password))) {
-			res.json({
-				_id: user._id,
-				name: user.name,
-				email: user.email,
-				token: generateToken(user._id),
-			});
-		} else {
-			res.status(401).json({ error: "Invalid email or password" });
-		}
-	} catch (err) {
+		console.error("Get user error:", err);
 		res.status(500).json({ error: "Server error" });
 	}
 };
 
-// Get all users (protected)
-export const getUsers = async (req, res) => {
+/**
+ * PUT /users/me
+ * Update current authenticated user's profile
+ */
+export const updateMe = async (req, res) => {
 	try {
-		const users = await User.find().select("-password");
-		res.json(users);
+		const { name, shop_name } = req.body;
+		const fields = [];
+		const values = [];
+		let paramCount = 0;
+
+		if (name) {
+			paramCount++;
+			fields.push(`name = $${paramCount}`);
+			values.push(name);
+		}
+
+		if (shop_name) {
+			paramCount++;
+			fields.push(`shop_name = $${paramCount}`);
+			values.push(shop_name);
+		}
+
+		if (fields.length === 0) {
+			return res.status(400).json({ error: "No fields to update" });
+		}
+
+		paramCount++;
+		values.push(req.user.id);
+
+		const result = await query(
+			`UPDATE users SET ${fields.join(", ")}, updated_at = NOW()
+			 WHERE id = $${paramCount}
+			 RETURNING id, name, email, shop_name, created_at, updated_at`,
+			values,
+		);
+
+		if (result.rows.length === 0) {
+			return res.status(404).json({ error: "User not found" });
+		}
+
+		res.json(result.rows[0]);
 	} catch (err) {
+		console.error("Update user error:", err);
 		res.status(500).json({ error: "Server error" });
 	}
 };
