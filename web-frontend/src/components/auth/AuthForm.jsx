@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import LockIcon from "@mui/icons-material/Lock";
-import API from "../../api";
+import API from "../../services/api";
 import AuthContainer from "./AuthContainer";
 import AuthHeader from "./AuthHeader";
 import AuthTextField from "./AuthTextField";

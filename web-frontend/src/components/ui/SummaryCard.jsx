@@ -25,8 +25,8 @@ const SummaryCard = ({ icon: Icon, title, value, color, subtitle }) => {
 				display: "flex",
 				flexDirection: "column",
 				"&:hover": {
-					transform: "translateY(-8px)",
-					boxShadow: `0 12px 35px ${theme.palette[color].main}25`,
+					transform: "translateY(-4px)",
+					boxShadow: `0 8px 24px ${theme.palette[color].main}20`,
 				},
 				"&::before": {
 					content: '""',
@@ -65,7 +65,7 @@ const SummaryCard = ({ icon: Icon, title, value, color, subtitle }) => {
 							width: isMobile ? 40 : 48,
 							height: isMobile ? 40 : 48,
 							backgroundColor: `${theme.palette[color].main}`,
-							boxShadow: `0 8px 20px ${theme.palette[color].main}30`,
+							boxShadow: `0 4px 12px ${theme.palette[color].main}30`,
 						}}
 					>
 						<Icon fontSize={isMobile ? "medium" : "large"} />

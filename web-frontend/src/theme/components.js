@@ -56,6 +56,9 @@ export const componentStyles = {
 				"& .MuiOutlinedInput-root": {
 					borderRadius: 12,
 					transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+					"& .MuiOutlinedInput-notchedOutline": {
+						borderColor: colors.gray[300], // Match mobile borderStrong
+					},
 					"&:hover": {
 						"& .MuiOutlinedInput-notchedOutline": {
 							borderColor: colors.primary[400],
@@ -69,7 +72,8 @@ export const componentStyles = {
 					},
 				},
 				"& .MuiInputLabel-root": {
-					color: colors.gray[600],
+					color: colors.gray[500], // Match mobile textSecondary
+					fontWeight: 600,
 					"&.Mui-focused": {
 						color: colors.primary[500],
 					},
@@ -102,10 +106,10 @@ export const componentStyles = {
 		styleOverrides: {
 			root: {
 				borderRadius: 16,
-				boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+				boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)", // Softer shadow matching Mobile BaseCard
 				transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
 				"&:hover": {
-					boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
+					boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
 					transform: "translateY(-2px)",
 				},
 			},

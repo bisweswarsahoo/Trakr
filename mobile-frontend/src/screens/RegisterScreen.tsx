@@ -10,11 +10,11 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import { Input } from "../components/Input";
-import { Button } from "../components/Button";
-import { Card } from "../components/Card";
+import { TextInputField } from "../components/ui/TextInputField";
+import { Button } from "../components/ui/Button";
+import { BaseCard } from "../components/ui/BaseCard";
 import { api } from "../services/api";
-import { colors, spacing } from "../theme";
+import { colors, spacing, typography } from "../theme";
 
 export const RegisterScreen = () => {
 	const {
@@ -59,12 +59,12 @@ export const RegisterScreen = () => {
 					<Text style={styles.subtitle}>Start tracking your shop expenses</Text>
 				</View>
 
-				<Card>
+				<BaseCard>
 					<Controller
 						control={control}
 						rules={{ required: "Name is required" }}
 						render={({ field: { onChange, onBlur, value } }) => (
-							<Input
+							<TextInputField
 								label="Full Name"
 								onBlur={onBlur}
 								onChangeText={onChange}
@@ -79,7 +79,7 @@ export const RegisterScreen = () => {
 						control={control}
 						rules={{ required: "Shop Name is required" }}
 						render={({ field: { onChange, onBlur, value } }) => (
-							<Input
+							<TextInputField
 								label="Shop Name"
 								onBlur={onBlur}
 								onChangeText={onChange}
@@ -97,7 +97,7 @@ export const RegisterScreen = () => {
 							pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
 						}}
 						render={({ field: { onChange, onBlur, value } }) => (
-							<Input
+							<TextInputField
 								label="Email"
 								onBlur={onBlur}
 								onChangeText={onChange}
@@ -117,7 +117,7 @@ export const RegisterScreen = () => {
 							minLength: { value: 6, message: "Minimum 6 characters" },
 						}}
 						render={({ field: { onChange, onBlur, value } }) => (
-							<Input
+							<TextInputField
 								label="Password"
 								onBlur={onBlur}
 								onChangeText={onChange}
@@ -135,7 +135,7 @@ export const RegisterScreen = () => {
 						loading={loading}
 						style={{ marginTop: spacing.md }}
 					/>
-				</Card>
+				</BaseCard>
 
 				<View style={styles.footer}>
 					<Text style={styles.footerText}>Already have an account? </Text>
@@ -166,13 +166,12 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	title: {
-		fontSize: 28,
-		fontWeight: "bold",
+		...typography.h1,
 		color: colors.text,
 		marginBottom: spacing.sm,
 	},
 	subtitle: {
-		fontSize: 16,
+		...typography.body,
 		color: colors.textSecondary,
 	},
 	footer: {

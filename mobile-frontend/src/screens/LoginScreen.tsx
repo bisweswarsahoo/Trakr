@@ -10,13 +10,13 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
-import { Input } from "../components/Input";
-import { Button } from "../components/Button";
-import { Card } from "../components/Card";
+import { TextInputField } from "../components/ui/TextInputField";
+import { Button } from "../components/ui/Button";
+import { BaseCard } from "../components/ui/BaseCard";
 import { api } from "../services/api";
 import { useAuthStore } from "../store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { colors, spacing } from "../theme";
+import { colors, spacing, typography } from "../theme";
 
 export const LoginScreen = () => {
 	const {
@@ -63,7 +63,7 @@ export const LoginScreen = () => {
 					<Text style={styles.subtitle}>Login to Trakr</Text>
 				</View>
 
-				<Card>
+				<BaseCard>
 					<Controller
 						control={control}
 						rules={{
@@ -71,7 +71,7 @@ export const LoginScreen = () => {
 							pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
 						}}
 						render={({ field: { onChange, onBlur, value } }) => (
-							<Input
+							<TextInputField
 								label="Email"
 								onBlur={onBlur}
 								onChangeText={onChange}
@@ -88,7 +88,7 @@ export const LoginScreen = () => {
 						control={control}
 						rules={{ required: "Password is required" }}
 						render={({ field: { onChange, onBlur, value } }) => (
-							<Input
+							<TextInputField
 								label="Password"
 								onBlur={onBlur}
 								onChangeText={onChange}
@@ -106,7 +106,7 @@ export const LoginScreen = () => {
 						loading={loading}
 						style={{ marginTop: spacing.md }}
 					/>
-				</Card>
+				</BaseCard>
 
 				<View style={styles.footer}>
 					<Text style={styles.footerText}>Don't have an account? </Text>
@@ -137,13 +137,12 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	title: {
-		fontSize: 28,
-		fontWeight: "bold",
+		...typography.h1,
 		color: colors.text,
 		marginBottom: spacing.sm,
 	},
 	subtitle: {
-		fontSize: 16,
+		...typography.body,
 		color: colors.textSecondary,
 	},
 	footer: {

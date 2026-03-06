@@ -6,9 +6,9 @@ import {
 	ScrollView,
 	RefreshControl,
 } from "react-native";
-import { Card } from "../components/Card";
+import { BaseCard } from "../components/ui/BaseCard";
 import { api } from "../services/api";
-import { colors, spacing } from "../theme";
+import { colors, spacing, typography } from "../theme";
 import { SummaryReport } from "../types";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -55,21 +55,21 @@ export const ReportsScreen = () => {
 				<Text style={styles.title}>Financial Reports</Text>
 			</View>
 
-			<Card style={styles.card}>
+			<BaseCard style={styles.card}>
 				<Text style={styles.cardTitle}>Total Income</Text>
 				<Text style={[styles.amount, { color: colors.success }]}>
 					${summary.total_income.toFixed(2)}
 				</Text>
-			</Card>
+			</BaseCard>
 
-			<Card style={styles.card}>
+			<BaseCard style={styles.card}>
 				<Text style={styles.cardTitle}>Total Expenses</Text>
 				<Text style={[styles.amount, { color: colors.error }]}>
 					${summary.total_expense.toFixed(2)}
 				</Text>
-			</Card>
+			</BaseCard>
 
-			<Card style={styles.card}>
+			<BaseCard style={styles.card}>
 				<Text style={styles.cardTitle}>Net Profit</Text>
 				<Text
 					style={[
@@ -79,14 +79,14 @@ export const ReportsScreen = () => {
 				>
 					${summary.net_profit.toFixed(2)}
 				</Text>
-			</Card>
+			</BaseCard>
 
 			{/* Additional UI for exporting reports would go here */}
-			<Card style={styles.card}>
+			<BaseCard style={styles.card}>
 				<Text style={styles.exportText}>
 					Export functionality (PDF / CSV) coming soon
 				</Text>
-			</Card>
+			</BaseCard>
 		</ScrollView>
 	);
 };
@@ -105,8 +105,7 @@ const styles = StyleSheet.create({
 		marginBottom: spacing.md,
 	},
 	title: {
-		fontSize: 24,
-		fontWeight: "bold",
+		...typography.h2,
 		color: colors.text,
 	},
 	card: {
@@ -116,13 +115,12 @@ const styles = StyleSheet.create({
 		paddingVertical: spacing.xl,
 	},
 	cardTitle: {
-		fontSize: 16,
+		...typography.body,
 		color: colors.textSecondary,
 		marginBottom: spacing.xs,
 	},
 	amount: {
-		fontSize: 32,
-		fontWeight: "bold",
+		...typography.h1,
 	},
 	exportText: {
 		color: colors.primary,

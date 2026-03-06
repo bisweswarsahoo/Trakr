@@ -1,12 +1,16 @@
 import React from "react";
 import { View, StyleSheet, ViewProps } from "react-native";
-import { colors, spacing, borderRadius } from "../theme";
+import { colors, spacing, borderRadius } from "../../theme";
 
 interface CardProps extends ViewProps {
 	children: React.ReactNode;
 }
 
-export const Card: React.FC<CardProps> = ({ children, style, ...props }) => {
+export const BaseCard: React.FC<CardProps> = ({
+	children,
+	style,
+	...props
+}) => {
 	return (
 		<View
 			style={[styles.card, style]}
@@ -20,16 +24,17 @@ export const Card: React.FC<CardProps> = ({ children, style, ...props }) => {
 const styles = StyleSheet.create({
 	card: {
 		backgroundColor: colors.surface,
-		borderRadius: borderRadius.lg,
+		borderRadius: borderRadius.xl, // 16px to match web
 		padding: spacing.md,
+		// Soft, diffused shadow matching web elevation=8
 		shadowColor: "#000",
 		shadowOffset: {
 			width: 0,
-			height: 2,
+			height: 4,
 		},
-		shadowOpacity: 0.1,
-		shadowRadius: 3.84,
-		elevation: 5,
+		shadowOpacity: 0.08,
+		shadowRadius: 12,
+		elevation: 4,
 		marginBottom: spacing.md,
 	},
 });

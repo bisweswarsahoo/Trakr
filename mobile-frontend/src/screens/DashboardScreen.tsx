@@ -9,9 +9,9 @@ import {
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { PieChart, BarChart } from "react-native-chart-kit";
-import { Card } from "../components/Card";
+import { BaseCard } from "../components/ui/BaseCard";
 import { api } from "../services/api";
-import { colors, spacing, borderRadius } from "../theme";
+import { colors, spacing, borderRadius, typography } from "../theme";
 import { SummaryReport } from "../types";
 
 const screenWidth = Dimensions.get("window").width;
@@ -88,7 +88,7 @@ export const DashboardScreen = () => {
 			</View>
 
 			<View style={styles.summaryRow}>
-				<Card
+				<BaseCard
 					style={[
 						styles.summaryCard,
 						{ backgroundColor: colors.success + "20" },
@@ -98,19 +98,19 @@ export const DashboardScreen = () => {
 					<Text style={[styles.summaryValue, { color: colors.success }]}>
 						${summary.total_income.toFixed(2)}
 					</Text>
-				</Card>
+				</BaseCard>
 
-				<Card
+				<BaseCard
 					style={[styles.summaryCard, { backgroundColor: colors.error + "20" }]}
 				>
 					<Text style={styles.summaryLabel}>Expense</Text>
 					<Text style={[styles.summaryValue, { color: colors.error }]}>
 						${summary.total_expense.toFixed(2)}
 					</Text>
-				</Card>
+				</BaseCard>
 			</View>
 
-			<Card style={styles.netCard}>
+			<BaseCard style={styles.netCard}>
 				<Text style={styles.summaryLabel}>Net Profit</Text>
 				<Text
 					style={[
@@ -123,9 +123,9 @@ export const DashboardScreen = () => {
 				>
 					${summary.net_profit.toFixed(2)}
 				</Text>
-			</Card>
+			</BaseCard>
 
-			<Card>
+			<BaseCard>
 				<Text style={styles.chartTitle}>Expense per Category</Text>
 				{categoryExpenses.length > 0 ? (
 					<PieChart
@@ -142,7 +142,7 @@ export const DashboardScreen = () => {
 				) : (
 					<Text style={styles.noData}>No expense data available</Text>
 				)}
-			</Card>
+			</BaseCard>
 		</ScrollView>
 	);
 };
@@ -158,8 +158,7 @@ const styles = StyleSheet.create({
 		marginTop: spacing.xl,
 	},
 	title: {
-		fontSize: 28,
-		fontWeight: "bold",
+		...typography.h1,
 		color: colors.text,
 	},
 	summaryRow: {
@@ -185,11 +184,11 @@ const styles = StyleSheet.create({
 		fontWeight: "600",
 	},
 	summaryValue: {
-		fontSize: 20,
+		...typography.h3,
 		fontWeight: "bold",
 	},
 	chartTitle: {
-		fontSize: 18,
+		...typography.body,
 		fontWeight: "600",
 		color: colors.text,
 		marginBottom: spacing.md,

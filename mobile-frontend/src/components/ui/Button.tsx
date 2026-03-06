@@ -6,8 +6,10 @@ import {
 	ActivityIndicator,
 	ViewStyle,
 	TextStyle,
+	View,
 } from "react-native";
-import { colors, spacing, borderRadius } from "../theme";
+import { colors, spacing, borderRadius } from "../../theme";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface ButtonProps {
 	title: string;
@@ -32,7 +34,7 @@ export const Button: React.FC<ButtonProps> = ({
 		if (disabled) return colors.border;
 		switch (variant) {
 			case "primary":
-				return colors.primary;
+				return colors.primary; // Fallback if gradient fails
 			case "secondary":
 				return colors.secondary;
 			case "danger":
@@ -50,21 +52,8 @@ export const Button: React.FC<ButtonProps> = ({
 		return colors.surface;
 	};
 
-	return (
-		<TouchableOpacity
-			style={[
-				styles.button,
-				{ backgroundColor: getBackgroundColor() },
-				variant === "outline" && {
-					borderWidth: 1,
-					borderColor: colors.primary,
-				},
-				style,
-			]}
-			onPress={onPress}
-			disabled={disabled || loading}
-			activeOpacity={0.8}
-		>
+	const buttonContent = (
+		<>
 			{loading ? (
 				<ActivityIndicator color={getTextColor()} />
 			) : (
@@ -72,20 +61,57 @@ export const Button: React.FC<ButtonProps> = ({
 					{title}
 				</Text>
 			)}
+		</>
+	);
+
+	return (
+		<TouchableOpacity
+			style={[
+				styles.buttonContainer,
+				variant === "outline" && {
+					borderWidth: 1,
+					borderColor: colors.primary,
+				},
+				variant !== "primary" &&
+					!disabled && { backgroundColor: getBackgroundColor() },
+				disabled && { backgroundColor: colors.border },
+				style,
+			]}
+			onPress={onPress}
+			disabled={disabled || loading}
+			activeOpacity={0.8}
+		>
+			{variant === "primary" && !disabled ? (
+				<LinearGradient
+					colors={colors.gradients.primary as any}
+					start={{ x: 0, y: 0 }}
+					end={{ x: 1, y: 1 }}
+					style={styles.gradient}
+				>
+					{buttonContent}
+				</LinearGradient>
+			) : (
+				<View style={styles.gradient}>{buttonContent}</View>
+			)}
 		</TouchableOpacity>
 	);
 };
 
 const styles = StyleSheet.create({
-	button: {
-		paddingVertical: spacing.md,
+	buttonContainer: {
+		borderRadius: borderRadius.lg, // 12px to match web
+		overflow: "hidden",
+	},
+	gradient: {
+		paddingVertical: 10,
 		paddingHorizontal: spacing.lg,
-		borderRadius: borderRadius.md,
 		alignItems: "center",
 		justifyContent: "center",
+		minHeight: 44, // Touch target size
 	},
 	text: {
 		fontSize: 16,
 		fontWeight: "600",
+		letterSpacing: 0.3,
 	},
 });

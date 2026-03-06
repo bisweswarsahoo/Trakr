@@ -1,11 +1,11 @@
 import React from "react";
 import { View, StyleSheet, Text, ScrollView, Alert } from "react-native";
-import { Card } from "../components/Card";
-import { Button } from "../components/Button";
+import { BaseCard } from "../components/ui/BaseCard";
+import { Button } from "../components/ui/Button";
 import { useAuthStore } from "../store";
 import { api } from "../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { colors, spacing } from "../theme";
+import { colors, spacing, typography } from "../theme";
 
 export const SettingsScreen = () => {
 	const { user, signOut } = useAuthStore();
@@ -35,7 +35,7 @@ export const SettingsScreen = () => {
 				<Text style={styles.title}>Settings</Text>
 			</View>
 
-			<Card style={styles.card}>
+			<BaseCard style={styles.card}>
 				<View style={styles.profileSection}>
 					<View style={styles.avatar}>
 						<Text style={styles.avatarText}>
@@ -47,9 +47,9 @@ export const SettingsScreen = () => {
 						<Text style={styles.userEmail}>{user?.email}</Text>
 					</View>
 				</View>
-			</Card>
+			</BaseCard>
 
-			<Card style={styles.card}>
+			<BaseCard style={styles.card}>
 				<View style={styles.settingRow}>
 					<Text style={styles.settingText}>Shop Name</Text>
 					<Text style={styles.settingValue}>{user?.shop_name}</Text>
@@ -64,7 +64,7 @@ export const SettingsScreen = () => {
 					<Text style={styles.settingText}>Dark Mode</Text>
 					<Text style={styles.settingValue}>Off</Text>
 				</View>
-			</Card>
+			</BaseCard>
 
 			<Button
 				title="Logout"
@@ -90,8 +90,7 @@ const styles = StyleSheet.create({
 		marginBottom: spacing.md,
 	},
 	title: {
-		fontSize: 24,
-		fontWeight: "bold",
+		...typography.h2,
 		color: colors.text,
 	},
 	card: {
@@ -120,12 +119,12 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	userName: {
-		fontSize: 18,
+		...typography.h3,
 		fontWeight: "bold",
 		color: colors.text,
 	},
 	userEmail: {
-		fontSize: 14,
+		...typography.caption,
 		color: colors.textSecondary,
 		marginTop: 2,
 	},
@@ -135,11 +134,11 @@ const styles = StyleSheet.create({
 		paddingVertical: spacing.sm,
 	},
 	settingText: {
-		fontSize: 16,
+		...typography.body,
 		color: colors.text,
 	},
 	settingValue: {
-		fontSize: 16,
+		...typography.body,
 		color: colors.textSecondary,
 		fontWeight: "500",
 	},
