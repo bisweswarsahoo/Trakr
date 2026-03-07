@@ -1,0 +1,26 @@
+{
+	"name": "@trakr/ui",
+	"version": "1.0.0",
+	"main": "src/index.ts",
+	"types": "src/index.ts",
+	"scripts": {
+		"dev": "tsc --watch",
+		"build": "tsc"
+	},
+	"dependencies": {
+		"@trakr/design-system": "workspace:*"
+	},
+	"peerDependencies": {
+		"@emotion/react": "*",
+		"@emotion/styled": "*",
+		"@mui/material": "*",
+		"expo-linear-gradient": "*",
+		"react": "*",
+		"react-native": "*"
+	},
+	"devDependencies": {
+		"@types/react": "^19.1.17",
+		"@types/react-native": "^0.73.0",
+		"typescript": "^5.0.0"
+	}
+}

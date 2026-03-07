@@ -1,0 +1,37 @@
+{
+	"name": "@trakr/api-gateway",
+	"version": "2.0.0",
+	"description": "Trakr API Gateway - Auth, Notifications, Real-time & FastAPI Proxy",
+	"type": "module",
+	"main": "src/server.js",
+	"scripts": {
+		"start": "tsx src/server.js",
+		"dev": "nodemon --exec tsx src/server.js"
+	},
+	"keywords": [
+		"trakr",
+		"api-gateway",
+		"microservice"
+	],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"axios": "^1.7.9",
+		"bcryptjs": "^3.0.2",
+		"cors": "^2.8.5",
+		"dotenv": "^17.2.2",
+		"express": "^5.1.0",
+		"jsonwebtoken": "^9.0.2",
+		"morgan": "^1.10.1",
+		"pg": "^8.13.1",
+		"socket.io": "^4.8.1",
+		"@trakr/config": "workspace:*",
+		"@trakr/types": "workspace:*",
+		"@trakr/utils": "workspace:*",
+		"@trakr/validation": "workspace:*"
+	},
+	"devDependencies": {
+		"nodemon": "^3.1.10",
+		"tsx": "^4.7.1"
+	}
+}
