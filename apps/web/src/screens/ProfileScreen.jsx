@@ -13,26 +13,26 @@ import {
 	Snackbar,
 	useTheme,
 	useMediaQuery,
+	InputAdornment,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
-import StoreIcon from "@mui/icons-material/Store";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import API from "../services/api";
 import { getGradientByName } from "@trakr/design-system";
-import { getInitials } from "@trakr/utils";
+import { getInitials, formatDate } from "@trakr/utils";
 
-const SettingsPage = ({ onLogout }) => {
+const ProfilePage = ({ onLogout }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 	const mode = theme.palette.mode;
 
 	const [user, setUser] = useState(null);
 	const [editing, setEditing] = useState(false);
-	const [form, setForm] = useState({ name: "", shop_name: "" });
+	const [form, setForm] = useState({ name: "" });
 	const [loading, setLoading] = useState(true);
 	const [saving, setSaving] = useState(false);
 	const [snackbar, setSnackbar] = useState({
@@ -46,7 +46,7 @@ const SettingsPage = ({ onLogout }) => {
 			try {
 				const { data } = await API.get("/users/me");
 				setUser(data);
-				setForm({ name: data.name || "", shop_name: data.shop_name || "" });
+				setForm({ name: data.name || "" });
 			} catch (err) {
 				console.error("Error fetching user", err);
 			} finally {
@@ -182,21 +182,6 @@ const SettingsPage = ({ onLogout }) => {
 					>
 						{user?.email}
 					</Typography>
-					{user?.shop_name && (
-						<Chip
-							icon={<StoreIcon sx={{ color: "white !important" }} />}
-							label={user.shop_name}
-							sx={{
-								mt: 1.5,
-								bgcolor: "rgba(255,255,255,0.2)",
-								color: "white",
-								border: "1px solid rgba(255,255,255,0.3)",
-								fontWeight: 500,
-								position: "relative",
-								zIndex: 1,
-							}}
-						/>
-					)}
 				</Box>
 
 				{/* Profile Details / Edit Form */}
@@ -213,25 +198,9 @@ const SettingsPage = ({ onLogout }) => {
 								slotProps={{
 									input: {
 										startAdornment: (
-											<PersonIcon sx={{ color: "primary.main", mr: 1 }} />
-										),
-									},
-								}}
-							/>
-							<TextField
-								label="Shop Name"
-								value={form.shop_name}
-								onChange={(e) =>
-									setForm((prev) => ({
-										...prev,
-										shop_name: e.target.value,
-									}))
-								}
-								fullWidth
-								slotProps={{
-									input: {
-										startAdornment: (
-											<StoreIcon sx={{ color: "primary.main", mr: 1 }} />
+											<InputAdornment position="start">
+												<PersonIcon sx={{ color: "primary.main" }} />
+											</InputAdornment>
 										),
 									},
 								}}
@@ -245,7 +214,6 @@ const SettingsPage = ({ onLogout }) => {
 										setEditing(false);
 										setForm({
 											name: user?.name || "",
-											shop_name: user?.shop_name || "",
 										});
 									}}
 									sx={{ borderRadius: 2, textTransform: "none" }}
@@ -288,16 +256,9 @@ const SettingsPage = ({ onLogout }) => {
 									value: user?.email,
 								},
 								{
-									icon: <StoreIcon color="primary" />,
-									label: "Shop",
-									value: user?.shop_name,
-								},
-								{
 									icon: <CalendarTodayIcon color="primary" />,
 									label: "Member since",
-									value: user?.created_at
-										? new Date(user.created_at).toLocaleDateString()
-										: "—",
+									value: user?.created_at ? formatDate(user.created_at) : "—",
 								},
 							].map((item, i) => (
 								<Box
@@ -306,7 +267,9 @@ const SettingsPage = ({ onLogout }) => {
 										display: "flex",
 										alignItems: "center",
 										gap: 2,
-										p: 1.5,
+										px: 2,
+										py: 1,
+										minHeight: "56px",
 										borderRadius: 2,
 										bgcolor:
 											theme.palette.mode === "light"
@@ -392,4 +355,4 @@ const SettingsPage = ({ onLogout }) => {
 	);
 };
 
-export default SettingsPage;
+export default ProfilePage;

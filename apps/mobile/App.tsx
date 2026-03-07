@@ -4,6 +4,7 @@ import AppNavigator from "./src/navigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "./src/store";
 import { api } from "./src/services/api";
+import { ThemeProvider } from "@trakr/ui";
 
 export default function App() {
 	const { signIn } = useAuthStore();
@@ -28,7 +29,9 @@ export default function App() {
 
 	return (
 		<SafeAreaProvider>
-			<AppNavigator />
+			<ThemeProvider>
+				<AppNavigator />
+			</ThemeProvider>
 		</SafeAreaProvider>
 	);
 }

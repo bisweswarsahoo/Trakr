@@ -5,6 +5,7 @@ import {
 	Text,
 	ScrollView,
 	RefreshControl,
+	TouchableOpacity,
 } from "react-native";
 import { BaseCard } from "@trakr/ui";
 import { api } from "../services/api";
@@ -13,18 +14,31 @@ import { SummaryReport } from "@trakr/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatCurrency } from "@trakr/utils";
 
+const periods = [
+	{ label: "Daily", value: "daily" },
+	{ label: "Weekly", value: "weekly" },
+	{ label: "Monthly", value: "monthly" },
+	{ label: "Yearly", value: "yearly" },
+];
+
 export const ReportsScreen = () => {
 	const [summary, setSummary] = useState<SummaryReport>({
 		total_income: 0,
 		total_expense: 0,
 		net_profit: 0,
 	});
+	const [period, setPeriod] = useState("monthly");
+	const [categoryReport, setCategoryReport] = useState<any[]>([]);
 	const [refreshing, setRefreshing] = useState(false);
 
 	const fetchReports = async () => {
 		try {
-			const summaryRes = await api.get("/reports/summary");
+			const [summaryRes, categoryRes] = await Promise.all([
+				api.get(`/reports/${period}`),
+				api.get("/reports/category"),
+			]);
 			setSummary(summaryRes.data);
+			setCategoryReport(categoryRes.data);
 		} catch (e) {
 			console.error(e);
 		}
@@ -33,7 +47,7 @@ export const ReportsScreen = () => {
 	useFocusEffect(
 		React.useCallback(() => {
 			fetchReports();
-		}, []),
+		}, [period]),
 	);
 
 	const onRefresh = async () => {
@@ -54,6 +68,33 @@ export const ReportsScreen = () => {
 		>
 			<View style={styles.header}>
 				<Text style={styles.title}>Financial Reports</Text>
+			</View>
+
+			<View style={styles.periodToggle}>
+				<ScrollView
+					horizontal
+					showsHorizontalScrollIndicator={false}
+				>
+					{periods.map((p) => (
+						<TouchableOpacity
+							key={p.value}
+							style={[
+								styles.periodButton,
+								period === p.value && styles.periodButtonActive,
+							]}
+							onPress={() => setPeriod(p.value)}
+						>
+							<Text
+								style={[
+									styles.periodButtonText,
+									period === p.value && styles.periodButtonTextActive,
+								]}
+							>
+								{p.label}
+							</Text>
+						</TouchableOpacity>
+					))}
+				</ScrollView>
 			</View>
 
 			<BaseCard style={styles.card}>
@@ -80,6 +121,25 @@ export const ReportsScreen = () => {
 				>
 					{formatCurrency(summary.net_profit)}
 				</Text>
+			</BaseCard>
+
+			<BaseCard style={styles.card}>
+				<Text style={styles.cardTitle}>Spending by Category</Text>
+				{categoryReport.length === 0 ? (
+					<Text style={styles.emptyText}>No category data available</Text>
+				) : (
+					categoryReport.map((cat, i) => (
+						<View
+							key={i}
+							style={styles.categoryRow}
+						>
+							<Text style={styles.categoryName}>{cat.category_name}</Text>
+							<Text style={styles.categoryAmount}>
+								{formatCurrency(cat.total)}
+							</Text>
+						</View>
+					))
+				)}
 			</BaseCard>
 
 			{/* Additional UI for exporting reports would go here */}
@@ -127,5 +187,51 @@ const styles = StyleSheet.create({
 		color: colors.primary,
 		fontWeight: "500",
 		textAlign: "center",
+	},
+	periodToggle: {
+		paddingHorizontal: spacing.lg,
+		marginBottom: spacing.md,
+		flexDirection: "row",
+	},
+	periodButton: {
+		paddingVertical: spacing.sm,
+		paddingHorizontal: spacing.md,
+		borderRadius: 20,
+		backgroundColor: colors.surface,
+		marginRight: spacing.sm,
+		borderWidth: 1,
+		borderColor: colors.border,
+	},
+	periodButtonActive: {
+		backgroundColor: colors.primary,
+		borderColor: colors.primary,
+	},
+	periodButtonText: {
+		color: colors.textSecondary,
+		fontWeight: "600",
+	},
+	periodButtonTextActive: {
+		color: colors.surface,
+	},
+	categoryRow: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		paddingVertical: spacing.sm,
+		borderBottomWidth: 1,
+		borderBottomColor: colors.border,
+		width: "100%",
+	},
+	categoryName: {
+		...typography.body,
+		color: colors.text,
+	},
+	categoryAmount: {
+		...typography.body,
+		fontWeight: "bold",
+		color: colors.text,
+	},
+	emptyText: {
+		color: colors.textSecondary,
+		marginTop: spacing.md,
 	},
 });

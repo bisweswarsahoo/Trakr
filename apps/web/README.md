@@ -18,7 +18,7 @@ Web dashboard for the Trakr expense manager. Built with React, Vite, and Materia
 - 💸 **Expense Management** — View, add, and delete expense records with category mapping
 - 💰 **Income Management** — Track and manage income entries
 - 📈 **Reports** — Period selector (daily/weekly/monthly/yearly) with summary cards and category breakdown
-- ⚙️ **Settings** — View/edit user profile (name, shop) and logout
+- ⚙️ **Profile** — View/edit user profile and logout
 - 🌙 **Theme Toggle** — Dark and light mode support
 - 📱 **Responsive Design** — Works on desktop and mobile browsers
 
@@ -30,7 +30,7 @@ web-frontend/
 │   ├── api.js                   # Axios instance → Node.js gateway (:5000/api)
 │   ├── components/
 │   │   ├── auth/                # AuthForm, AuthButton, AuthTextField, etc.
-│   │   ├── Navbar.jsx           # Navigation (Expenses, Income, Dashboard, Reports, Settings)
+│   │   ├── Navbar.jsx           # Navigation (Expenses, Income, Dashboard, Reports, Profile)
 │   │   ├── AddExpenseForm.jsx   # Expense creation modal
 │   │   ├── AddIncomeForm.jsx    # Income creation modal
 │   │   ├── ExpenseList.jsx      # Expense list with summary
@@ -43,10 +43,9 @@ web-frontend/
 │   │   ├── IncomePage.jsx       # Income page
 │   │   ├── Dashboard.jsx        # Dashboard with charts
 │   │   ├── ReportsPage.jsx      # Financial reports
-│   │   ├── SettingsPage.jsx     # User profile + logout
+│   │   ├── ProfileScreen.jsx    # User profile + logout
 │   │   ├── LoginPage.jsx        # Login
 │   │   └── Register.jsx         # Registration
-│   ├── theme/                   # MUI theme + utilities
 │   └── main.jsx                 # App entry point
 ├── index.html
 ├── vite.config.js

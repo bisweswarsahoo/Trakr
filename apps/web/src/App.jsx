@@ -11,7 +11,7 @@ import Home from "./screens/ExpensesScreen";
 import Dashboard from "./screens/DashboardScreen";
 import IncomePage from "./screens/IncomeScreen";
 import ReportsPage from "./screens/ReportsScreen";
-import SettingsPage from "./screens/SettingsScreen";
+import ProfilePage from "./screens/ProfileScreen";
 import Navbar from "./components/layout/Navbar";
 import Register from "./screens/RegisterScreen";
 
@@ -60,10 +60,10 @@ const App = () => {
 						element={user ? <ReportsPage /> : <Navigate to="/login" />}
 					/>
 					<Route
-						path="/settings"
+						path="/profile"
 						element={
 							user ? (
-								<SettingsPage onLogout={handleLogout} />
+								<ProfilePage onLogout={handleLogout} />
 							) : (
 								<Navigate to="/login" />
 							)

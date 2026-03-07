@@ -2,7 +2,6 @@ export interface User {
 	id: number;
 	email: string;
 	name: string;
-	shop_name: string;
 	created_at?: string;
 }
 
@@ -40,7 +39,6 @@ export interface AuthResponse {
 	id: number;
 	email: string;
 	name: string;
-	shop_name: string;
 }
 
 export interface DashboardData {

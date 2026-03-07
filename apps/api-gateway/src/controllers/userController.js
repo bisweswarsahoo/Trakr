@@ -7,7 +7,7 @@ import { query } from "../config/db.js";
 export const getMe = async (req, res) => {
 	try {
 		const result = await query(
-			"SELECT id, name, email, shop_name, created_at FROM users WHERE id = $1",
+			"SELECT id, name, email, created_at FROM users WHERE id = $1",
 			[req.user.id],
 		);
 
@@ -28,21 +28,15 @@ export const getMe = async (req, res) => {
  */
 export const updateMe = async (req, res) => {
 	try {
-		const { name, shop_name } = req.body;
+		const { name } = req.body;
 		const fields = [];
 		const values = [];
 		let paramCount = 0;
 
-		if (name) {
+		if (name !== undefined) {
 			paramCount++;
 			fields.push(`name = $${paramCount}`);
 			values.push(name);
-		}
-
-		if (shop_name) {
-			paramCount++;
-			fields.push(`shop_name = $${paramCount}`);
-			values.push(shop_name);
 		}
 
 		if (fields.length === 0) {
@@ -55,7 +49,7 @@ export const updateMe = async (req, res) => {
 		const result = await query(
 			`UPDATE users SET ${fields.join(", ")}, updated_at = NOW()
 			 WHERE id = $${paramCount}
-			 RETURNING id, name, email, shop_name, created_at, updated_at`,
+			 RETURNING id, name, email, created_at, updated_at`,
 			values,
 		);
 

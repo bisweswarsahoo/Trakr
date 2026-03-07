@@ -113,3 +113,44 @@ export const colorScale = {
 		950: "#020617",
 	},
 };
+
+/**
+ * Converts a hex color string to an rgba string with the specified opacity.
+ * Used extensively in the web app for glassy UI effects.
+ */
+export const createAlphaColor = (hex: string, alpha: number): string => {
+	// If it's already an rgba or rgb string, return as is (simple fallback)
+	if (hex.startsWith("rgb")) return hex;
+
+	// Remove hash if present
+	hex = hex.replace("#", "");
+
+	// Handle 3-char hex
+	if (hex.length === 3) {
+		hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+	}
+
+	const r = parseInt(hex.substring(0, 2), 16) || 0;
+	const g = parseInt(hex.substring(2, 4), 16) || 0;
+	const b = parseInt(hex.substring(4, 6), 16) || 0;
+
+	return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+/**
+ * Returns a color based on the category name.
+ */
+export const getCategoryColor = (category: string, theme: any): string => {
+	const lowerCat = category?.toLowerCase() || "";
+	if (lowerCat.includes("food"))
+		return theme.palette.error.main || colors.error;
+	if (lowerCat.includes("transport"))
+		return theme.palette.warning.main || colors.warning;
+	if (lowerCat.includes("salary") || lowerCat.includes("income"))
+		return theme.palette.success.main || colors.success;
+	if (lowerCat.includes("entertainment"))
+		return theme.palette.secondary.main || colors.secondaryDark;
+	if (lowerCat.includes("shopping"))
+		return theme.palette.info?.main || colors.primary;
+	return theme.palette.primary.main || colors.primary;
+};

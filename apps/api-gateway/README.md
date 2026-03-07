@@ -15,8 +15,7 @@ API Gateway and authentication service for Trakr. Built with Express.js and Post
 ## Features
 
 - 🔐 **User Authentication** — Register, login, and logout with hashed passwords and JWT tokens
-- 👤 **User Profiles** — View and update user profile (name, shop name)
-- 🏠 **Shop Management** — CRUD for shop records
+- 👤 **User Profiles** — View and update user profile
 - 🔔 **Notifications** — User notification endpoints
 - 🔀 **API Gateway Proxy** — Forwards `/expenses`, `/income`, `/categories`, `/reports`, `/dashboard` to FastAPI
 - 🛡️ **Protected Routes** — All data endpoints require a valid JWT token
@@ -29,7 +28,6 @@ node-backend/
 │   ├── routes/
 │   │   ├── authRoutes.js         # Register / Login / Logout
 │   │   ├── userRoutes.js         # GET/PUT /users/me
-│   │   ├── shopRoutes.js         # Shop management
 │   │   └── notificationRoutes.js # Notifications
 │   ├── controllers/              # Route handler logic
 │   ├── middlewares/

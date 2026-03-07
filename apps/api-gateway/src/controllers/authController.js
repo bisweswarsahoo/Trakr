@@ -11,9 +11,14 @@ export const registerUser = async (req, res) => {
 	try {
 		const parsed = registerSchema.safeParse(req.body);
 		if (!parsed.success) {
+			console.log(
+				"[Register Validation Failed]",
+				req.body,
+				parsed.error.issues,
+			);
 			return res.status(400).json({ error: parsed.error.issues[0].message });
 		}
-		const { name, email, password, shop_name } = parsed.data;
+		const { name, email, password } = parsed.data;
 
 		// Check if user already exists
 		const existing = await query("SELECT id FROM users WHERE email = $1", [
@@ -31,10 +36,10 @@ export const registerUser = async (req, res) => {
 
 		// Insert user
 		const result = await query(
-			`INSERT INTO users (name, email, hashed_password, shop_name, created_at)
-			 VALUES ($1, $2, $3, $4, NOW())
-			 RETURNING id, name, email, shop_name, created_at`,
-			[name, email.toLowerCase(), hashedPassword, shop_name],
+			`INSERT INTO users (name, email, hashed_password, created_at)
+			 VALUES ($1, $2, $3, NOW())
+			 RETURNING id, name, email, created_at`,
+			[name, email.toLowerCase(), hashedPassword],
 		);
 
 		const user = result.rows[0];
@@ -43,7 +48,6 @@ export const registerUser = async (req, res) => {
 			id: user.id,
 			name: user.name,
 			email: user.email,
-			shop_name: user.shop_name,
 			token: generateToken(user.id),
 		});
 	} catch (err) {
@@ -65,7 +69,7 @@ export const loginUser = async (req, res) => {
 		const { email, password } = parsed.data;
 
 		const result = await query(
-			"SELECT id, name, email, hashed_password, shop_name FROM users WHERE email = $1",
+			"SELECT id, name, email, hashed_password FROM users WHERE email = $1",
 			[email.toLowerCase()],
 		);
 
@@ -84,7 +88,6 @@ export const loginUser = async (req, res) => {
 			id: user.id,
 			name: user.name,
 			email: user.email,
-			shop_name: user.shop_name,
 			token: generateToken(user.id),
 		});
 	} catch (err) {

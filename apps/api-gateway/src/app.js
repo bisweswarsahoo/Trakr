@@ -5,7 +5,6 @@ import dotenv from "dotenv";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import shopRoutes from "./routes/shopRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import protect from "./middlewares/authMiddleware.js";
 import { createProxy } from "./middlewares/gatewayProxy.js";
@@ -24,9 +23,6 @@ app.use("/api/auth", authRoutes);
 
 // ─── User profile routes (handled directly by Node.js) ───
 app.use("/api/users", userRoutes);
-
-// ─── Shop management routes (handled directly by Node.js) ───
-app.use("/api/shops", shopRoutes);
 
 // ─── Notification routes (handled directly by Node.js) ───
 app.use("/api/notifications", notificationRoutes);

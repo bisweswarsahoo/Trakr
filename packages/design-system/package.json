@@ -7,7 +7,5 @@
 		"dev": "tsc --watch",
 		"build": "tsc"
 	},
-	"devDependencies": {
-		"typescript": "^5.0.0"
-	}
+	"devDependencies": {}
 }

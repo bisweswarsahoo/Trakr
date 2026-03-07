@@ -1,5 +1,5 @@
 import { Box, useTheme } from "@mui/material";
-import { createAlphaColor } from "../../theme/utils";
+import { createAlphaColor } from "@trakr/design-system";
 
 const FloatingElements = ({ variant = "login" }) => {
 	const theme = useTheme();

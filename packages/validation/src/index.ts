@@ -7,7 +7,6 @@ export const loginSchema = z.object({
 
 export const registerSchema = loginSchema.extend({
 	name: z.string().min(2, "Name is required"),
-	shop_name: z.string().min(2, "Shop name is required"),
 });
 
 export const transactionSchema = z.object({

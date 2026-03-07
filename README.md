@@ -1,6 +1,6 @@
-# Trakr — Shop Expense Manager
+# Trakr — Personal Expense Tracker
 
-A full-stack expense tracking application for small shop owners to manage income, expenses, and view financial reports.
+A full-stack personal expense tracking application to manage income, expenses, and view financial reports.
 
 ## Project Structure
 
@@ -14,13 +14,13 @@ Trakr/
 │   ├── finance-service/  # FastAPI + PostgreSQL — Financial Service
 │   └── api-gateway/      # Express + PostgreSQL — API Gateway & Auth
 ├── packages/
-│   ├── ui/               # Shared React Native & Web components
-│   ├── design-system/    # Shared design tokens & themes
+│   ├── ui/               # Universal ThemeProvider & Shared React Native/Web components
+│   ├── design-system/    # Framework-agnostic design tokens (colors, typography, shadowing)
 │   ├── api-client/       # Shared Axios API client
 │   ├── validation/       # Zod schemas for validation
-│   ├── config/           # ESLint/TypeScript configurations
+│   ├── config/           # Shared constants & configurations
 │   ├── types/            # Shared TypeScript definitions
-│   └── utils/            # Shared helper functions
+│   └── utils/            # Shared helper functions (formatters, transformers)
 ```
 
 > Both frontends communicate **only** with the Node.js API Gateway (`:5000/api`).  
@@ -161,10 +161,11 @@ Host the `dist/` folder on Vercel, Netlify, or any static host.
 
 ## Tech Stack
 
-| Layer       | Technology                                          |
-| ----------- | --------------------------------------------------- |
-| Mobile App  | React Native, Expo, Zustand, React Hook Form        |
-| Web App     | React 19, Vite, Material UI, Recharts               |
-| Finance API | FastAPI, SQLAlchemy, Alembic, PostgreSQL (Supabase) |
-| API Gateway | Express.js, PostgreSQL, JWT, Axios (proxy)          |
-| Database    | PostgreSQL (shared, hosted on Supabase)             |
+| Layer       | Technology                                                            |
+| ----------- | --------------------------------------------------------------------- |
+| Mobile App  | React Native, Expo, Zustand, React Hook Form (`ProfileScreen` & Tabs) |
+| Web App     | React 19, Vite, Material UI, Recharts                                 |
+| Shared UI   | `@trakr/design-system` (Tokens), `@trakr/ui` (Themes)                 |
+| Finance API | FastAPI, SQLAlchemy, Alembic, PostgreSQL (Supabase)                   |
+| API Gateway | Express.js, PostgreSQL, JWT, Axios (proxy)                            |
+| Database    | PostgreSQL (shared, hosted on Supabase)                               |

@@ -19,7 +19,6 @@ from app.database import Base
 from app.models.user import User
 from app.models.category import Category
 from app.models.transaction import Transaction
-from app.models.shop import Shop
 from app.models.notification import Notification
 
 # add your model's MetaData object here

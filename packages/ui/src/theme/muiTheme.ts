@@ -1,10 +1,13 @@
-import { createTheme } from "@mui/material/styles";
-import { alpha } from "@mui/material/styles";
-import { createColorScheme, baseColors } from "./colors";
-import { typography } from "./typography";
-import { colorScale } from "@trakr/design-system";
+import { createTheme, alpha } from "@mui/material/styles";
+import {
+	colorScale,
+	createColorScheme,
+	typography,
+} from "@trakr/design-system";
 
-const createShadows = (mode) => {
+const baseColors = colorScale;
+
+const createShadows = (mode: string): any => {
 	const shadowColor = "0, 0, 0";
 	const intensityMultiplier = mode === "light" ? 1 : 1.5;
 
@@ -38,7 +41,7 @@ const createShadows = (mode) => {
 };
 
 // MUI component style overrides (consolidated from deleted components.js)
-const createComponentOverrides = (colors) => ({
+const createComponentOverrides = (colors: any) => ({
 	MuiButton: {
 		styleOverrides: {
 			root: {
@@ -199,7 +202,7 @@ const createComponentOverrides = (colors) => ({
 	},
 });
 
-const createThemeConfig = (mode) => {
+const createThemeConfig = (mode: "light" | "dark") => {
 	const colors = createColorScheme(mode);
 
 	return createTheme({
@@ -249,7 +252,36 @@ const createThemeConfig = (mode) => {
 			},
 			divider: colors.border.light,
 		},
-		typography,
+		typography: {
+			fontFamily: typography.fontFamily,
+			h1: { ...typography.h1, lineHeight: `${typography.h1.lineHeight}px` },
+			h2: { ...typography.h2, lineHeight: `${typography.h2.lineHeight}px` },
+			h3: { ...typography.h3, lineHeight: `${typography.h3.lineHeight}px` },
+			body1: {
+				...typography.body,
+				lineHeight: `${typography.body.lineHeight}px`,
+			},
+			body2: {
+				...typography.body,
+				lineHeight: `${typography.body.lineHeight}px`,
+			},
+			subtitle1: {
+				...typography.body,
+				lineHeight: `${typography.body.lineHeight}px`,
+			},
+			subtitle2: {
+				...typography.caption,
+				lineHeight: `${typography.caption.lineHeight}px`,
+			},
+			caption: {
+				...typography.caption,
+				lineHeight: `${typography.caption.lineHeight}px`,
+			},
+			overline: {
+				...typography.small,
+				lineHeight: `${typography.small.lineHeight}px`,
+			},
+		},
 		spacing: 8,
 		breakpoints: {
 			values: {
@@ -297,8 +329,5 @@ const createThemeConfig = (mode) => {
 
 export const lightTheme = createThemeConfig("light");
 export const darkTheme = createThemeConfig("dark");
-
-export { createColorScheme, baseColors } from "./colors";
-export { typography } from "./typography";
 
 export default lightTheme;

@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { ThemeProvider as MUIThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-import { lightTheme, darkTheme } from "./index";
+import { lightTheme, darkTheme } from "./muiTheme";
+import { createColorScheme } from "@trakr/design-system";
 
-const ThemeContext = createContext({
+export const ThemeContext = createContext<any>({
 	isDark: false,
 	toggleTheme: () => {},
 	currentTheme: lightTheme,
+	colors: createColorScheme("light"),
 });
 
 export const useThemeContext = () => {
@@ -19,7 +21,7 @@ export const useThemeContext = () => {
 	return context;
 };
 
-export const ThemeContextProvider = ({ children }) => {
+export const ThemeProvider = ({ children }: any) => {
 	const [isDark, setIsDark] = useState(() => {
 		const savedTheme = localStorage.getItem("trakr-theme");
 		if (savedTheme) {
@@ -38,10 +40,13 @@ export const ThemeContextProvider = ({ children }) => {
 
 	const currentTheme = isDark ? darkTheme : lightTheme;
 
+	const colors = createColorScheme(isDark ? "dark" : "light");
+
 	const contextValue = {
 		isDark,
 		toggleTheme,
 		currentTheme,
+		colors,
 	};
 
 	return (
@@ -53,5 +58,3 @@ export const ThemeContextProvider = ({ children }) => {
 		</ThemeContext.Provider>
 	);
 };
-
-export default ThemeContextProvider;

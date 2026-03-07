@@ -8,17 +8,12 @@ import {
 	Dimensions,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { PieChart, BarChart } from "react-native-chart-kit";
+import { PieChart, BarChart, LineChart } from "react-native-chart-kit";
 import { BaseCard } from "@trakr/ui";
 import { api } from "../services/api";
-import {
-	colors,
-	spacing,
-	borderRadius,
-	typography,
-} from "@trakr/design-system";
+import { colors, spacing, typography } from "@trakr/design-system";
 import { SummaryReport } from "@trakr/types";
-import { formatCurrency } from "@trakr/utils";
+import { formatCurrency, transformDashboardCharts } from "@trakr/utils";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -29,6 +24,8 @@ export const DashboardScreen = () => {
 		net_profit: 0,
 	});
 	const [categoryExpenses, setCategoryExpenses] = useState<any[]>([]);
+	const [barData, setBarData] = useState<any>(null);
+	const [lineData, setLineData] = useState<any>(null);
 	const [refreshing, setRefreshing] = useState(false);
 
 	const fetchDashboardData = async () => {
@@ -42,17 +39,35 @@ export const DashboardScreen = () => {
 				net_profit: data.monthly.net,
 			});
 
-			const mappedCategories = (data.charts?.category_breakdown || []).map(
-				(c: any) => ({
-					name: c.name || "Other",
-					population: c.value,
-					color:
-						c.color || `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-					legendFontColor: colors.textSecondary,
-					legendFontSize: 12,
-				}),
-			);
+			const charts = transformDashboardCharts(data);
+
+			const mappedCategories = (charts.pieData || []).map((c: any) => ({
+				name: c.name || "Other",
+				population: c.value,
+				color:
+					c.color || `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+				legendFontColor: colors.textSecondary,
+				legendFontSize: 12,
+			}));
 			setCategoryExpenses(mappedCategories);
+
+			if (charts.barData && charts.barData.length > 0) {
+				setBarData({
+					labels: charts.barData.map((d: any) => d.name),
+					datasets: [{ data: charts.barData.map((d: any) => d.amount) }],
+				});
+			} else {
+				setBarData(null);
+			}
+
+			if (charts.monthlyData && charts.monthlyData.length > 0) {
+				setLineData({
+					labels: charts.monthlyData.map((d: any) => d.month),
+					datasets: [{ data: charts.monthlyData.map((d: any) => d.amount) }],
+				});
+			} else {
+				setLineData(null);
+			}
 		} catch (e) {
 			console.error(e);
 		}
@@ -146,7 +161,44 @@ export const DashboardScreen = () => {
 						absolute
 					/>
 				) : (
-					<Text style={styles.noData}>No expense data available</Text>
+					<Text style={styles.noData}>No category data available</Text>
+				)}
+			</BaseCard>
+
+			<BaseCard style={{ marginTop: spacing.md }}>
+				<Text style={styles.chartTitle}>Recent Expenses</Text>
+				{barData ? (
+					<BarChart
+						data={barData}
+						width={screenWidth - spacing.lg * 2 - spacing.md * 2}
+						height={220}
+						yAxisLabel="₹"
+						yAxisSuffix=""
+						chartConfig={chartConfig}
+						showValuesOnTopOfBars={true}
+						withInnerLines={false}
+						style={{ borderRadius: 8, marginVertical: 8 }}
+					/>
+				) : (
+					<Text style={styles.noData}>No recent expenses data</Text>
+				)}
+			</BaseCard>
+
+			<BaseCard style={{ marginTop: spacing.md }}>
+				<Text style={styles.chartTitle}>Monthly Spending Trends</Text>
+				{lineData ? (
+					<LineChart
+						data={lineData}
+						width={screenWidth - spacing.lg * 2 - spacing.md * 2}
+						height={220}
+						yAxisLabel="₹"
+						yAxisSuffix=""
+						chartConfig={chartConfig}
+						bezier
+						style={{ borderRadius: 8, marginVertical: 8 }}
+					/>
+				) : (
+					<Text style={styles.noData}>No trend data available</Text>
 				)}
 			</BaseCard>
 		</ScrollView>

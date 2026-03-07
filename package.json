@@ -11,8 +11,14 @@
 		"lint": "turbo run lint",
 		"clean": "turbo run clean"
 	},
+	"dependencies": {
+		"axios": "^1.13.6"
+	},
 	"devDependencies": {
-		"turbo": "^1.12.4"
+		"turbo": "^1.12.4",
+		"typescript": "~5.9.2",
+		"@types/react": "^19.1.10",
+		"@types/react-dom": "^19.1.7"
 	},
 	"pnpm": {
 		"overrides": {

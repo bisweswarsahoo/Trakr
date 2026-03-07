@@ -6,17 +6,52 @@ import {
 	Text,
 	RefreshControl,
 	TouchableOpacity,
+	Modal,
+	KeyboardAvoidingView,
+	Platform,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Plus } from "lucide-react-native";
 import { api } from "../services/api";
 import { Transaction } from "@trakr/types";
-import { colors, spacing, borderRadius } from "@trakr/design-system";
+import {
+	colors,
+	spacing,
+	borderRadius,
+	typography,
+} from "@trakr/design-system";
+import { TextInputField, Button, BaseCard } from "@trakr/ui";
 import { formatCurrency } from "@trakr/utils";
 
 export const ExpensesScreen = ({ navigation }: any) => {
 	const [expenses, setExpenses] = useState<Transaction[]>([]);
 	const [refreshing, setRefreshing] = useState(false);
+	const [modalVisible, setModalVisible] = useState(false);
+	const [form, setForm] = useState({ title: "", amount: "", category: "" });
+	const [saving, setSaving] = useState(false);
+
+	const handleAddExpense = async () => {
+		if (!form.title || !form.amount) return;
+		try {
+			setSaving(true);
+			await api.post("/expenses/", {
+				title: form.title,
+				amount: parseFloat(form.amount),
+				date: new Date().toISOString(),
+				type: "expense",
+				payment_method: "cash",
+				category_id: 1,
+				notes: form.category || "",
+			});
+			setModalVisible(false);
+			setForm({ title: "", amount: "", category: "" });
+			fetchExpenses();
+		} catch (e) {
+			console.error(e);
+		} finally {
+			setSaving(false);
+		}
+	};
 
 	const fetchExpenses = async () => {
 		try {
@@ -54,11 +89,20 @@ export const ExpensesScreen = ({ navigation }: any) => {
 		);
 	};
 
+	const totalExpenses = expenses.reduce((sum, curr) => sum + curr.amount, 0);
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
 				<Text style={styles.title}>Expenses</Text>
 			</View>
+
+			<BaseCard style={styles.summaryCard}>
+				<Text style={styles.summaryLabel}>Total Extracted Expenses</Text>
+				<Text style={[styles.summaryValue, { color: colors.error }]}>
+					{formatCurrency(totalExpenses)}
+				</Text>
+			</BaseCard>
 
 			<FlatList
 				data={expenses}
@@ -78,13 +122,66 @@ export const ExpensesScreen = ({ navigation }: any) => {
 
 			<TouchableOpacity
 				style={styles.fab}
-				onPress={() => console.log("Add Expense placeholder")}
+				onPress={() => setModalVisible(true)}
 			>
 				<Plus
 					color="#fff"
 					size={24}
 				/>
 			</TouchableOpacity>
+
+			<Modal
+				visible={modalVisible}
+				animationType="slide"
+				transparent={true}
+				onRequestClose={() => setModalVisible(false)}
+			>
+				<KeyboardAvoidingView
+					behavior={Platform.OS === "ios" ? "padding" : "height"}
+					style={styles.modalOverlay}
+				>
+					<View style={styles.modalContent}>
+						<Text style={styles.modalTitle}>Add Expense</Text>
+
+						<TextInputField
+							label="Title"
+							value={form.title}
+							onChangeText={(t) => setForm({ ...form, title: t })}
+							placeholder="Groceries"
+							autoCapitalize="words"
+						/>
+						<TextInputField
+							label="Amount"
+							value={form.amount}
+							onChangeText={(t) => setForm({ ...form, amount: t })}
+							placeholder="50.00"
+							keyboardType="numeric"
+						/>
+						<TextInputField
+							label="Category"
+							value={form.category}
+							onChangeText={(t) => setForm({ ...form, category: t })}
+							placeholder="Food"
+							autoCapitalize="words"
+						/>
+
+						<View style={styles.modalActions}>
+							<Button
+								title="Cancel"
+								variant="outline"
+								onPress={() => setModalVisible(false)}
+								style={styles.modalButton}
+							/>
+							<Button
+								title="Save"
+								onPress={handleAddExpense}
+								loading={saving}
+								style={styles.modalButton}
+							/>
+						</View>
+					</View>
+				</KeyboardAvoidingView>
+			</Modal>
 		</View>
 	);
 };
@@ -105,6 +202,23 @@ const styles = StyleSheet.create({
 		fontSize: 24,
 		fontWeight: "bold",
 		color: colors.text,
+	},
+	summaryCard: {
+		marginHorizontal: spacing.lg,
+		marginTop: spacing.md,
+		marginBottom: spacing.sm,
+		alignItems: "center",
+		paddingVertical: spacing.lg,
+	},
+	summaryLabel: {
+		fontSize: 14,
+		color: colors.textSecondary,
+		marginBottom: spacing.xs,
+		fontWeight: "600",
+	},
+	summaryValue: {
+		...typography.h2,
+		fontWeight: "bold",
 	},
 	listContainer: {
 		padding: spacing.md,
@@ -160,5 +274,32 @@ const styles = StyleSheet.create({
 		shadowOpacity: 0.3,
 		shadowOffset: { width: 0, height: 4 },
 		shadowRadius: 5,
+	},
+	modalOverlay: {
+		flex: 1,
+		backgroundColor: "rgba(0, 0, 0, 0.5)",
+		justifyContent: "flex-end",
+	},
+	modalContent: {
+		backgroundColor: colors.background,
+		borderTopLeftRadius: borderRadius.lg,
+		borderTopRightRadius: borderRadius.lg,
+		padding: spacing.lg,
+		paddingBottom: spacing.xxl,
+	},
+	modalTitle: {
+		fontSize: 20,
+		fontWeight: "bold",
+		color: colors.text,
+		marginBottom: spacing.lg,
+	},
+	modalActions: {
+		flexDirection: "row",
+		justifyContent: "flex-end",
+		marginTop: spacing.md,
+	},
+	modalButton: {
+		flex: 1,
+		marginLeft: spacing.xs,
 	},
 });

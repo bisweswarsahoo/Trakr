@@ -1,6 +1,6 @@
 import { IconButton, Tooltip } from "@mui/material";
 import { Brightness4, Brightness7 } from "@mui/icons-material";
-import { useThemeContext } from "../../theme/ThemeProvider";
+import { useThemeContext } from "@trakr/ui";
 
 const ThemeToggle = ({ size = "medium", ...props }) => {
 	const { isDark, toggleTheme } = useThemeContext();

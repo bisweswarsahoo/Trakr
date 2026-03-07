@@ -16,7 +16,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PaymentIcon from "@mui/icons-material/Payment";
-import { createAlphaColor, getGradientByName } from "../../theme/utils";
+import { createAlphaColor, getGradientByName } from "@trakr/design-system";
 
 const IncomeList = ({
 	income,

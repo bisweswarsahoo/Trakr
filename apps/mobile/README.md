@@ -19,7 +19,7 @@ Cross-platform mobile app for Trakr. Built with React Native, Expo, and Zustand.
 - 💸 **Expense Tracking** — View and manage your expense records with pull-to-refresh
 - 💰 **Income Tracking** — Record and browse income entries
 - 📈 **Reports** — Visual financial reports with charts
-- ⚙️ **Settings** — Manage account preferences and sign out
+- ⚙️ **Profile** — Manage account preferences and sign out
 - 🔄 **Auto-reload** — Screens refresh data every time they gain focus
 
 ## Project Structure
@@ -36,12 +36,11 @@ mobile-frontend/
 │   │   ├── ExpensesScreen.tsx   # Expense list
 │   │   ├── IncomeScreen.tsx     # Income list
 │   │   ├── ReportsScreen.tsx    # Extended reports
-│   │   └── SettingsScreen.tsx   # App settings / logout
+│   │   └── ProfileScreen.tsx    # User profile / logout
 │   ├── services/
 │   │   └── api.ts               # Axios instance with auth interceptor
 │   ├── store/
 │   │   └── index.ts             # Zustand auth store
-│   ├── theme/                   # Colors, spacing, typography
 │   └── types/                   # TypeScript interfaces
 ├── app.json                     # Expo configuration
 ├── package.json

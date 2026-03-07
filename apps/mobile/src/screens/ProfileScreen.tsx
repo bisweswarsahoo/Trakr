@@ -1,14 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Text, ScrollView, Alert } from "react-native";
-import { BaseCard, Button } from "@trakr/ui";
+import { BaseCard, Button, TextInputField } from "@trakr/ui";
 import { useAuthStore } from "../store";
 import { api } from "../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors, spacing, typography } from "@trakr/design-system";
 import { getInitials } from "@trakr/utils";
 
-export const SettingsScreen = () => {
-	const { user, signOut } = useAuthStore();
+export const ProfileScreen = () => {
+	const { user, token, signIn, signOut } = useAuthStore();
+	const [editing, setEditing] = useState(false);
+	const [formName, setFormName] = useState(user?.name || "");
+	const [saving, setSaving] = useState(false);
+
+	const handleSave = async () => {
+		try {
+			setSaving(true);
+			const res = await api.put("/users/me", { name: formName });
+			if (token) {
+				signIn(res.data, token);
+			}
+			setEditing(false);
+		} catch (e: any) {
+			Alert.alert(
+				"Error",
+				e.response?.data?.error || "Failed to update profile",
+			);
+		} finally {
+			setSaving(false);
+		}
+	};
 
 	const handleLogout = async () => {
 		Alert.alert("Logout", "Are you sure you want to log out?", [
@@ -32,27 +53,55 @@ export const SettingsScreen = () => {
 	return (
 		<ScrollView style={styles.container}>
 			<View style={styles.header}>
-				<Text style={styles.title}>Settings</Text>
+				<Text style={styles.title}>Profile</Text>
 			</View>
 
 			<BaseCard style={styles.card}>
-				<View style={styles.profileSection}>
-					<View style={styles.avatar}>
-						<Text style={styles.avatarText}>{getInitials(user?.name)}</Text>
+				{editing ? (
+					<View style={styles.editSection}>
+						<TextInputField
+							label="Full Name"
+							value={formName}
+							onChangeText={setFormName}
+						/>
+						<View style={styles.editActions}>
+							<Button
+								title="Cancel"
+								variant="outline"
+								onPress={() => {
+									setEditing(false);
+									setFormName(user?.name || "");
+								}}
+								style={styles.editButton}
+							/>
+							<Button
+								title="Save"
+								onPress={handleSave}
+								loading={saving}
+								style={styles.editButton}
+							/>
+						</View>
 					</View>
-					<View style={styles.userInfo}>
-						<Text style={styles.userName}>{user?.name}</Text>
-						<Text style={styles.userEmail}>{user?.email}</Text>
+				) : (
+					<View style={styles.profileSection}>
+						<View style={styles.avatar}>
+							<Text style={styles.avatarText}>{getInitials(user?.name)}</Text>
+						</View>
+						<View style={styles.userInfo}>
+							<Text style={styles.userName}>{user?.name}</Text>
+							<Text style={styles.userEmail}>{user?.email}</Text>
+						</View>
+						<Button
+							title="Edit"
+							variant="outline"
+							onPress={() => setEditing(true)}
+							style={styles.editTriggerButton}
+						/>
 					</View>
-				</View>
+				)}
 			</BaseCard>
 
 			<BaseCard style={styles.card}>
-				<View style={styles.settingRow}>
-					<Text style={styles.settingText}>Shop Name</Text>
-					<Text style={styles.settingValue}>{user?.shop_name}</Text>
-				</View>
-				<View style={styles.divider} />
 				<View style={styles.settingRow}>
 					<Text style={styles.settingText}>Currency</Text>
 					<Text style={styles.settingValue}>USD ($)</Text>
@@ -148,5 +197,22 @@ const styles = StyleSheet.create({
 	logoutButton: {
 		marginHorizontal: spacing.lg,
 		marginTop: spacing.xl,
+	},
+	editSection: {
+		paddingVertical: spacing.sm,
+	},
+	editActions: {
+		flexDirection: "row",
+		justifyContent: "flex-end",
+		marginTop: spacing.md,
+	},
+	editButton: {
+		flex: 1,
+		marginLeft: spacing.xs,
+	},
+	editTriggerButton: {
+		marginLeft: spacing.md,
+		paddingHorizontal: spacing.sm,
+		paddingVertical: spacing.xs,
 	},
 });

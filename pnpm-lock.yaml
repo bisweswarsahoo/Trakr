@@ -11,10 +11,23 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      axios:
+        specifier: ^1.13.6
+        version: 1.13.6
     devDependencies:
+      '@types/react':
+        specifier: ^19.1.10
+        version: 19.1.17
+      '@types/react-dom':
+        specifier: ^19.1.7
+        version: 19.2.3(@types/react@19.1.17)
       turbo:
         specifier: ^1.12.4
         version: 1.13.4
+      typescript:
+        specifier: ~5.9.2
+        version: 5.9.3
 
   apps/api-gateway:
     dependencies:
@@ -30,9 +43,6 @@ importers:
       '@trakr/validation':
         specifier: workspace:*
         version: link:../../packages/validation
-      axios:
-        specifier: ^1.7.9
-        version: 1.13.6
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.3
@@ -103,9 +113,6 @@ importers:
       '@trakr/validation':
         specifier: workspace:*
         version: link:../../packages/validation
-      axios:
-        specifier: ^1.13.6
-        version: 1.13.6
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -152,12 +159,6 @@ importers:
       '@babel/plugin-transform-runtime':
         specifier: ^7.29.0
         version: 7.29.0(@babel/core@7.29.0)
-      '@types/react':
-        specifier: ~19.1.10
-        version: 19.1.17
-      typescript:
-        specifier: ~5.9.2
-        version: 5.9.3
 
   apps/web:
     dependencies:
@@ -194,9 +195,6 @@ importers:
       '@trakr/validation':
         specifier: workspace:*
         version: link:../../packages/validation
-      axios:
-        specifier: ^1.12.2
-        version: 1.13.6
       chart.js:
         specifier: ^4.5.0
         version: 4.5.1
@@ -219,12 +217,6 @@ importers:
       '@eslint/js':
         specifier: ^9.33.0
         version: 9.39.4
-      '@types/react':
-        specifier: ^19.1.10
-        version: 19.1.17
-      '@types/react-dom':
-        specifier: ^19.1.7
-        version: 19.2.3(@types/react@19.1.17)
       '@vitejs/plugin-react':
         specifier: ^5.0.0
         version: 5.1.4(vite@7.3.1)
@@ -252,31 +244,12 @@ importers:
       '@trakr/types':
         specifier: '*'
         version: link:../types
-      axios:
-        specifier: ^1.6.0
-        version: 1.13.6
-    devDependencies:
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
 
-  packages/config:
-    devDependencies:
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
+  packages/config: {}
 
-  packages/design-system:
-    devDependencies:
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
+  packages/design-system: {}
 
-  packages/types:
-    devDependencies:
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
+  packages/types: {}
 
   packages/ui:
     dependencies:
@@ -302,35 +275,21 @@ importers:
         specifier: '*'
         version: 0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0)
     devDependencies:
-      '@types/react':
-        specifier: ^19.1.17
-        version: 19.1.17
       '@types/react-native':
         specifier: ^0.73.0
         version: 0.73.0(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.1.0)
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
 
   packages/utils:
     dependencies:
       '@trakr/types':
         specifier: workspace:*
         version: link:../types
-    devDependencies:
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
 
   packages/validation:
     dependencies:
       zod:
         specifier: ^3.22.4
         version: 3.25.76
-    devDependencies:
-      typescript:
-        specifier: ^5.0.0
-        version: 5.9.3
 
 packages:
 

@@ -17,7 +17,7 @@ const protect = async (req, res, next) => {
 			const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
 			const result = await query(
-				"SELECT id, name, email, shop_name FROM users WHERE id = $1",
+				"SELECT id, name, email FROM users WHERE id = $1",
 				[decoded.id],
 			);
 

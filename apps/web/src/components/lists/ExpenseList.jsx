@@ -18,10 +18,10 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import CategoryIcon from "@mui/icons-material/Category";
 import {
-	getCategoryColor,
 	createAlphaColor,
+	getCategoryColor,
 	getGradientByName,
-} from "../../theme/utils";
+} from "@trakr/design-system";
 
 const ExpenseList = ({
 	expenses,

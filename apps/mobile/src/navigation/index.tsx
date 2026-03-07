@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useThemeContext } from "@trakr/ui";
 import { useAuthStore } from "../store";
 import { LoginScreen } from "../screens/LoginScreen";
 import { RegisterScreen } from "../screens/RegisterScreen";
@@ -8,14 +9,26 @@ import { DashboardScreen } from "../screens/DashboardScreen";
 import { ExpensesScreen } from "../screens/ExpensesScreen";
 import { IncomeScreen } from "../screens/IncomeScreen";
 import { ReportsScreen } from "../screens/ReportsScreen";
-import { SettingsScreen } from "../screens/SettingsScreen";
+import { ProfileScreen } from "../screens/ProfileScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function AppTabs() {
+	const { colors } = useThemeContext();
+
 	return (
-		<Tab.Navigator screenOptions={{ headerShown: false }}>
+		<Tab.Navigator
+			screenOptions={{
+				headerShown: false,
+				tabBarActiveTintColor: colors.semantic.info[500],
+				tabBarInactiveTintColor: colors.text.secondary,
+				tabBarStyle: {
+					backgroundColor: colors.background.surface,
+					borderTopColor: colors.border.light,
+				},
+			}}
+		>
 			<Tab.Screen
 				name="Dashboard"
 				component={DashboardScreen}
@@ -33,8 +46,8 @@ function AppTabs() {
 				component={ReportsScreen}
 			/>
 			<Tab.Screen
-				name="Settings"
-				component={SettingsScreen}
+				name="Profile"
+				component={ProfileScreen}
 			/>
 		</Tab.Navigator>
 	);

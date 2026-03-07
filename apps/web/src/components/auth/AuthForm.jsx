@@ -95,7 +95,6 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 					name: form.name,
 					email: form.email,
 					password: form.password,
-					shop_name: form.name + "'s Shop",
 				});
 				navigate("/login");
 			} else {

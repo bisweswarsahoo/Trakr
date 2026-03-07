@@ -31,7 +31,7 @@ const AuthHeader = ({ variant = "login", title, subtitle, description }) => {
 		register: {
 			avatarGradient: getGradientByName("secondary", theme),
 			textGradient: getGradientByName("secondary", theme),
-			shadowColor: createAlphaColor(theme.palette.secondary.main, 0.4),
+			shadowColor: alpha(theme.palette.secondary.main, 0.4),
 			animation: "bounce 2s ease-in-out infinite alternate",
 			animationKeyframes: {
 				"@keyframes bounce": {

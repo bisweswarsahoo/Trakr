@@ -56,12 +56,8 @@ export const createApiClient = ({
 export const createAuthApi = (client: AxiosInstance) => ({
 	login: (email: string, password: string) =>
 		client.post<AuthResponse>("/auth/login", { email, password }),
-	register: (data: {
-		name: string;
-		email: string;
-		password: string;
-		shop_name: string;
-	}) => client.post("/auth/register", data),
+	register: (data: { name: string; email: string; password: string }) =>
+		client.post("/auth/register", data),
 	logout: () => client.post("/auth/logout"),
 });
 
@@ -96,6 +92,5 @@ export const createCategoryApi = (client: AxiosInstance) => ({
 
 export const createUserApi = (client: AxiosInstance) => ({
 	getMe: () => client.get<User>("/users/me"),
-	updateMe: (data: { name?: string; shop_name?: string }) =>
-		client.put<User>("/users/me", data),
+	updateMe: (data: { name?: string }) => client.put<User>("/users/me", data),
 });

@@ -1,7 +1,7 @@
 import { TextField, IconButton, useTheme } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { createAlphaColor } from "../../theme/utils";
+import { createAlphaColor } from "@trakr/design-system";
 
 const AuthTextField = ({
 	label,

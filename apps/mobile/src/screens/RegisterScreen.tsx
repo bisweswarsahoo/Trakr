@@ -18,18 +18,23 @@ export const RegisterScreen = () => {
 	const {
 		control,
 		handleSubmit,
+		watch,
 		formState: { errors },
 	} = useForm();
 	const [loading, setLoading] = useState(false);
 	const navigation = useNavigation<any>();
 
 	const onSubmit = async (data: any) => {
+		if (data.password !== data.confirmPassword) {
+			Alert.alert("Registration Failed", "Passwords do not match");
+			return;
+		}
+
 		try {
 			setLoading(true);
 			await api.post("/auth/register", {
 				email: data.email,
 				name: data.name,
-				shop_name: data.shop_name,
 				password: data.password,
 			});
 
@@ -54,7 +59,7 @@ export const RegisterScreen = () => {
 			<ScrollView contentContainerStyle={styles.scroll}>
 				<View style={styles.header}>
 					<Text style={styles.title}>Create Account</Text>
-					<Text style={styles.subtitle}>Start tracking your shop expenses</Text>
+					<Text style={styles.subtitle}>Start tracking your expenses</Text>
 				</View>
 
 				<BaseCard>
@@ -71,21 +76,6 @@ export const RegisterScreen = () => {
 							/>
 						)}
 						name="name"
-					/>
-
-					<Controller
-						control={control}
-						rules={{ required: "Shop Name is required" }}
-						render={({ field: { onChange, onBlur, value } }) => (
-							<TextInputField
-								label="Shop Name"
-								onBlur={onBlur}
-								onChangeText={onChange}
-								value={value}
-								error={errors.shop_name?.message as string}
-							/>
-						)}
-						name="shop_name"
 					/>
 
 					<Controller
@@ -125,6 +115,29 @@ export const RegisterScreen = () => {
 							/>
 						)}
 						name="password"
+					/>
+
+					<Controller
+						control={control}
+						rules={{
+							required: "Confirm Password is required",
+							validate: (val: string) => {
+								if (watch("password") != val) {
+									return "Your passwords do no match";
+								}
+							},
+						}}
+						render={({ field: { onChange, onBlur, value } }) => (
+							<TextInputField
+								label="Confirm Password"
+								onBlur={onBlur}
+								onChangeText={onChange}
+								value={value}
+								secureTextEntry
+								error={errors.confirmPassword?.message as string}
+							/>
+						)}
+						name="confirmPassword"
 					/>
 
 					<Button
