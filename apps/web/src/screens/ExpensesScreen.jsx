@@ -4,6 +4,8 @@ import ExpenseList from "../components/lists/ExpenseList";
 import API from "../services/api";
 import { useTheme, useMediaQuery, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { transformExpenseSummary, buildCategoryMap } from "@trakr/utils";
+import { DEFAULT_PAYMENT_METHOD } from "@trakr/config";
 
 const Home = () => {
 	const theme = useTheme();
@@ -47,24 +49,7 @@ const Home = () => {
 		const fetchSummary = async () => {
 			try {
 				const { data } = await API.get("/dashboard");
-				setSummary({
-					totalAmount: data.monthly?.expense?.toFixed(2) || "0.00",
-					totalExpenses:
-						data.recent_transactions?.filter((t) => t.type === "expense")
-							.length || 0,
-					categoryCount: data.charts?.category_breakdown?.length || 0,
-					averageExpense:
-						data.monthly?.expense && data.recent_transactions?.length
-							? (
-									data.monthly.expense /
-									Math.max(
-										data.recent_transactions.filter((t) => t.type === "expense")
-											.length,
-										1,
-									)
-								).toFixed(2)
-							: "0.00",
-				});
+				setSummary(transformExpenseSummary(data));
 			} catch (err) {
 				console.error("Error fetching summary data", err);
 			} finally {
@@ -90,7 +75,7 @@ const Home = () => {
 					? new Date(expense.date).toISOString()
 					: new Date().toISOString(),
 				type: "expense",
-				payment_method: "cash",
+				payment_method: DEFAULT_PAYMENT_METHOD,
 				category_id: category?.id || categories[0]?.id || 1,
 				notes: expense.category || "",
 			});
@@ -110,10 +95,7 @@ const Home = () => {
 	};
 
 	// Build a category lookup map for ExpenseList
-	const categoryMap = {};
-	categories.forEach((c) => {
-		categoryMap[c.id] = c.name;
-	});
+	const categoryMap = buildCategoryMap(categories);
 
 	// Enrich expenses with category name from the map
 	const enrichedExpenses = expenses.map((exp) => ({

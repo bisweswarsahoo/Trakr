@@ -5,6 +5,7 @@ import { useAuthStore } from "../store";
 import { api } from "../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors, spacing, typography } from "@trakr/design-system";
+import { getInitials } from "@trakr/utils";
 
 export const SettingsScreen = () => {
 	const { user, signOut } = useAuthStore();
@@ -37,9 +38,7 @@ export const SettingsScreen = () => {
 			<BaseCard style={styles.card}>
 				<View style={styles.profileSection}>
 					<View style={styles.avatar}>
-						<Text style={styles.avatarText}>
-							{user?.name?.[0]?.toUpperCase()}
-						</Text>
+						<Text style={styles.avatarText}>{getInitials(user?.name)}</Text>
 					</View>
 					<View style={styles.userInfo}>
 						<Text style={styles.userName}>{user?.name}</Text>

@@ -1,13 +1,14 @@
 import { Container, useTheme, useMediaQuery } from "@mui/material";
-import { getGradientByName } from "../../theme/utils";
+import { getGradientByName } from "@trakr/design-system";
 
 const AuthContainer = ({ children, variant = "login" }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const mode = theme.palette.mode;
 
 	const gradients = {
-		login: getGradientByName("primary", theme),
-		register: getGradientByName("secondary", theme),
+		login: getGradientByName("primary", mode),
+		register: getGradientByName("secondary", mode),
 	};
 
 	return (

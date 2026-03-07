@@ -11,7 +11,6 @@ import {
 	CircularProgress,
 	Alert,
 	Snackbar,
-	Divider,
 	useTheme,
 	useMediaQuery,
 } from "@mui/material";
@@ -23,11 +22,13 @@ import SaveIcon from "@mui/icons-material/Save";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import API from "../services/api";
-import { getGradientByName } from "../theme/utils";
+import { getGradientByName } from "@trakr/design-system";
+import { getInitials } from "@trakr/utils";
 
 const SettingsPage = ({ onLogout }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const mode = theme.palette.mode;
 
 	const [user, setUser] = useState(null);
 	const [editing, setEditing] = useState(false);
@@ -120,7 +121,7 @@ const SettingsPage = ({ onLogout }) => {
 				{/* Header */}
 				<Box
 					sx={{
-						background: getGradientByName("primary", theme),
+						background: getGradientByName("primary", mode),
 						color: "white",
 						p: isMobile ? 3 : 4,
 						display: "flex",
@@ -163,7 +164,7 @@ const SettingsPage = ({ onLogout }) => {
 							zIndex: 1,
 						}}
 					>
-						{user?.name?.[0]?.toUpperCase() || "U"}
+						{getInitials(user?.name)}
 					</Avatar>
 					<Typography
 						variant="h5"
@@ -259,7 +260,7 @@ const SettingsPage = ({ onLogout }) => {
 									sx={{
 										borderRadius: 2,
 										textTransform: "none",
-										background: getGradientByName("primary", theme),
+										background: getGradientByName("primary", mode),
 									}}
 								>
 									{saving ? (

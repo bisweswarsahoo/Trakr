@@ -1,11 +1,7 @@
-// Typography configuration for Trakr app
-const fontFamily = [
-	'"Inter"',
-	'"Roboto"',
-	'"Helvetica"',
-	'"Arial"',
-	"sans-serif",
-].join(",");
+import { typography as dsTypography } from "@trakr/design-system";
+
+// Typography configuration for Trakr app - sourced from shared design system
+const fontFamily = dsTypography.fontFamily;
 
 export const typography = {
 	fontFamily,

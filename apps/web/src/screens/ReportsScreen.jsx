@@ -13,9 +13,9 @@ import {
 	Card,
 	CardContent,
 	Avatar,
-	Chip,
 	LinearProgress,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import BalanceIcon from "@mui/icons-material/Balance";
@@ -23,11 +23,14 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import CategoryIcon from "@mui/icons-material/Category";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import API from "../services/api";
-import { getGradientByName, createAlphaColor } from "../theme/utils";
+import { getGradientByName } from "@trakr/design-system";
+import { formatCurrency } from "@trakr/utils";
+import { REPORT_PERIODS } from "@trakr/config";
 
 const ReportsPage = () => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const mode = theme.palette.mode;
 
 	const [period, setPeriod] = useState("monthly");
 	const [report, setReport] = useState(null);
@@ -123,7 +126,7 @@ const ReportsPage = () => {
 			>
 				<Box
 					sx={{
-						background: getGradientByName("primary", theme),
+						background: getGradientByName("primary", mode),
 						color: "white",
 						p: isMobile ? 2 : 3,
 						position: "relative",
@@ -175,22 +178,26 @@ const ReportsPage = () => {
 								fontWeight: 600,
 								textTransform: "none",
 								"&.Mui-selected": {
-									background: getGradientByName("primary", theme),
+									background: getGradientByName("primary", mode),
 									color: "white",
 									"&:hover": {
-										background: getGradientByName("primary", theme),
+										background: getGradientByName("primary", mode),
 									},
 								},
 							},
 						}}
 					>
-						<ToggleButton value="daily">
-							<CalendarTodayIcon sx={{ mr: 0.5, fontSize: "1rem" }} />
-							Daily
-						</ToggleButton>
-						<ToggleButton value="weekly">Weekly</ToggleButton>
-						<ToggleButton value="monthly">Monthly</ToggleButton>
-						<ToggleButton value="yearly">Yearly</ToggleButton>
+						{REPORT_PERIODS.map((p) => (
+							<ToggleButton
+								key={p.value}
+								value={p.value}
+							>
+								{p.value === "daily" && (
+									<CalendarTodayIcon sx={{ mr: 0.5, fontSize: "1rem" }} />
+								)}
+								{p.label}
+							</ToggleButton>
+						))}
 					</ToggleButtonGroup>
 				</Box>
 			</Paper>
@@ -212,21 +219,21 @@ const ReportsPage = () => {
 					{[
 						{
 							label: "Total Income",
-							value: `₹${report.total_income?.toFixed(2) || "0.00"}`,
+							value: formatCurrency(report.total_income || 0),
 							icon: <TrendingUpIcon />,
 							color: theme.palette.success.main,
 							gradient: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
 						},
 						{
 							label: "Total Expense",
-							value: `₹${report.total_expense?.toFixed(2) || "0.00"}`,
+							value: formatCurrency(report.total_expense || 0),
 							icon: <TrendingDownIcon />,
 							color: theme.palette.error.main,
 							gradient: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
 						},
 						{
 							label: "Net Profit",
-							value: `₹${report.net_profit?.toFixed(2) || "0.00"}`,
+							value: formatCurrency(report.net_profit || 0),
 							icon: <BalanceIcon />,
 							color:
 								report.net_profit >= 0
@@ -254,7 +261,7 @@ const ReportsPage = () => {
 								transition: "all 0.3s ease",
 								"&:hover": {
 									transform: "translateY(-4px)",
-									boxShadow: `0 12px 30px ${createAlphaColor(card.color, 0.25)}`,
+									boxShadow: `0 12px 30px ${alpha(card.color, 0.25)}`,
 								},
 							}}
 						>
@@ -274,7 +281,7 @@ const ReportsPage = () => {
 								>
 									<Avatar
 										sx={{
-											bgcolor: createAlphaColor(card.color, 0.12),
+											bgcolor: alpha(card.color, 0.12),
 											color: card.color,
 											width: isMobile ? 44 : 50,
 											height: isMobile ? 44 : 50,
@@ -410,7 +417,7 @@ const ReportsPage = () => {
 													color: cat.color || "primary.main",
 												}}
 											>
-												₹{cat.total?.toFixed(2)}
+												{formatCurrency(cat.total || 0)}
 											</Typography>
 										</Box>
 										<LinearProgress
@@ -419,7 +426,7 @@ const ReportsPage = () => {
 											sx={{
 												height: 6,
 												borderRadius: 3,
-												bgcolor: createAlphaColor(
+												bgcolor: alpha(
 													cat.color || theme.palette.primary.main,
 													0.1,
 												),

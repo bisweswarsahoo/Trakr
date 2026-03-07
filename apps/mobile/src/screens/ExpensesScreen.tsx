@@ -12,6 +12,7 @@ import { Plus } from "lucide-react-native";
 import { api } from "../services/api";
 import { Transaction } from "@trakr/types";
 import { colors, spacing, borderRadius } from "@trakr/design-system";
+import { formatCurrency } from "@trakr/utils";
 
 export const ExpensesScreen = ({ navigation }: any) => {
 	const [expenses, setExpenses] = useState<Transaction[]>([]);
@@ -48,7 +49,7 @@ export const ExpensesScreen = ({ navigation }: any) => {
 						{formattedDate} • {item.payment_method}
 					</Text>
 				</View>
-				<Text style={styles.itemAmount}>-${item.amount.toFixed(2)}</Text>
+				<Text style={styles.itemAmount}>-{formatCurrency(item.amount)}</Text>
 			</View>
 		);
 	};

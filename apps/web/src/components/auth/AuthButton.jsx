@@ -1,5 +1,5 @@
 import { Button, useTheme } from "@mui/material";
-import { getGradientByName } from "../../theme/utils";
+import { getGradientByName } from "@trakr/design-system";
 
 const AuthButton = ({
 	children,
@@ -8,17 +8,18 @@ const AuthButton = ({
 	...props
 }) => {
 	const theme = useTheme();
+	const mode = theme.palette.mode;
 
 	const config = {
 		login: {
-			gradient: getGradientByName("primary", theme),
-			hoverGradient: getGradientByName("primary", theme),
+			gradient: getGradientByName("primary", mode),
+			hoverGradient: getGradientByName("primary", mode),
 			shadowColor: `rgba(102, 126, 234, 0.4)`,
 			hoverShadowColor: `rgba(102, 126, 234, 0.5)`,
 		},
 		register: {
-			gradient: getGradientByName("secondary", theme),
-			hoverGradient: getGradientByName("secondary", theme),
+			gradient: getGradientByName("secondary", mode),
+			hoverGradient: getGradientByName("secondary", mode),
 			shadowColor: `rgba(240, 147, 251, 0.4)`,
 			hoverShadowColor: `rgba(240, 147, 251, 0.5)`,
 		},

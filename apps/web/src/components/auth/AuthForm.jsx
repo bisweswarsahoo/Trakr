@@ -10,6 +10,7 @@ import {
 	useTheme,
 	useMediaQuery,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
@@ -20,12 +21,13 @@ import AuthHeader from "./AuthHeader";
 import AuthTextField from "./AuthTextField";
 import AuthButton from "./AuthButton";
 import FloatingElements from "./FloatingElements";
-import { getGradientByName, createAlphaColor } from "../../theme/utils";
+import { getGradientByName } from "@trakr/design-system";
 
 const AuthForm = ({ mode = "login", onLogin }) => {
 	const navigate = useNavigate();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const themeMode = theme.palette.mode;
 	const isRegister = mode === "register";
 
 	const [form, setForm] = useState({
@@ -50,7 +52,7 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 			footerText: "Don't have an account?",
 			footerLinkText: "Create one here",
 			footerAction: () => navigate("/register"),
-			borderGradient: getGradientByName("primary", theme),
+			borderGradient: getGradientByName("primary", themeMode),
 		},
 		register: {
 			title: "Join Trakr",
@@ -61,7 +63,7 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 			footerText: "Already have an account?",
 			footerLinkText: "Sign in here",
 			footerAction: () => navigate("/login"),
-			borderGradient: getGradientByName("secondary", theme),
+			borderGradient: getGradientByName("secondary", themeMode),
 		},
 	};
 
@@ -146,19 +148,13 @@ const AuthForm = ({ mode = "login", onLogin }) => {
 						},
 						maxWidth: isRegister ? "580px" : "520px",
 						borderRadius: 4,
-						background: createAlphaColor(theme.palette.background.paper, 0.95),
+						background: alpha(theme.palette.background.paper, 0.95),
 						backdropFilter: "blur(20px)",
-						boxShadow: `0 32px 64px ${createAlphaColor(
+						boxShadow: `0 32px 64px ${alpha(
 							theme.palette.common.black,
 							0.15,
-						)}, inset 0 1px 0 ${createAlphaColor(
-							theme.palette.common.white,
-							0.6,
-						)}`,
-						border: `1px solid ${createAlphaColor(
-							theme.palette.common.white,
-							0.2,
-						)}`,
+						)}, inset 0 1px 0 ${alpha(theme.palette.common.white, 0.6)}`,
+						border: `1px solid ${alpha(theme.palette.common.white, 0.2)}`,
 						position: "relative",
 						overflow: "hidden",
 						"&::before": {

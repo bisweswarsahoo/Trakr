@@ -10,7 +10,11 @@ import {
 import SummarySection from "../components/sections/SummarySection";
 import ChartsSection from "../components/sections/ChartsSection";
 import API from "../services/api";
-import { getGradientByName } from "../theme/utils";
+import { getGradientByName } from "@trakr/design-system";
+import {
+	transformExpenseSummary,
+	transformDashboardCharts,
+} from "@trakr/utils";
 
 const Dashboard = () => {
 	const theme = useTheme();
@@ -20,57 +24,15 @@ const Dashboard = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	const COLORS = [
-		theme.palette.primary.main,
-		theme.palette.success.main,
-		theme.palette.warning.main,
-		theme.palette.error.main,
-		theme.palette.secondary.main,
-	];
-
 	const fetchDashboardData = useCallback(async () => {
 		try {
 			setLoading(true);
 			const response = await API.get("/dashboard");
 			const raw = response.data;
 
-			// Transform API response to match component expectations
 			const transformed = {
-				summary: {
-					totalAmount: raw.monthly?.expense?.toFixed(2) || "0.00",
-					totalExpenses:
-						raw.recent_transactions?.filter((t) => t.type === "expense")
-							.length || 0,
-					categoryCount: raw.charts?.category_breakdown?.length || 0,
-					averageExpense:
-						raw.monthly?.expense && raw.recent_transactions?.length
-							? (
-									raw.monthly.expense /
-									Math.max(
-										raw.recent_transactions.filter((t) => t.type === "expense")
-											.length,
-										1,
-									)
-								).toFixed(2)
-							: "0.00",
-				},
-				charts: {
-					pieData: (raw.charts?.category_breakdown || []).map((c) => ({
-						name: c.name || "Other",
-						value: c.value || 0,
-					})),
-					barData: (raw.recent_transactions || [])
-						.filter((t) => t.type === "expense")
-						.slice(0, 7)
-						.map((t) => ({
-							name: t.title?.substring(0, 12) || "Expense",
-							amount: t.amount || 0,
-						})),
-					monthlyData: (raw.charts?.monthly_trend || []).map((m) => ({
-						month: m.month || "",
-						amount: m.expense || 0,
-					})),
-				},
+				summary: transformExpenseSummary(raw),
+				charts: transformDashboardCharts(raw),
 			};
 
 			setDashboardData(transformed);
@@ -151,7 +113,7 @@ const Dashboard = () => {
 			<Box
 				sx={{
 					minHeight: "100vh",
-					background: getGradientByName("primary", theme),
+					background: getGradientByName("primary", theme.palette.mode),
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",

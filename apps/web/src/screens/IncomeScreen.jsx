@@ -4,6 +4,8 @@ import IncomeList from "../components/lists/IncomeList";
 import API from "../services/api";
 import { useTheme, useMediaQuery, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { transformIncomeSummary } from "@trakr/utils";
+import { DEFAULT_PAYMENT_METHOD } from "@trakr/config";
 
 const IncomePage = () => {
 	const theme = useTheme();
@@ -33,12 +35,7 @@ const IncomePage = () => {
 		const fetchSummary = async () => {
 			try {
 				const { data } = await API.get("/dashboard");
-				const incomeEntries =
-					data.recent_transactions?.filter((t) => t.type === "income") || [];
-				setSummary({
-					totalAmount: data.monthly?.income?.toFixed(2) || "0.00",
-					totalEntries: incomeEntries.length,
-				});
+				setSummary(transformIncomeSummary(data));
 			} catch (err) {
 				console.error("Error fetching summary", err);
 			} finally {
@@ -57,7 +54,7 @@ const IncomePage = () => {
 					? new Date(incomeData.date).toISOString()
 					: new Date().toISOString(),
 				type: "income",
-				payment_method: incomeData.payment_method || "cash",
+				payment_method: incomeData.payment_method || DEFAULT_PAYMENT_METHOD,
 			});
 			setIncome((prev) => [data, ...prev]);
 		} catch (err) {

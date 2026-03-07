@@ -15,6 +15,7 @@ import {
 	Slide,
 	CircularProgress,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import TitleIcon from "@mui/icons-material/Title";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import DateRangeIcon from "@mui/icons-material/DateRange";
@@ -22,17 +23,19 @@ import PaymentIcon from "@mui/icons-material/Payment";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
-import { getGradientByName, createAlphaColor } from "../../theme/utils";
+import { getGradientByName } from "@trakr/design-system";
+import { DEFAULT_PAYMENT_METHOD } from "@trakr/config";
 
 const AddIncomeForm = ({ open, onClose, onAddIncome }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const mode = theme.palette.mode;
 
 	const [formData, setFormData] = useState({
 		title: "",
 		amount: "",
 		date: "",
-		payment_method: "cash",
+		payment_method: DEFAULT_PAYMENT_METHOD,
 	});
 
 	const [errors, setErrors] = useState({});
@@ -62,7 +65,12 @@ const AddIncomeForm = ({ open, onClose, onAddIncome }) => {
 		}
 		setLoading(true);
 		onAddIncome(formData);
-		setFormData({ title: "", amount: "", date: "", payment_method: "cash" });
+		setFormData({
+			title: "",
+			amount: "",
+			date: "",
+			payment_method: DEFAULT_PAYMENT_METHOD,
+		});
 		setLoading(false);
 		onClose();
 	};
@@ -71,14 +79,10 @@ const AddIncomeForm = ({ open, onClose, onAddIncome }) => {
 		"& .MuiOutlinedInput-root": {
 			borderRadius: theme.shape.borderRadius,
 			backgroundColor:
-				theme.palette.mode === "light"
-					? theme.palette.grey[50]
-					: theme.palette.grey[900],
+				mode === "light" ? theme.palette.grey[50] : theme.palette.grey[900],
 			"&:hover": {
 				backgroundColor:
-					theme.palette.mode === "light"
-						? theme.palette.grey[100]
-						: theme.palette.grey[800],
+					mode === "light" ? theme.palette.grey[100] : theme.palette.grey[800],
 			},
 			"&.Mui-focused": {
 				backgroundColor: theme.palette.background.paper,
@@ -96,10 +100,7 @@ const AddIncomeForm = ({ open, onClose, onAddIncome }) => {
 				backdrop: {
 					timeout: 500,
 					sx: {
-						backgroundColor: createAlphaColor(
-							theme.palette.background.default,
-							0.7,
-						),
+						backgroundColor: alpha(theme.palette.background.default, 0.7),
 						backdropFilter: "blur(8px)",
 					},
 				},
@@ -134,7 +135,7 @@ const AddIncomeForm = ({ open, onClose, onAddIncome }) => {
 					>
 						<Box
 							sx={{
-								background: getGradientByName("secondary", theme),
+								background: getGradientByName("secondary", mode),
 								color: theme.palette.secondary.contrastText,
 								p: isMobile ? 2.5 : 3,
 								position: "relative",
@@ -146,7 +147,7 @@ const AddIncomeForm = ({ open, onClose, onAddIncome }) => {
 									right: -20,
 									width: 100,
 									height: 100,
-									background: createAlphaColor(theme.palette.common.white, 0.1),
+									background: alpha(theme.palette.common.white, 0.1),
 									borderRadius: "50%",
 								},
 							}}
@@ -158,16 +159,10 @@ const AddIncomeForm = ({ open, onClose, onAddIncome }) => {
 									right: 12,
 									top: 12,
 									color: theme.palette.secondary.contrastText,
-									backgroundColor: createAlphaColor(
-										theme.palette.common.white,
-										0.15,
-									),
+									backgroundColor: alpha(theme.palette.common.white, 0.15),
 									zIndex: 2,
 									"&:hover": {
-										backgroundColor: createAlphaColor(
-											theme.palette.common.white,
-											0.25,
-										),
+										backgroundColor: alpha(theme.palette.common.white, 0.25),
 									},
 								}}
 							>
@@ -184,7 +179,7 @@ const AddIncomeForm = ({ open, onClose, onAddIncome }) => {
 							>
 								<Avatar
 									sx={{
-										bgcolor: createAlphaColor(theme.palette.common.white, 0.2),
+										bgcolor: alpha(theme.palette.common.white, 0.2),
 										color: theme.palette.secondary.contrastText,
 										width: isMobile ? 50 : 60,
 										height: isMobile ? 50 : 60,
@@ -317,7 +312,7 @@ const AddIncomeForm = ({ open, onClose, onAddIncome }) => {
 										borderRadius: theme.shape.borderRadius,
 										background: loading
 											? theme.palette.action.disabledBackground
-											: getGradientByName("secondary", theme),
+											: getGradientByName("secondary", mode),
 										boxShadow: loading ? "none" : theme.shadows[2],
 										textTransform: "none",
 										transition: theme.transitions.create([

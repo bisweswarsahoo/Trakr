@@ -6,18 +6,20 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import TrackChangesIcon from "@mui/icons-material/TrackChanges";
-import { getGradientByName, createAlphaColor } from "../../theme/utils";
+import { getGradientByName } from "@trakr/design-system";
 
 const AuthHeader = ({ variant = "login", title, subtitle, description }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const mode = theme.palette.mode;
 
 	const config = {
 		login: {
-			avatarGradient: getGradientByName("primary", theme),
-			textGradient: getGradientByName("primary", theme),
-			shadowColor: createAlphaColor(theme.palette.primary.main, 0.3),
+			avatarGradient: getGradientByName("primary", mode),
+			textGradient: getGradientByName("primary", mode),
+			shadowColor: alpha(theme.palette.primary.main, 0.3),
 			animation: "pulse 2s ease-in-out infinite alternate",
 			animationKeyframes: {
 				"@keyframes pulse": {

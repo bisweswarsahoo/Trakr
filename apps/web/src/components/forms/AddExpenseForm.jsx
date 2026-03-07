@@ -16,6 +16,7 @@ import {
 	Slide,
 	CircularProgress,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import TitleIcon from "@mui/icons-material/Title";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CategoryIcon from "@mui/icons-material/Category";
@@ -23,11 +24,16 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
-import { getGradientByName, createAlphaColor } from "../../theme/utils";
+import { getGradientByName } from "@trakr/design-system";
+import {
+	DEFAULT_EXPENSE_CATEGORIES,
+	DEFAULT_PAYMENT_METHOD,
+} from "@trakr/config";
 
 const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const mode = theme.palette.mode;
 
 	const [formData, setFormData] = useState({
 		title: "",
@@ -38,16 +44,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 
 	const [errors, setErrors] = useState({});
 
-	const categories = [
-		{ name: "Food", icon: "🍽️", key: "food" },
-		{ name: "Transport", icon: "🚗", key: "transport" },
-		{ name: "Entertainment", icon: "🎬", key: "entertainment" },
-		{ name: "Shopping", icon: "🛍️", key: "shopping" },
-		{ name: "Health", icon: "🏥", key: "healthcare" },
-		{ name: "Utilities", icon: "💡", key: "utilities" },
-		{ name: "Education", icon: "📚", key: "education" },
-		{ name: "Other", icon: "💰", key: "other" },
-	];
+	const categories = DEFAULT_EXPENSE_CATEGORIES;
 
 	const [loading, setLoading] = useState(false);
 
@@ -79,7 +76,22 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 		onAddExpense(formData);
 		setFormData({ title: "", amount: "", category: "", date: "" });
 		setLoading(false);
-		onClose(); // Close modal after successful submission
+		onClose();
+	};
+
+	const inputSx = {
+		"& .MuiOutlinedInput-root": {
+			borderRadius: theme.shape.borderRadius,
+			backgroundColor:
+				mode === "light" ? theme.palette.grey[50] : theme.palette.grey[900],
+			"&:hover": {
+				backgroundColor:
+					mode === "light" ? theme.palette.grey[100] : theme.palette.grey[800],
+			},
+			"&.Mui-focused": {
+				backgroundColor: theme.palette.background.paper,
+			},
+		},
 	};
 
 	return (
@@ -94,10 +106,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 				backdrop: {
 					timeout: 500,
 					sx: {
-						backgroundColor: createAlphaColor(
-							theme.palette.background.default,
-							0.7,
-						),
+						backgroundColor: alpha(theme.palette.background.default, 0.7),
 						backdropFilter: "blur(8px)",
 					},
 				},
@@ -140,7 +149,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 					>
 						<Box
 							sx={{
-								background: getGradientByName("primary", theme),
+								background: getGradientByName("primary", mode),
 								color: theme.palette.primary.contrastText,
 								p: isMobile ? 2.5 : 3,
 								position: "relative",
@@ -152,7 +161,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									right: -20,
 									width: 100,
 									height: 100,
-									background: createAlphaColor(theme.palette.common.white, 0.1),
+									background: alpha(theme.palette.common.white, 0.1),
 									borderRadius: "50%",
 								},
 								"&::after": {
@@ -162,10 +171,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									left: -30,
 									width: 80,
 									height: 80,
-									background: createAlphaColor(
-										theme.palette.common.white,
-										0.05,
-									),
+									background: alpha(theme.palette.common.white, 0.05),
 									borderRadius: "50%",
 								},
 							}}
@@ -177,16 +183,10 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									right: 12,
 									top: 12,
 									color: theme.palette.primary.contrastText,
-									backgroundColor: createAlphaColor(
-										theme.palette.common.white,
-										0.15,
-									),
+									backgroundColor: alpha(theme.palette.common.white, 0.15),
 									zIndex: 2,
 									"&:hover": {
-										backgroundColor: createAlphaColor(
-											theme.palette.common.white,
-											0.25,
-										),
+										backgroundColor: alpha(theme.palette.common.white, 0.25),
 									},
 								}}
 							>
@@ -203,7 +203,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 							>
 								<Avatar
 									sx={{
-										bgcolor: createAlphaColor(theme.palette.common.white, 0.2),
+										bgcolor: alpha(theme.palette.common.white, 0.2),
 										color: theme.palette.primary.contrastText,
 										width: isMobile ? 50 : 60,
 										height: isMobile ? 50 : 60,
@@ -237,7 +237,6 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 							</Box>
 						</Box>
 
-						{/* Enhanced Content Section */}
 						<Box sx={{ p: isMobile ? 2.5 : 3.5 }}>
 							<Box
 								component="form"
@@ -257,24 +256,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									helperText={errors.title}
 									fullWidth
 									variant="outlined"
-									sx={{
-										"& .MuiOutlinedInput-root": {
-											borderRadius: theme.shape.borderRadius,
-											backgroundColor:
-												theme.palette.mode === "light"
-													? theme.palette.grey[50]
-													: theme.palette.grey[900],
-											"&:hover": {
-												backgroundColor:
-													theme.palette.mode === "light"
-														? theme.palette.grey[100]
-														: theme.palette.grey[800],
-											},
-											"&.Mui-focused": {
-												backgroundColor: theme.palette.background.paper,
-											},
-										},
-									}}
+									sx={inputSx}
 									slotProps={{
 										input: {
 											startAdornment: (
@@ -293,24 +275,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									helperText={errors.amount}
 									fullWidth
 									variant="outlined"
-									sx={{
-										"& .MuiOutlinedInput-root": {
-											borderRadius: theme.shape.borderRadius,
-											backgroundColor:
-												theme.palette.mode === "light"
-													? theme.palette.grey[50]
-													: theme.palette.grey[900],
-											"&:hover": {
-												backgroundColor:
-													theme.palette.mode === "light"
-														? theme.palette.grey[100]
-														: theme.palette.grey[800],
-											},
-											"&.Mui-focused": {
-												backgroundColor: theme.palette.background.paper,
-											},
-										},
-									}}
+									sx={inputSx}
 									slotProps={{
 										input: {
 											startAdornment: (
@@ -331,24 +296,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									helperText={errors.category}
 									fullWidth
 									variant="outlined"
-									sx={{
-										"& .MuiOutlinedInput-root": {
-											borderRadius: theme.shape.borderRadius,
-											backgroundColor:
-												theme.palette.mode === "light"
-													? theme.palette.grey[50]
-													: theme.palette.grey[900],
-											"&:hover": {
-												backgroundColor:
-													theme.palette.mode === "light"
-														? theme.palette.grey[100]
-														: theme.palette.grey[800],
-											},
-											"&.Mui-focused": {
-												backgroundColor: theme.palette.background.paper,
-											},
-										},
-									}}
+									sx={inputSx}
 									slotProps={{
 										input: {
 											startAdornment: (
@@ -381,24 +329,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 									helperText={errors.date}
 									fullWidth
 									variant="outlined"
-									sx={{
-										"& .MuiOutlinedInput-root": {
-											borderRadius: theme.shape.borderRadius,
-											backgroundColor:
-												theme.palette.mode === "light"
-													? theme.palette.grey[50]
-													: theme.palette.grey[900],
-											"&:hover": {
-												backgroundColor:
-													theme.palette.mode === "light"
-														? theme.palette.grey[100]
-														: theme.palette.grey[800],
-											},
-											"&.Mui-focused": {
-												backgroundColor: theme.palette.background.paper,
-											},
-										},
-									}}
+									sx={inputSx}
 									slotProps={{
 										input: {
 											startAdornment: (
@@ -410,7 +341,6 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 										},
 									}}
 								/>
-								{/* Enhanced Submit Section */}
 								<Divider sx={{ my: 2, borderStyle: "dashed" }} />
 
 								<Button
@@ -426,7 +356,7 @@ const AddExpenseForm = ({ open, onClose, onAddExpense }) => {
 										borderRadius: theme.shape.borderRadius,
 										background: loading
 											? theme.palette.action.disabledBackground
-											: getGradientByName("primary", theme),
+											: getGradientByName("primary", mode),
 										boxShadow: loading ? "none" : theme.shadows[2],
 										textTransform: "none",
 										transition: theme.transitions.create([

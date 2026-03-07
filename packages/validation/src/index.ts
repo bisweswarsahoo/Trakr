@@ -21,6 +21,36 @@ export const transactionSchema = z.object({
 	vendor: z.string().optional(),
 });
 
+/** Client-side expense form validation (title, amount, category, date required) */
+export const expenseFormSchema = z.object({
+	title: z.string().min(1, "Title is required"),
+	amount: z
+		.string()
+		.min(1, "Enter a valid amount")
+		.refine(
+			(val) => !isNaN(Number(val)) && Number(val) > 0,
+			"Amount must be a positive number",
+		),
+	category: z.string().min(1, "Category is required"),
+	date: z.string().min(1, "Select a date"),
+});
+
+/** Client-side income form validation (title, amount, date required) */
+export const incomeFormSchema = z.object({
+	title: z.string().min(1, "Title is required"),
+	amount: z
+		.string()
+		.min(1, "Enter a valid amount")
+		.refine(
+			(val) => !isNaN(Number(val)) && Number(val) > 0,
+			"Amount must be a positive number",
+		),
+	date: z.string().min(1, "Select a date"),
+	payment_method: z.string().default("cash"),
+});
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type TransactionInput = z.infer<typeof transactionSchema>;
+export type ExpenseFormInput = z.infer<typeof expenseFormSchema>;
+export type IncomeFormInput = z.infer<typeof incomeFormSchema>;

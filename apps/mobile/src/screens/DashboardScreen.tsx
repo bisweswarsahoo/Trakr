@@ -18,6 +18,7 @@ import {
 	typography,
 } from "@trakr/design-system";
 import { SummaryReport } from "@trakr/types";
+import { formatCurrency } from "@trakr/utils";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -101,7 +102,7 @@ export const DashboardScreen = () => {
 				>
 					<Text style={styles.summaryLabel}>Income</Text>
 					<Text style={[styles.summaryValue, { color: colors.success }]}>
-						${summary.total_income.toFixed(2)}
+						{formatCurrency(summary.total_income)}
 					</Text>
 				</BaseCard>
 
@@ -110,7 +111,7 @@ export const DashboardScreen = () => {
 				>
 					<Text style={styles.summaryLabel}>Expense</Text>
 					<Text style={[styles.summaryValue, { color: colors.error }]}>
-						${summary.total_expense.toFixed(2)}
+						{formatCurrency(summary.total_expense)}
 					</Text>
 				</BaseCard>
 			</View>
@@ -126,7 +127,7 @@ export const DashboardScreen = () => {
 						},
 					]}
 				>
-					${summary.net_profit.toFixed(2)}
+					{formatCurrency(summary.net_profit)}
 				</Text>
 			</BaseCard>
 

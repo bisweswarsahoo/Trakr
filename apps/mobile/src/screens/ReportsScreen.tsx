@@ -11,6 +11,7 @@ import { api } from "../services/api";
 import { colors, spacing, typography } from "@trakr/design-system";
 import { SummaryReport } from "@trakr/types";
 import { useFocusEffect } from "@react-navigation/native";
+import { formatCurrency } from "@trakr/utils";
 
 export const ReportsScreen = () => {
 	const [summary, setSummary] = useState<SummaryReport>({
@@ -58,14 +59,14 @@ export const ReportsScreen = () => {
 			<BaseCard style={styles.card}>
 				<Text style={styles.cardTitle}>Total Income</Text>
 				<Text style={[styles.amount, { color: colors.success }]}>
-					${summary.total_income.toFixed(2)}
+					{formatCurrency(summary.total_income)}
 				</Text>
 			</BaseCard>
 
 			<BaseCard style={styles.card}>
 				<Text style={styles.cardTitle}>Total Expenses</Text>
 				<Text style={[styles.amount, { color: colors.error }]}>
-					${summary.total_expense.toFixed(2)}
+					{formatCurrency(summary.total_expense)}
 				</Text>
 			</BaseCard>
 
@@ -77,7 +78,7 @@ export const ReportsScreen = () => {
 						{ color: summary.net_profit >= 0 ? colors.success : colors.error },
 					]}
 				>
-					${summary.net_profit.toFixed(2)}
+					{formatCurrency(summary.net_profit)}
 				</Text>
 			</BaseCard>
 
