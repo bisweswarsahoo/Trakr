@@ -22,6 +22,8 @@ import {
 } from "@trakr/design-system";
 import { TextInputField, Button, BaseCard } from "@trakr/ui";
 import { formatCurrency } from "@trakr/utils";
+import { ScreenHeader } from "../components/ScreenHeader";
+import { SummaryCard } from "../components/SummaryCard";
 
 export const IncomeScreen = ({ navigation }: any) => {
 	const [income, setIncome] = useState<Transaction[]>([]);
@@ -91,16 +93,13 @@ export const IncomeScreen = ({ navigation }: any) => {
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.header}>
-				<Text style={styles.title}>Income</Text>
-			</View>
+			<ScreenHeader title="Income" />
 
-			<BaseCard style={styles.summaryCard}>
-				<Text style={styles.summaryLabel}>Total Extracted Income</Text>
-				<Text style={[styles.summaryValue, { color: colors.success }]}>
-					{formatCurrency(totalIncome)}
-				</Text>
-			</BaseCard>
+			<SummaryCard
+				label="Total Extracted Income"
+				value={formatCurrency(totalIncome)}
+				type="income"
+			/>
 
 			<FlatList
 				data={income}
@@ -181,35 +180,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: colors.background,
-	},
-	header: {
 		padding: spacing.lg,
-		paddingTop: spacing.xxl,
-		backgroundColor: colors.surface,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border,
-	},
-	title: {
-		fontSize: 24,
-		fontWeight: "bold",
-		color: colors.text,
-	},
-	summaryCard: {
-		marginHorizontal: spacing.lg,
-		marginTop: spacing.md,
-		marginBottom: spacing.sm,
-		alignItems: "center",
-		paddingVertical: spacing.lg,
-	},
-	summaryLabel: {
-		fontSize: 14,
-		color: colors.textSecondary,
-		marginBottom: spacing.xs,
-		fontWeight: "600",
-	},
-	summaryValue: {
-		...typography.h2,
-		fontWeight: "bold",
 	},
 	listContainer: {
 		padding: spacing.md,

@@ -14,10 +14,9 @@ Web dashboard for the Trakr expense manager. Built with React, Vite, and Materia
 ## Features
 
 - 🔐 **Authentication** — Login and register with JWT token persistence via localStorage
-- 📊 **Dashboard** — Visual overview of income, expenses, and net profit with charts
+- 📊 **Dashboard** — Visual overview with period selector (daily/weekly/monthly/yearly), income/expense/net profit summary cards, interactive charts, and category breakdown
 - 💸 **Expense Management** — View, add, and delete expense records with category mapping
 - 💰 **Income Management** — Track and manage income entries
-- 📈 **Reports** — Period selector (daily/weekly/monthly/yearly) with summary cards and category breakdown
 - ⚙️ **Profile** — View/edit user profile and logout
 - 🌙 **Theme Toggle** — Dark and light mode support
 - 📱 **Responsive Design** — Works on desktop and mobile browsers
@@ -30,19 +29,19 @@ web-frontend/
 │   ├── api.js                   # Axios instance → Node.js gateway (:5000/api)
 │   ├── components/
 │   │   ├── auth/                # AuthForm, AuthButton, AuthTextField, etc.
-│   │   ├── Navbar.jsx           # Navigation (Expenses, Income, Dashboard, Reports, Profile)
+│   │   ├── Navbar.jsx           # Navigation (Dashboard, Expenses, Income, Profile)
 │   │   ├── AddExpenseForm.jsx   # Expense creation modal
 │   │   ├── AddIncomeForm.jsx    # Income creation modal
 │   │   ├── ExpenseList.jsx      # Expense list with summary
 │   │   ├── IncomeList.jsx       # Income list with summary
 │   │   ├── SummarySection.jsx   # Dashboard summary cards
 │   │   ├── ChartsSection.jsx    # Dashboard charts
+│   │   ├── CategoryBreakdownSection.jsx  # Category spending breakdown
 │   │   └── ThemeToggle.jsx      # Dark/light mode switch
 │   ├── pages/
-│   │   ├── Home.jsx             # Expenses page
+│   │   ├── ExpensePage.jsx      # Expenses page
 │   │   ├── IncomePage.jsx       # Income page
-│   │   ├── Dashboard.jsx        # Dashboard with charts
-│   │   ├── ReportsPage.jsx      # Financial reports
+│   │   ├── Dashboard.jsx        # Dashboard with charts, reports & category breakdown
 │   │   ├── ProfileScreen.jsx    # User profile + logout
 │   │   ├── LoginPage.jsx        # Login
 │   │   └── Register.jsx         # Registration

@@ -8,8 +8,8 @@ import { RegisterScreen } from "../screens/RegisterScreen";
 import { DashboardScreen } from "../screens/DashboardScreen";
 import { ExpensesScreen } from "../screens/ExpensesScreen";
 import { IncomeScreen } from "../screens/IncomeScreen";
-import { ReportsScreen } from "../screens/ReportsScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
+import { Home, TrendingDown, TrendingUp, User } from "lucide-react-native";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,22 +32,36 @@ function AppTabs() {
 			<Tab.Screen
 				name="Dashboard"
 				component={DashboardScreen}
+				options={{
+					tabBarIcon: ({ color, size }) => (
+						<Home color={color} size={size} />
+					),
+				}}
 			/>
 			<Tab.Screen
 				name="Expenses"
 				component={ExpensesScreen}
+				options={{
+					tabBarIcon: ({ color, size }) => (
+						<TrendingDown color={color} size={size} />
+					),
+				}}
 			/>
 			<Tab.Screen
 				name="Income"
 				component={IncomeScreen}
-			/>
-			<Tab.Screen
-				name="Reports"
-				component={ReportsScreen}
+				options={{
+					tabBarIcon: ({ color, size }) => (
+						<TrendingUp color={color} size={size} />
+					),
+				}}
 			/>
 			<Tab.Screen
 				name="Profile"
 				component={ProfileScreen}
+				options={{
+					tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
+				}}
 			/>
 		</Tab.Navigator>
 	);

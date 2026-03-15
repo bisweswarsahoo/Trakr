@@ -1,6 +1,23 @@
 # Trakr — Personal Expense Tracker
 
-A full-stack personal expense tracking application to manage income, expenses, and view financial reports.
+Trakr is a comprehensive, full-stack personal finance application designed to help users effortlessly track their income and expenses, manage their budgets, and gain meaningful insights into their financial health.
+
+Built with a modern microservice architecture within a Turborepo monorepo, Trakr provides a seamless, synchronized experience across multiple platforms, ensuring you can manage your finances wherever you go.
+
+## What It Does
+
+- **Transaction Management:** Easily record, categorize, and organize your daily income and expenses.
+- **Dashboard & Insights:** Visualize your spending habits and financial trends with interactive charts, period-based summaries (daily/weekly/monthly/yearly), and detailed category breakdowns — all on a unified dashboard.
+- **Cross-Platform Synchronization:** Your financial data is securely synchronized across all your devices via a centralized API Gateway.
+- **Secure Authentication:** Built-in secure user registration, login, and session management.
+- **Profile Management:** Manage your user profile and customizable preferences seamlessly.
+
+## Supported Platforms
+
+Trakr is designed to be accessible everywhere:
+
+- **📱 Mobile App (iOS & Android):** Built with React Native and Expo, offering a streamlined experience perfect for logging transactions on the go.
+- **💻 Web Dashboard:** A responsive, feature-rich web interface built with React and Vite for deep-dive analysis and comprehensive financial management on your desktop.
 
 ## Project Structure
 

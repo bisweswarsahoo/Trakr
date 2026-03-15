@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { transformExpenseSummary, buildCategoryMap } from "@trakr/utils";
 import { DEFAULT_PAYMENT_METHOD } from "@trakr/config";
 
-const Home = () => {
+const ExpensePage = () => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -134,4 +134,4 @@ const Home = () => {
 	);
 };
 
-export default Home;
+export default ExpensePage;

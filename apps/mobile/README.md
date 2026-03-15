@@ -15,10 +15,9 @@ Cross-platform mobile app for Trakr. Built with React Native, Expo, and Zustand.
 ## Features
 
 - 🔐 **Authentication** — Register and login with JWT-based session management
-- 📊 **Dashboard** — At-a-glance view of total income, expenses, and net profit with a pie chart breakdown by category
+- 📊 **Dashboard** — At-a-glance view of total income, expenses, and net profit with period selector (daily/weekly/monthly/yearly), pie chart breakdown by category, bar and line charts, and category spending list
 - 💸 **Expense Tracking** — View and manage your expense records with pull-to-refresh
 - 💰 **Income Tracking** — Record and browse income entries
-- 📈 **Reports** — Visual financial reports with charts
 - ⚙️ **Profile** — Manage account preferences and sign out
 - 🔄 **Auto-reload** — Screens refresh data every time they gain focus
 
@@ -27,15 +26,14 @@ Cross-platform mobile app for Trakr. Built with React Native, Expo, and Zustand.
 ```
 mobile-frontend/
 ├── src/
-│   ├── components/              # Reusable UI components (Button, Card, Input)
+│   ├── components/              # Reusable UI components (ScreenHeader, SummaryCard, NetProfitCard, ChartCard)
 │   ├── navigation/              # React Navigation stack setup
 │   ├── screens/
 │   │   ├── LoginScreen.tsx      # Login form
 │   │   ├── RegisterScreen.tsx   # Registration form
-│   │   ├── DashboardScreen.tsx  # Summary + charts
+│   │   ├── DashboardScreen.tsx  # Summary + charts + reports + category breakdown
 │   │   ├── ExpensesScreen.tsx   # Expense list
 │   │   ├── IncomeScreen.tsx     # Income list
-│   │   ├── ReportsScreen.tsx    # Extended reports
 │   │   └── ProfileScreen.tsx    # User profile / logout
 │   ├── services/
 │   │   └── api.ts               # Axios instance with auth interceptor

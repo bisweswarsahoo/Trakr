@@ -6,6 +6,7 @@ import {
 	Text,
 	RefreshControl,
 	Dimensions,
+	TouchableOpacity,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { PieChart, BarChart, LineChart } from "react-native-chart-kit";
@@ -14,8 +15,19 @@ import { api } from "../services/api";
 import { colors, spacing, typography } from "@trakr/design-system";
 import { SummaryReport } from "@trakr/types";
 import { formatCurrency, transformDashboardCharts } from "@trakr/utils";
+import { ScreenHeader } from "../components/ScreenHeader";
+import { SummaryCard } from "../components/SummaryCard";
+import { NetProfitCard } from "../components/NetProfitCard";
+import { ChartCard } from "../components/ChartCard";
 
 const screenWidth = Dimensions.get("window").width;
+
+const periods = [
+	{ label: "Daily", value: "daily" },
+	{ label: "Weekly", value: "weekly" },
+	{ label: "Monthly", value: "monthly" },
+	{ label: "Yearly", value: "yearly" },
+];
 
 export const DashboardScreen = () => {
 	const [summary, setSummary] = useState<SummaryReport>({
@@ -23,7 +35,9 @@ export const DashboardScreen = () => {
 		total_expense: 0,
 		net_profit: 0,
 	});
+	const [period, setPeriod] = useState("monthly");
 	const [categoryExpenses, setCategoryExpenses] = useState<any[]>([]);
+	const [categoryReport, setCategoryReport] = useState<any[]>([]);
 	const [barData, setBarData] = useState<any>(null);
 	const [lineData, setLineData] = useState<any>(null);
 	const [refreshing, setRefreshing] = useState(false);
@@ -32,12 +46,6 @@ export const DashboardScreen = () => {
 		try {
 			const res = await api.get("/dashboard");
 			const data = res.data;
-
-			setSummary({
-				total_income: data.monthly.income,
-				total_expense: data.monthly.expense,
-				net_profit: data.monthly.net,
-			});
 
 			const charts = transformDashboardCharts(data);
 
@@ -73,15 +81,35 @@ export const DashboardScreen = () => {
 		}
 	};
 
+	const fetchReports = async () => {
+		try {
+			const [summaryRes, categoryRes] = await Promise.all([
+				api.get(`/reports/${period}`),
+				api.get("/reports/category"),
+			]);
+			setSummary(summaryRes.data);
+			setCategoryReport(categoryRes.data);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
 	useFocusEffect(
 		useCallback(() => {
 			fetchDashboardData();
 		}, []),
 	);
 
+	useFocusEffect(
+		useCallback(() => {
+			fetchReports();
+		}, [period]),
+	);
+
 	const onRefresh = async () => {
 		setRefreshing(true);
 		await fetchDashboardData();
+		await fetchReports();
 		setRefreshing(false);
 	};
 
@@ -104,51 +132,58 @@ export const DashboardScreen = () => {
 				/>
 			}
 		>
-			<View style={styles.header}>
-				<Text style={styles.title}>Dashboard</Text>
+			<ScreenHeader title="Dashboard" />
+
+			<View style={styles.periodToggle}>
+				{periods.map((p) => (
+					<TouchableOpacity
+						key={p.value}
+						style={[
+							styles.periodButton,
+							period === p.value && styles.periodButtonActive,
+						]}
+						onPress={() => setPeriod(p.value)}
+					>
+						<Text
+							style={[
+								styles.periodButtonText,
+								period === p.value && styles.periodButtonTextActive,
+							]}
+						>
+							{p.label}
+						</Text>
+					</TouchableOpacity>
+				))}
 			</View>
 
 			<View style={styles.summaryRow}>
-				<BaseCard
-					style={[
-						styles.summaryCard,
-						{ backgroundColor: colors.success + "20" },
-					]}
-				>
-					<Text style={styles.summaryLabel}>Income</Text>
-					<Text style={[styles.summaryValue, { color: colors.success }]}>
-						{formatCurrency(summary.total_income)}
-					</Text>
-				</BaseCard>
+				<SummaryCard
+					label="Income"
+					value={formatCurrency(summary.total_income)}
+					type="income"
+					style={styles.summaryCardOverride}
+				/>
 
-				<BaseCard
-					style={[styles.summaryCard, { backgroundColor: colors.error + "20" }]}
-				>
-					<Text style={styles.summaryLabel}>Expense</Text>
-					<Text style={[styles.summaryValue, { color: colors.error }]}>
-						{formatCurrency(summary.total_expense)}
-					</Text>
-				</BaseCard>
+				<SummaryCard
+					label="Expense"
+					value={formatCurrency(summary.total_expense)}
+					type="expense"
+					style={styles.summaryCardOverride}
+				/>
 			</View>
 
-			<BaseCard style={styles.netCard}>
-				<Text style={styles.summaryLabel}>Net Profit</Text>
-				<Text
-					style={[
-						styles.summaryValue,
-						{
-							color: summary.net_profit >= 0 ? colors.success : colors.error,
-							fontSize: 24,
-						},
-					]}
-				>
-					{formatCurrency(summary.net_profit)}
-				</Text>
-			</BaseCard>
+			<NetProfitCard
+				label="Net Profit"
+				value={formatCurrency(summary.net_profit)}
+				amount={summary.net_profit}
+			/>
 
-			<BaseCard>
-				<Text style={styles.chartTitle}>Expense per Category</Text>
-				{categoryExpenses.length > 0 ? (
+			<ChartCard
+				title="Expense per Category"
+				isEmpty={categoryExpenses.length === 0}
+				emptyText="No category data available"
+			>
+				{categoryExpenses.length > 0 && (
 					<PieChart
 						data={categoryExpenses}
 						width={screenWidth - spacing.lg * 2 - spacing.md * 2}
@@ -160,14 +195,34 @@ export const DashboardScreen = () => {
 						center={[10, 0]}
 						absolute
 					/>
-				) : (
-					<Text style={styles.noData}>No category data available</Text>
 				)}
-			</BaseCard>
 
-			<BaseCard style={{ marginTop: spacing.md }}>
-				<Text style={styles.chartTitle}>Recent Expenses</Text>
-				{barData ? (
+				<View style={{ marginTop: spacing.md }}>
+					{categoryReport.length === 0 ? (
+						<Text style={styles.noData}>No category breakdown available</Text>
+					) : (
+						categoryReport.map((cat, i) => (
+							<View
+								key={i}
+								style={styles.categoryRow}
+							>
+								<Text style={styles.categoryName}>{cat.category_name}</Text>
+								<Text style={styles.categoryAmount}>
+									{formatCurrency(cat.total)}
+								</Text>
+							</View>
+						))
+					)}
+				</View>
+			</ChartCard>
+
+			<ChartCard
+				title="Recent Expenses"
+				style={{ marginTop: spacing.md }}
+				isEmpty={!barData}
+				emptyText="No recent expenses data"
+			>
+				{barData && (
 					<BarChart
 						data={barData}
 						width={screenWidth - spacing.lg * 2 - spacing.md * 2}
@@ -179,14 +234,16 @@ export const DashboardScreen = () => {
 						withInnerLines={false}
 						style={{ borderRadius: 8, marginVertical: 8 }}
 					/>
-				) : (
-					<Text style={styles.noData}>No recent expenses data</Text>
 				)}
-			</BaseCard>
+			</ChartCard>
 
-			<BaseCard style={{ marginTop: spacing.md }}>
-				<Text style={styles.chartTitle}>Monthly Spending Trends</Text>
-				{lineData ? (
+			<ChartCard
+				title="Monthly Spending Trends"
+				style={{ marginTop: spacing.md }}
+				isEmpty={!lineData}
+				emptyText="No trend data available"
+			>
+				{lineData && (
 					<LineChart
 						data={lineData}
 						width={screenWidth - spacing.lg * 2 - spacing.md * 2}
@@ -197,9 +254,13 @@ export const DashboardScreen = () => {
 						bezier
 						style={{ borderRadius: 8, marginVertical: 8 }}
 					/>
-				) : (
-					<Text style={styles.noData}>No trend data available</Text>
 				)}
+			</ChartCard>
+
+			<BaseCard style={{ marginTop: spacing.md, marginBottom: spacing.xl, paddingVertical: spacing.md, alignItems: "center" }}>
+				<Text style={styles.exportText}>
+					Export functionality (PDF / CSV) coming soon
+				</Text>
 			</BaseCard>
 		</ScrollView>
 	);
@@ -211,45 +272,59 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.background,
 		padding: spacing.lg,
 	},
-	header: {
-		marginBottom: spacing.md,
-		marginTop: spacing.xl,
-	},
-	title: {
-		...typography.h1,
-		color: colors.text,
-	},
 	summaryRow: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 	},
-	summaryCard: {
+	summaryCardOverride: {
 		flex: 1,
-		marginHorizontal: spacing.xs,
-		alignItems: "center",
-		paddingVertical: spacing.lg,
 	},
-	netCard: {
-		marginHorizontal: spacing.xs,
-		alignItems: "center",
-		paddingVertical: spacing.lg,
-		backgroundColor: colors.surface,
-	},
-	summaryLabel: {
-		fontSize: 14,
-		color: colors.textSecondary,
-		marginBottom: spacing.xs,
-		fontWeight: "600",
-	},
-	summaryValue: {
-		...typography.h3,
-		fontWeight: "bold",
-	},
-	chartTitle: {
-		...typography.body,
-		fontWeight: "600",
-		color: colors.text,
+	periodToggle: {
 		marginBottom: spacing.md,
+		flexDirection: "row",
+		justifyContent: "space-between",
+	},
+	periodButton: {
+		paddingVertical: spacing.sm,
+		paddingHorizontal: spacing.md,
+		borderRadius: 20,
+		backgroundColor: colors.surface,
+		marginRight: spacing.sm,
+		borderWidth: 1,
+		borderColor: colors.border,
+	},
+	periodButtonActive: {
+		backgroundColor: colors.primary,
+		borderColor: colors.primary,
+	},
+	periodButtonText: {
+		color: colors.textSecondary,
+		fontWeight: "600",
+	},
+	periodButtonTextActive: {
+		color: colors.surface,
+	},
+	categoryRow: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		paddingVertical: spacing.sm,
+		borderBottomWidth: 1,
+		borderBottomColor: colors.border,
+		width: "100%",
+	},
+	categoryName: {
+		...typography.body,
+		color: colors.text,
+	},
+	categoryAmount: {
+		...typography.body,
+		fontWeight: "bold",
+		color: colors.text,
+	},
+	exportText: {
+		color: colors.primary,
+		fontWeight: "500",
+		textAlign: "center",
 	},
 	noData: {
 		textAlign: "center",

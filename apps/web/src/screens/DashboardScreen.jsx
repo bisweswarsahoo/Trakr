@@ -6,36 +6,45 @@ import {
 	Alert,
 	useTheme,
 	useMediaQuery,
+	ToggleButtonGroup,
+	ToggleButton,
 } from "@mui/material";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import SummarySection from "../components/sections/SummarySection";
 import ChartsSection from "../components/sections/ChartsSection";
+import CategoryBreakdownSection from "../components/sections/CategoryBreakdownSection";
 import API from "../services/api";
 import { getGradientByName } from "@trakr/design-system";
-import {
-	transformExpenseSummary,
-	transformDashboardCharts,
-} from "@trakr/utils";
+import { transformDashboardCharts } from "@trakr/utils";
+import { REPORT_PERIODS } from "@trakr/config";
 
 const Dashboard = () => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
 	const [dashboardData, setDashboardData] = useState(null);
+	const [categoryReport, setCategoryReport] = useState([]);
+	const [period, setPeriod] = useState("monthly");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
 	const fetchDashboardData = useCallback(async () => {
 		try {
 			setLoading(true);
-			const response = await API.get("/dashboard");
-			const raw = response.data;
+			const [dashboardRes, periodRes, categoryRes] = await Promise.all([
+				API.get("/dashboard"),
+				API.get(`/reports/${period}`),
+				API.get("/reports/category"),
+			]);
+			const raw = dashboardRes.data;
 
 			const transformed = {
-				summary: transformExpenseSummary(raw),
+				summary: periodRes.data,
 				charts: transformDashboardCharts(raw),
 			};
 
 			setDashboardData(transformed);
+			setCategoryReport(categoryRes.data);
 			setError(null);
 		} catch (err) {
 			console.error("Error fetching dashboard data:", err);
@@ -43,11 +52,15 @@ const Dashboard = () => {
 		} finally {
 			setLoading(false);
 		}
-	}, []);
+	}, [period]);
 
 	useEffect(() => {
 		fetchDashboardData();
 	}, [fetchDashboardData]);
+
+	const handlePeriodChange = (_, newPeriod) => {
+		if (newPeriod) setPeriod(newPeriod);
+	};
 
 	if (loading) {
 		return (
@@ -148,8 +161,51 @@ const Dashboard = () => {
 					background: "transparent",
 				}}
 			>
+				<Box
+					sx={{
+						mb: 3,
+						display: "flex",
+						justifyContent: isMobile ? "center" : "flex-start",
+					}}
+				>
+					<ToggleButtonGroup
+						value={period}
+						exclusive
+						onChange={handlePeriodChange}
+						size={isMobile ? "small" : "medium"}
+						sx={{
+							"& .MuiToggleButton-root": {
+								borderRadius: 2,
+								px: isMobile ? 2 : 3,
+								fontWeight: 600,
+								textTransform: "none",
+								"&.Mui-selected": {
+									background: getGradientByName("primary", theme.palette.mode),
+									color: "white",
+									"&:hover": {
+										background: getGradientByName("primary", theme.palette.mode),
+									},
+								},
+							},
+						}}
+					>
+						{REPORT_PERIODS.map((p) => (
+							<ToggleButton
+								key={p.value}
+								value={p.value}
+							>
+								{p.value === "daily" && (
+									<CalendarTodayIcon sx={{ mr: 0.5, fontSize: "1rem" }} />
+								)}
+								{p.label}
+							</ToggleButton>
+						))}
+					</ToggleButtonGroup>
+				</Box>
+
 				<SummarySection summary={summary} />
 				<ChartsSection charts={charts} />
+				<CategoryBreakdownSection categoryReport={categoryReport} />
 			</Container>
 		</Box>
 	);

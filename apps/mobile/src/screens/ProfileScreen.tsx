@@ -6,6 +6,7 @@ import { api } from "../services/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors, spacing, typography } from "@trakr/design-system";
 import { getInitials } from "@trakr/utils";
+import { ScreenHeader } from "../components/ScreenHeader";
 
 export const ProfileScreen = () => {
 	const { user, token, signIn, signOut } = useAuthStore();
@@ -52,9 +53,7 @@ export const ProfileScreen = () => {
 
 	return (
 		<ScrollView style={styles.container}>
-			<View style={styles.header}>
-				<Text style={styles.title}>Profile</Text>
-			</View>
+			<ScreenHeader title="Profile" />
 
 			<BaseCard style={styles.card}>
 				{editing ? (
@@ -127,21 +126,9 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: colors.background,
-	},
-	header: {
 		padding: spacing.lg,
-		paddingTop: spacing.xxl,
-		backgroundColor: colors.surface,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border,
-		marginBottom: spacing.md,
-	},
-	title: {
-		...typography.h2,
-		color: colors.text,
 	},
 	card: {
-		marginHorizontal: spacing.lg,
 		marginBottom: spacing.md,
 	},
 	profileSection: {
@@ -195,7 +182,6 @@ const styles = StyleSheet.create({
 		marginVertical: spacing.sm,
 	},
 	logoutButton: {
-		marginHorizontal: spacing.lg,
 		marginTop: spacing.xl,
 	},
 	editSection: {

@@ -84,12 +84,6 @@ const Navbar = ({ onLogout }) => {
 			color: theme.palette.info.main,
 		},
 		{
-			text: "Reports",
-			icon: <ReceiptIcon />,
-			path: "/reports",
-			color: theme.palette.warning.main,
-		},
-		{
 			text: "Profile",
 			icon: <PersonIcon />,
 			path: "/profile",
